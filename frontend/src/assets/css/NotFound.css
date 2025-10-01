@@ -1,0 +1,30 @@
+.notfound-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin-top: 30rem;
+    margin-bottom: 30rem;
+}
+
+.notfound-title {
+    font-size: 60rem;
+    font-weight: bold;
+    color: #3bc8e7;
+    margin-bottom: 10px;
+}
+
+.notfound-link {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #3bc8e7;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: background-color 0.2s ease;
+}
+
+.notfound-link:hover {
+    background-color: #e84118;
+}
