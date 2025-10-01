@@ -227,6 +227,9 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_THROTTLE_RATES': {
         'admin': '10/second',
+        'csrf': '1/minute',
+        'profile': '5/minute',
+        'login': '2/minute'
     },
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema'
 }

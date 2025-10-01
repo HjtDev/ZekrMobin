@@ -7,15 +7,15 @@ import os
 
 class UserManager(BaseUserManager):
     
-    def create_user(self, phone, password=None, **extra_fields):
-        if not phone:
-            raise ValueError('Users must have a phone number')
-        user = self.model(phone=phone, **extra_fields)
+    def create_user(self, username, password=None, **extra_fields):
+        if not username:
+            raise ValueError('Users must have a username number')
+        user = self.model(username=username, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
         return user
     
-    def create_superuser(self, phone, password=None, **extra_fields):
+    def create_superuser(self, username, password=None, **extra_fields):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
         
@@ -24,7 +24,7 @@ class UserManager(BaseUserManager):
         if extra_fields.get('is_superuser') is not True:
             raise ValueError('Superuser must have is_superuser=True.')
         
-        return self.create_user(phone, password, **extra_fields)
+        return self.create_user(username, password, **extra_fields)
 
 
 def profile_directory_path(instance, filename):
@@ -35,7 +35,7 @@ def profile_directory_path(instance, filename):
     )
 
 class User(AbstractBaseUser, PermissionsMixin):
-    phone = models.CharField(max_length=11, unique=True, verbose_name='شماره تلفن')
+    username = models.CharField(max_length=11, unique=True, verbose_name='نام کاربری')
     email = models.EmailField(max_length=255, blank=True, null=True, verbose_name='ایمیل')
     name = models.CharField(max_length=60, verbose_name='نام')
     
@@ -47,7 +47,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     
     objects = UserManager()
     
-    USERNAME_FIELD = 'phone'
+    USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['name']
     
     def __str__(self):
