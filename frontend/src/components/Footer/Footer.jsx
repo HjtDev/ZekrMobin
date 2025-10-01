@@ -4,7 +4,7 @@ const Footer = () => {
     return (
         <div className="ms_footer_wrapper">
             <div className="ms_footer_logo">
-                <a href="index.html">
+                <a href="../../../index.html">
                     <img src="images/open_logo.png" alt=""/>
                 </a>
             </div>

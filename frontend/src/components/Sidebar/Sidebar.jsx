@@ -9,12 +9,12 @@ const Sidebar = () => {
             <div className="ms_sidemenu_inner">
                 <div className="ms_logo_inner">
                     <div className="ms_logo">
-                        <a href="index.html">
+                        <a href="../../../index.html">
                             <img src="images/logo.png" alt="" className="img-fluid" />
                         </a>
                     </div>
                     <div className="ms_logo_open">
-                        <a href="index.html">
+                        <a href="../../../index.html">
                             <img src="images/open_logo.png" alt="" className="img-fluid" />
                         </a>
                     </div>
@@ -22,7 +22,7 @@ const Sidebar = () => {
                 <div className="ms_nav_wrapper">
                     <ul>
                         <li>
-                            <a href="index.html" className="active" title="خانه">
+                            <a href="../../../index.html" className="active" title="خانه">
                 <span className="nav_icon">
                   <span className="icon icon_discover" />
                 </span>

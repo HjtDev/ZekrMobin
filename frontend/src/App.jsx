@@ -1,13 +1,13 @@
 import './App.css'
-import './components/Sidebar.jsx'
-import Sidebar from './components/Sidebar.jsx';
-import Header from './components/Header.jsx'
-import Footer from './components/Footer.jsx'
-import Player from './components/Player.jsx'
+import './components/Sidebar/Sidebar.jsx'
+import Sidebar from './components/Sidebar/Sidebar.jsx';
+import Header from './components/Header/Header.jsx'
+import Footer from './components/Footer/Footer.jsx'
+import Player from './components/Footer/Player.jsx'
 import MainPage from './Pages/MainPage.jsx'
-import PlayerModals from './components/PlayerModals.jsx'
-import LanguagePopup from './components/LanguagePopup.jsx';
-import RegisterPopups from './components/RegisterPopups.jsx';
+import PlayerModals from './components/Footer/PlayerModals.jsx'
+import LanguagePopup from './components/Header/LanguagePopup.jsx';
+import RegisterPopups from './components/Header/RegisterPopups.jsx';
 import Loading from './components/Loading.jsx'
 import NotFound from './Pages/NotFound.jsx'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
