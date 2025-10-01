@@ -1,6 +1,9 @@
 from rest_framework import status
 from rest_framework.response import Response
 from typing import Any, Callable, Mapping
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
+import re
 
 
 class ResponseBuilderMixin:
@@ -10,6 +13,22 @@ class ResponseBuilderMixin:
 
 
 class GetDataMixin:
+    EMAIL_REGEX = re.compile(r'^[\w\.-]+@[\w\.-]+\.\w+$')
+    
+    @staticmethod
+    def validate_email(email: str) -> bool:
+        return bool(GetDataMixin.EMAIL_REGEX.match(email))
+    
+    @staticmethod
+    def validate_password(password: str, password2: str = None) -> tuple[bool, list[str]]:
+        if password2 and password != password2:
+            return False, ['Passwords don\'t match']
+        try:
+            validate_password(password)
+            return True, []
+        except ValidationError as e:
+            return False, e.messages
+    
     @staticmethod
     def validate_arg(arg: str | tuple[str, Callable], data: Mapping[str, Any]) -> str:
         if isinstance(arg, str):

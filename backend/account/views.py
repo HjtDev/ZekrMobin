@@ -15,7 +15,8 @@ class GetCSRFToken(APIView, ResponseBuilderMixin):
         return self.build_response(
             csrf_token=get_token(request)
         )
-    
+
+
 class Profile(APIView, ResponseBuilderMixin):
     throttle_scope = 'profile'
     
@@ -25,6 +26,42 @@ class Profile(APIView, ResponseBuilderMixin):
             user=UserSerializer(request.user).data if request.user.is_authenticated else None
         )
 
+class Signup(APIView, ResponseBuilderMixin, GetDataMixin):
+    throttle_scope = 'signup'
+    permission_classes = (NotAuthenticated,)
+    
+    def post(self, request):
+        success, result = self.get_data(request, 'username', 'password', 'password2', ('email', self.validate_email), 'name')
+        if not success:
+            return self.build_response(
+                status.HTTP_400_BAD_REQUEST,
+                message='Invalid data',
+                errors=result
+            )
+        
+        success, errors = self.validate_password(result['password'], result['password2'])
+        if not success:
+            return self.build_response(
+                status.HTTP_406_NOT_ACCEPTABLE,
+                message='Password not acceptable',
+                errors=errors
+            )
+        
+        serializer = UserSerializer(data=result)
+        if serializer.is_valid():
+            user = serializer.save()
+            login(request, user)
+            return self.build_response(
+                status.HTTP_201_CREATED,
+                message='User created',
+                user=serializer.data
+            )
+        else:
+            return self.build_response(
+                status.HTTP_400_BAD_REQUEST,
+                message='Invalid data',
+                errors=serializer.errors
+            )
 
 class Login(APIView, ResponseBuilderMixin, GetDataMixin):
     throttle_scope = 'login'
@@ -53,4 +90,3 @@ class Login(APIView, ResponseBuilderMixin, GetDataMixin):
             message='Logged in successfully',
             user=UserSerializer(user).data
         )
-        
