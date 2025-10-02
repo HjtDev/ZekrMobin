@@ -11,9 +11,14 @@ import RegisterPopups from './components/Header/RegisterPopups.jsx';
 import Loading from './components/Loading.jsx'
 import NotFound from './Pages/NotFound.jsx'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import {useEffect} from "react";
+import { refreshCSRF } from './api/api.js'
 
 
 function App() {
+    useEffect(() => {
+        refreshCSRF();
+    }, []);
     return (
         <Router>
            <Loading />
