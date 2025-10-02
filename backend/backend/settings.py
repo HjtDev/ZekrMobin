@@ -236,6 +236,7 @@ REST_FRAMEWORK = {
         'profile': '5/minute',
         'login': '5/minute',
         'signup': '5/minute',
+        'logout': '5/minute',
     },
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema'
 }

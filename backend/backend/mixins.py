@@ -9,7 +9,7 @@ import re
 class ResponseBuilderMixin:
     @staticmethod
     def build_response(response_status: int = status.HTTP_200_OK, **kwargs) -> Response:
-        return Response(data=kwargs, status=response_status)
+        return Response(data=kwargs, status=response_status) if response_status != status.HTTP_204_NO_CONTENT else Response(status=response_status)
 
 
 class GetDataMixin:

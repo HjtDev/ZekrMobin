@@ -1,4 +1,5 @@
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from backend.mixins import ResponseBuilderMixin, GetDataMixin
 from .permissions import NotAuthenticated
@@ -54,6 +55,12 @@ class Signup(APIView, ResponseBuilderMixin, GetDataMixin):
                 errors=errors
             )
         
+        if User.objects.filter(username=result['username']).exists():
+            return self.build_response(
+                status.HTTP_409_CONFLICT,
+                message='User with username already exists.',
+            )
+        
         serializer = UserSerializer(data=result)
         if serializer.is_valid():
             user = serializer.save()
@@ -97,3 +104,11 @@ class Login(APIView, ResponseBuilderMixin, GetDataMixin):
             message='Logged in successfully',
             user=UserSerializer(user).data
         )
+    
+class Logout(APIView, ResponseBuilderMixin):
+    throttle_scope = 'logout'
+    permission_classes = (IsAuthenticated,)
+    
+    def post(self, request):
+        logout(request)
+        return self.build_response(status.HTTP_204_NO_CONTENT)
