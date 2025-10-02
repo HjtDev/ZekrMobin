@@ -234,6 +234,7 @@ REST_FRAMEWORK = {
         'admin': '10/second',
         'csrf': '1/minute',
         'profile': '5/minute',
+        'edit_profile': '3/minute',
         'login': '5/minute',
         'signup': '5/minute',
         'logout': '5/minute',

@@ -8,6 +8,10 @@ from rest_framework import status
 from .serializers import UserSerializer
 from django.middleware.csrf import get_token
 from django.conf import settings
+from logging import getLogger
+
+
+logger = getLogger(__name__)
 
 
 class GetCSRFToken(APIView, ResponseBuilderMixin):
@@ -112,3 +116,41 @@ class Logout(APIView, ResponseBuilderMixin):
     def post(self, request):
         logout(request)
         return self.build_response(status.HTTP_204_NO_CONTENT)
+    
+class EditProfile(APIView, ResponseBuilderMixin, GetDataMixin):
+    throttle_scope = 'edit_profile'
+    permission_classes = (IsAuthenticated,)
+    
+    def patch(self, request):
+        if 'password' in request.data or 'password2' in request.data:
+            success, result = self.get_data(request, 'password', 'password2')
+            if not success:
+                return self.build_response(
+                    status.HTTP_400_BAD_REQUEST,
+                    message='Missing or invalid password arguments.',
+                    errors=result
+                )
+            password, password2 = result['password'], result['password2']
+            password_valid, errors = self.validate_password(password, password2)
+            if not password_valid:
+                return self.build_response(
+                    status.HTTP_406_NOT_ACCEPTABLE,
+                    message='Password not acceptable',
+                    errors=errors
+                )
+        
+        serializer = UserSerializer(instance=request.user, data=request.data, partial=True)
+        
+        if serializer.is_valid():
+            serializer.save()
+            return self.build_response(
+                status.HTTP_200_OK,
+                message='User edited',
+                user=serializer.data
+            )
+        else:
+            return self.build_response(
+                status.HTTP_400_BAD_REQUEST,
+                message='Invalid data',
+                errors=serializer.errors
+            )

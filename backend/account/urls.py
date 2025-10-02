@@ -7,6 +7,7 @@ app_name = 'account'
 urlpatterns = [
     path('csrf/', views.GetCSRFToken.as_view(), name='get_csrf_token'),
     path('profile/', views.Profile.as_view(), name='get_profile_info'),
+    path('profile/update/', views.EditProfile.as_view(), name='edit_profile'),
     path('signup/', views.Signup.as_view(), name='signup'),
     path('login/', views.Login.as_view(), name='login'),
     path('logout/', views.Logout.as_view(), name='logout'),
