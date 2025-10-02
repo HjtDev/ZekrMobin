@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser, PermissionsMixin
 from django.utils import timezone
-from random import choice
+from django_resized import ResizedImageField
 import os
 
 
@@ -38,6 +38,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=11, unique=True, verbose_name='نام کاربری')
     email = models.EmailField(max_length=255, blank=True, null=True, verbose_name='ایمیل')
     name = models.CharField(max_length=60, verbose_name='نام')
+    profile_picture = ResizedImageField(upload_to=profile_directory_path, blank=True, null=True, default='Profiles/default_profile.png', verbose_name='تصویر پروفایل')
     
     is_active = models.BooleanField(default=True, verbose_name='دسترسی به حساب')
     is_staff = models.BooleanField(default=False, verbose_name='کارمند سایت')
