@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser, PermissionsMixin
 from django.utils import timezone
 from django_resized import ResizedImageField
+from django.core.exceptions import ValidationError
+from backend.mixins import GetDataMixin
 import os
 
 
@@ -34,8 +36,12 @@ def profile_directory_path(instance, filename):
         filename
     )
 
+def validate_username(username):
+    if not GetDataMixin.validate_username(username):
+        raise ValidationError('نام کاربری باید: با یک حرف شروع شود - بین ۳ تا ۳۰ کاراکتر باشد - شامل کاراکتر های خاص نباشد.')
+
 class User(AbstractBaseUser, PermissionsMixin):
-    username = models.CharField(max_length=11, unique=True, verbose_name='نام کاربری')
+    username = models.CharField(max_length=30, unique=True, verbose_name='نام کاربری', validators=[validate_username])
     email = models.EmailField(max_length=255, blank=True, null=True, verbose_name='ایمیل')
     name = models.CharField(max_length=60, verbose_name='نام')
     profile_picture = ResizedImageField(upload_to=profile_directory_path, blank=True, null=True, default='Profiles/default_profile.png', verbose_name='تصویر پروفایل')

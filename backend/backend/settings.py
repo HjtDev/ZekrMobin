@@ -131,7 +131,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = 'fa-ir'
+LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'Asia/Tehran'
 
@@ -151,13 +151,13 @@ STATICFILES_DIRS = [
 
 # Media files
 
-MEDIA_URL = '/media/'
+MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 # Jazzmin
 
-jazzmin_settings = {
-    'custom_css': 'css/jazzmin_rtl.css',
+JAZZMIN_SETTINGS = {
+    'custom_css': 'css/jazzmin-rtl.css',
     'site_brand': 'داشبورد',
 }
 admin.sites.AdminSite.site_header = 'پنل مدیریت'
@@ -234,7 +234,8 @@ REST_FRAMEWORK = {
         'admin': '10/second',
         'csrf': '1/minute',
         'profile': '5/minute',
-        'login': '2/minute'
+        'login': '5/minute',
+        'signup': '5/minute',
     },
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema'
 }

@@ -14,6 +14,11 @@ class ResponseBuilderMixin:
 
 class GetDataMixin:
     EMAIL_REGEX = re.compile(r'^[\w\.-]+@[\w\.-]+\.\w+$')
+    USERNAME_REGEX = re.compile(r'^[a-zA-Z][a-zA-Z0-9_.]{2,29}$')
+    
+    @staticmethod
+    def validate_username(username):
+        return bool(GetDataMixin.USERNAME_REGEX.match(username))
     
     @staticmethod
     def validate_email(email: str) -> bool:

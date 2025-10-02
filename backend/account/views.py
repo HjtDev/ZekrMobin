@@ -6,15 +6,22 @@ from .models import User
 from rest_framework import status
 from .serializers import UserSerializer
 from django.middleware.csrf import get_token
+from django.conf import settings
 
 
 class GetCSRFToken(APIView, ResponseBuilderMixin):
     throttle_scope = 'csrf'
     
     def get(self, request):
-        return self.build_response(
-            csrf_token=get_token(request)
+        token = get_token(request)
+        response = self.build_response()
+        response.set_cookie(
+            'csrftoken',
+            token,
+            httponly=False,
+            secure=not settings.DEBUG
         )
+        return response
 
 
 class Profile(APIView, ResponseBuilderMixin):
