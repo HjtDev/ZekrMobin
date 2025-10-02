@@ -131,7 +131,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = 'fa-ir'
+LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'Asia/Tehran'
 
@@ -149,10 +149,15 @@ STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
 
+# Media files
+
+MEDIA_URL = 'media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
 # Jazzmin
 
-jazzmin_settings = {
-    'custom_css': 'css/jazzmin_rtl.css',
+JAZZMIN_SETTINGS = {
+    'custom_css': 'css/jazzmin-rtl.css',
     'site_brand': 'داشبورد',
 }
 admin.sites.AdminSite.site_header = 'پنل مدیریت'
@@ -227,6 +232,12 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_THROTTLE_RATES': {
         'admin': '10/second',
+        'csrf': '1/minute',
+        'profile': '5/minute',
+        'edit_profile': '3/minute',
+        'login': '5/minute',
+        'signup': '5/minute',
+        'logout': '5/minute',
     },
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema'
 }
@@ -250,3 +261,13 @@ SPECTACULAR_SETTINGS = {
         'hideDownloadButton': True,
     },
 }
+
+# Resized Images
+
+DJANGORESIZED_DEFAULT_SIZE = [155, 155]
+# DJANGORESIZED_DEFAULT_SCALE = 0.5
+DJANGORESIZED_DEFAULT_QUALITY = 100
+DJANGORESIZED_DEFAULT_KEEP_META = True
+# DJANGORESIZED_DEFAULT_FORCE_FORMAT = 'JPEG'
+DJANGORESIZED_DEFAULT_FORMAT_EXTENSIONS = {'JPEG': '.jpg', 'PNG': '.png', 'WEBP': '.webp'}
+# DJANGORESIZED_DEFAULT_NORMALIZE_ROTATION = False
