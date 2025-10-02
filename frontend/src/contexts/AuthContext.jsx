@@ -19,6 +19,7 @@ export const AuthProvider = ({children}) => {
         }
 
         const createNewAccount = async (username, name, password, password2) => {
+            await refreshCSRF();
             if(!username) {
                 return {
                     success: false,
@@ -114,11 +115,24 @@ export const AuthProvider = ({children}) => {
             }
         }
 
+        const logout = async () => {
+            try {
+                const res = await api.post('user/logout/');
+                if(res.status === 204) {
+                    setIsLoggedIn(false);
+                    setUser(null);
+                    await refreshCSRF();
+                }
+            } catch (err) {
+                console.error('Failed to logout:', err.response?.data || err.message);
+            }
+        }
+
         useEffect(() => {
             fetchProfile();
         }, []);
         return (
-            <AuthContext.Provider value={{user, isLoggedIn, fetchProfile, createNewAccount}}>
+            <AuthContext.Provider value={{user, isLoggedIn, fetchProfile, createNewAccount, logout}}>
                 {children}
             </AuthContext.Provider>
         )
