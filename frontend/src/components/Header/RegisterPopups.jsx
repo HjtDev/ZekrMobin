@@ -2,7 +2,7 @@ import React, {useState} from 'react'
 import {useAuth} from "../../contexts/AuthContext.jsx";
 
 const RegisterPopups = () => {
-    const {createNewAccount} = useAuth();
+    const {createNewAccount, connectAccount} = useAuth();
 
     const [username, setUsername] = useState('');
     const [usernameErrors, setUsernameErrors] = useState([]);
@@ -16,7 +16,12 @@ const RegisterPopups = () => {
 
     const [formErrors, setFormErrors] = useState([]);
 
+    const [loginUsername, setLoginUsername] = useState('');
+    const [loginPassword, setLoginPassword] = useState('');
+    const [loginFormErrors, setLoginFormErrors] = useState([]);
+
     const [isLoading, setIsLoading] = useState(false);
+
 
     const register = async () => {
         setUsernameErrors([]);
@@ -34,6 +39,20 @@ const RegisterPopups = () => {
             setNameErrors(field === 'name' ? msg : []);
             setPasswordErrors(field === 'password' ? msg : []);
             setFormErrors(field === '' ? msg : []);
+        }
+        setIsLoading(false);
+    }
+
+    const login = async () => {
+        setLoginFormErrors([]);
+        setIsLoading(true);
+
+        const {success, msg} = await connectAccount(loginUsername, loginPassword);
+
+        if(success) {
+            document.querySelector('i.login_modal_close').click();
+        } else {
+            setLoginFormErrors(msg);
         }
         setIsLoading(false);
     }
@@ -151,7 +170,7 @@ const RegisterPopups = () => {
                     {/* Modal content*/}
                     <div className="modal-content">
                         <button type="button" className="close" data-dismiss="modal">
-                            <i className="fa_icon form_close"/>
+                            <i className="fa_icon form_close login_modal_close"/>
                         </button>
                         <div className="modal-body">
                             <div className="ms_register_img">
@@ -162,8 +181,9 @@ const RegisterPopups = () => {
                                 <div className="form-group">
                                     <input
                                         type="text"
-                                        placeholder="ایمیل"
+                                        placeholder="نام کاربری"
                                         className="form-control"
+                                        onChange={(e) => {setLoginUsername(e.target.value)}}
                                     />
                                     <span className="form_icon">
                   <i className="fa_icon form-envelope" aria-hidden="true"/>
@@ -174,25 +194,27 @@ const RegisterPopups = () => {
                                         type="password"
                                         placeholder="رمز عبور"
                                         className="form-control"
+                                        onChange={(e) => {setLoginPassword(e.target.value)}}
                                     />
+                                    <ul className="small text-right" style={{color: "#e74c3c"}}>
+                                        {
+                                            loginFormErrors.map((err, index) => (
+                                                <li>{err}</li>
+                                            ))
+                                        }
+                                    </ul>
                                     <span className="form_icon">
-                  <i className="fa_icon form-lock" aria-hidden="true"/>
-                </span>
+                                        <i className="fa_icon form-lock" aria-hidden="true"/>
+                                    </span>
                                 </div>
-                                <div className="remember_checkbox">
-                                    <label>
-                                        مرا بخاطر داشته باش
-                                        <input type="checkbox"/>
-                                        <span className="checkmark"/>
-                                    </label>
-                                </div>
-                                <a href="profile.html" className="ms_btn" target="_blank">
-                                    ورود
-                                </a>
-                                <div className="popup_forgot">
-                                    <a href="#">رمز عبور را فراموش کرده اید ؟</a>
-                                </div>
-                                <p>
+                                {
+                                    isLoading ?
+                                    <div className="loading"></div> :
+                                    <a href="#" onClick={login} className="ms_btn">
+                                        ورود
+                                    </a>
+                                }
+                                <p style={{marginTop: "15rem"}}>
                                     حساب کاربری ندارید ؟{" "}
                                     <a
                                         href="#myModal"

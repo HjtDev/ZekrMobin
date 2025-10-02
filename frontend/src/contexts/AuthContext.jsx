@@ -128,11 +128,57 @@ export const AuthProvider = ({children}) => {
             }
         }
 
+        const connectAccount = async (username, password) => {
+            if(!username || username === ' ') {
+                return {
+                    success: false,
+                    msg: ['لطفا نام کاربری خود را وارد کنید.']
+                }
+            }
+            if(!password || password === ' ') {
+                return {
+                    success: false,
+                    msg: ['لطفا رمز عبور خود را وارد کنید.']
+                }
+            }
+
+            try {
+                const res = await api.post(
+                    'user/login/',
+                    {
+                        username, password
+                    }
+                );
+                if(res.status === 200) {
+                    setIsLoggedIn(true);
+                    setUser(res.data.user);
+                    await refreshCSRF();
+                    return {
+                        success: true,
+                        msg: ['']
+                    }
+                }
+            } catch (err) {
+                if(err.response.status === 401) {
+                    return {
+                        success: false,
+                        msg: ['نام کاربری یا رمز عبور اشتباه است.']
+                    }
+                } else {
+                    console.error('Failed to login:', err.response?.data || err.message)
+                    return {
+                        success: false,
+                        msg: ['مشکلی پیش آمده است لطفا بعدا تلاش کنید.']
+                    }
+                }
+            }
+        }
+
         useEffect(() => {
             fetchProfile();
         }, []);
         return (
-            <AuthContext.Provider value={{user, isLoggedIn, fetchProfile, createNewAccount, logout}}>
+            <AuthContext.Provider value={{user, isLoggedIn, fetchProfile, createNewAccount, logout, connectAccount}}>
                 {children}
             </AuthContext.Provider>
         )

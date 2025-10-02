@@ -16,25 +16,24 @@ const Header = () => {
     const LoggedInButtons = (
         <div className="ms_top_btn">
             <a href="#" onClick={toggleUserDropDown} role="button" className="ms_admin_name">
-                {user?.name} <span className="ms_pro_name">{user?.name[0]}</span>
+                {user?.name}
+                {
+                    user?.profile_picture ?
+                    <img src={import.meta.env.VITE_API_BASE_URL + user?.profile_picture} className="ms_pro_name" alt="User Profile Picture"/> :
+                    <span className="ms_pro_name">{user?.name[0]}</span>
+                }
             </a>
             <ul className={`pro_dropdown_menu text-right ${userDropDown}`} style={{top: "100%", right: "5%"}}>
                 <li>
                     <a href="profile.html">پروفایل</a>
                 </li>
-                <li>
-                    <a href="manage_acc.html" target="_blank">
-                        پکیج قیمت ها
-                    </a>
-                </li>
+
                 <li>
                     <a href="blog.html" target="_blank">
                         بلاگ
                     </a>
                 </li>
-                <li>
-                    <a href="">تنظیمات</a>
-                </li>
+
                 <li>
                     <a href="#" onClick={logout}>خروج</a>
                 </li>
