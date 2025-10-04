@@ -43,7 +43,8 @@ class Signup(APIView, ResponseBuilderMixin, GetDataMixin):
     permission_classes = (NotAuthenticated,)
     
     def post(self, request):
-        success, result = self.get_data(request, 'username', 'password', 'password2', ('email', self.validate_email), 'name')
+        # success, result = self.get_data(request, 'username', 'password', 'password2', ('email', self.validate_email), 'name')
+        success, result = self.get_data(request, 'username', 'password', 'password2', 'name')
         if not success:
             return self.build_response(
                 status.HTTP_400_BAD_REQUEST,

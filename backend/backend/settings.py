@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
     'main.apps.MainConfig',
     'account.apps.AccountConfig',
     'rest_framework',
@@ -51,6 +52,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -232,8 +234,8 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_THROTTLE_RATES': {
         'admin': '10/second',
-        'csrf': '1/minute',
-        'profile': '5/minute',
+        'csrf': '10/minute',
+        'profile': '10/minute',
         'edit_profile': '3/minute',
         'login': '5/minute',
         'signup': '5/minute',
@@ -271,3 +273,15 @@ DJANGORESIZED_DEFAULT_KEEP_META = True
 # DJANGORESIZED_DEFAULT_FORCE_FORMAT = 'JPEG'
 DJANGORESIZED_DEFAULT_FORMAT_EXTENSIONS = {'JPEG': '.jpg', 'PNG': '.png', 'WEBP': '.webp'}
 # DJANGORESIZED_DEFAULT_NORMALIZE_ROTATION = False
+
+# Cross Origin Requests
+
+SESSION_COOKIE_SECURE = not DEBUG
+CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS', default=[])
+CORS_ALLOWED_ORIGINS = env.list('CORS_ALLOWED_ORIGINS')
+CORS_ALLOW_CREDENTIALS = env.bool('CORS_ALLOW_CREDENTIALS')
+CORS_ALLOW_ALL_ORIGINS = DEBUG
+SESSION_COOKIE_SAMESITE = 'None' if not DEBUG else 'Lax'
+CSRF_COOKIE_SAMESITE = 'None'if not DEBUG else 'Lax'
+SESSION_COOKIE_DOMAIN = env('SESSION_COOKIE_DOMAIN')
+CSRF_COOKIE_DOMAIN = env('CSRF_COOKIE_DOMAIN')

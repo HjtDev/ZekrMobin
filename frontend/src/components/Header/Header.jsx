@@ -1,32 +1,41 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
+import { useAuth } from "../../contexts/AuthContext.jsx";
 
 const Header = () => {
-    const [isLoggedIn, setIsLoggedIn] = useState(true);
+    const {user, isLoggedIn, logout} = useAuth();
+    const [userDropDown, setUserDropDown] = useState('');
+
+    const toggleUserDropDown = () => {
+        if(userDropDown === '') {
+            setUserDropDown('open_dropdown');
+        } else {
+            setUserDropDown('');
+        }
+    }
 
     const LoggedInButtons = (
         <div className="ms_top_btn">
-            <a href="javascript:;" className="ms_admin_name">
-                سلام بلاریس <span className="ms_pro_name">ب</span>
+            <a href="#" onClick={toggleUserDropDown} role="button" className="ms_admin_name">
+                {user?.name}
+                {
+                    user?.profile_picture ?
+                    <img src={import.meta.env.VITE_API_BASE_URL + user?.profile_picture} className="ms_pro_name" alt="User Profile Picture"/> :
+                    <span className="ms_pro_name">{user?.name[0]}</span>
+                }
             </a>
-            <ul className="pro_dropdown_menu text-right">
+            <ul className={`pro_dropdown_menu text-right ${userDropDown}`} style={{top: "100%", right: "5%"}}>
                 <li>
                     <a href="profile.html">پروفایل</a>
                 </li>
-                <li>
-                    <a href="manage_acc.html" target="_blank">
-                        پکیج قیمت ها
-                    </a>
-                </li>
+
                 <li>
                     <a href="blog.html" target="_blank">
                         بلاگ
                     </a>
                 </li>
+
                 <li>
-                    <a href="">تنظیمات</a>
-                </li>
-                <li>
-                    <a href="">خروج</a>
+                    <a href="#" onClick={logout}>خروج</a>
                 </li>
             </ul>
         </div>
