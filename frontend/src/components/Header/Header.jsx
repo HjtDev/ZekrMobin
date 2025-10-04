@@ -1,5 +1,6 @@
-import React, {useEffect, useState} from 'react'
+import React, {useState} from 'react'
 import { useAuth } from "../../contexts/AuthContext.jsx";
+import {Link} from "react-router-dom";
 
 const Header = () => {
     const {user, isLoggedIn, logout} = useAuth();
@@ -19,13 +20,17 @@ const Header = () => {
                 {user?.name}
                 {
                     user?.profile_picture ?
-                    <img src={import.meta.env.VITE_API_BASE_URL + user?.profile_picture} className="ms_pro_name" alt="User Profile Picture"/> :
+                    <img src={import.meta.env.VITE_BASE_URL + user.profile_picture} className="ms_pro_name" alt="User Profile Picture"/> :
                     <span className="ms_pro_name">{user?.name[0]}</span>
                 }
             </a>
             <ul className={`pro_dropdown_menu text-right ${userDropDown}`} style={{top: "100%", right: "5%"}}>
                 <li>
-                    <a href="profile.html">پروفایل</a>
+                    <Link to='/'>خانه</Link>
+                </li>
+
+                <li>
+                    <Link to='/profile'>پروفایل</Link>
                 </li>
 
                 <li>

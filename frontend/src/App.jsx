@@ -10,6 +10,8 @@ import LanguagePopup from './components/Header/LanguagePopup.jsx';
 import RegisterPopups from './components/Header/RegisterPopups.jsx';
 import Loading from './components/Loading.jsx'
 import NotFound from './Pages/NotFound.jsx'
+import Profile from './Pages/Profile.jsx';
+import { ToastContainer, Bounce } from 'react-toastify';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 
@@ -17,12 +19,27 @@ function App() {
     return (
         <Router>
            <Loading />
+            <ToastContainer
+                position="top-center"
+                autoClose={3000}
+                limit={3}
+                hideProgressBar={false}
+                newestOnTop
+                closeOnClick
+                pauseOnHover={false}
+                pauseOnFocusLoss={false}
+                rtl
+                draggable={false}
+                theme="dark"
+                transition={Bounce}
+            />
             <div className="ms_main_wrapper">
                 <Sidebar/>
                 <div className="ms_content_wrapper padder_top80">
                     <Header />
                     <Routes>
                         <Route path='/' element={<MainPage />} />
+                        <Route path='/profile' element={<Profile />} />
                         <Route path='*' element={<NotFound />} />
                     </Routes>
                 </div>
