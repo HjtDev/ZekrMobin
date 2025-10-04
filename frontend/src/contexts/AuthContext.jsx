@@ -7,8 +7,10 @@ const AuthContext = createContext();
 export const AuthProvider = ({children}) => {
         const [user, setUser] = useState(null);
         const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [loadingUserData, setLoadingUserData] = useState(true);
 
         const fetchProfile = async () => {
+            setLoadingUserData(true);
             try {
                 const res = await api.get('user/profile/');
                 setIsLoggedIn(res.data.logged_in);
@@ -16,6 +18,7 @@ export const AuthProvider = ({children}) => {
             } catch (err) {
                 console.error('Failed to fetch profile:', err.response?.data || err.message);
             }
+            setLoadingUserData(false);
         }
 
         const createNewAccount = async (username, name, password, password2) => {
@@ -174,11 +177,71 @@ export const AuthProvider = ({children}) => {
             }
         }
 
+        const updateProfile = async (name, password, password2) => {
+            if(!name.trim() && !password.trim()) {
+                return {
+                    success: false,
+                    msg: ['چیزی برای تغییر نداری.']
+                }
+            }
+            if(name === user?.name) {
+                return {
+                    success: false,
+                    msg: ['لطفا اسم متفاوتی از اسم قبلی خود انتخاب کنید.']
+                }
+            }
+            if(password !== password2) {
+                return {
+                    success: false,
+                    msg: ['رمز عبور با تکرار ان برابر نیست.']
+                }
+            }
+
+            try {
+                let data = {};
+                if(password.trim()) {
+                    data['password'] = password;
+                    data['password2'] = password2;
+                }
+                if(name.trim()) {
+                    data['name'] = name;
+                }
+                const res = await api.patch(
+                    'user/profile/update/',
+                    data
+                );
+                if(res.status === 200) {
+                    setUser(res.data.user);
+                    return {
+                        success: true,
+                        msg: ['اطلاعات با موفقیت ذخیره شد.']
+                    }
+                }
+            } catch (err) {
+                if(err.response?.status === 406) {
+                    return {
+                        success: false,
+                        msg: [
+                            'رمز عبور نباید شبیه نام کاربری باشد یا قابل حدس باشد.',
+                            'رمز عبور باید حداقل ۸ کاراکتر باشد.',
+                            'رمز عبور نباید تمام عددی باشد.',
+                        ]
+                    }
+                } else {
+                    console.error('Failed to update profile:', err?.response.data || err.message)
+                    return {
+                        success: false,
+                        msg: ['مشکلی پیش آمده است لطفا بعدا تلاش کنید.']
+                    }
+                }
+            }
+        }
+
         useEffect(() => {
             fetchProfile();
         }, []);
         return (
-            <AuthContext.Provider value={{user, isLoggedIn, fetchProfile, createNewAccount, logout, connectAccount}}>
+            <AuthContext.Provider value={{ user, loadingUserData, isLoggedIn, fetchProfile, createNewAccount, logout, connectAccount, updateProfile }}>
                 {children}
             </AuthContext.Provider>
         )
