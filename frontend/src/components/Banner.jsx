@@ -1,23 +1,57 @@
-import React from 'react'
+import React, {useEffect, useState} from 'react'
+import CustomSkeleton from './CustomSkeleton.jsx'
+import fetchSettings from '../api/settings.js';
+
 
 const Banner = () => {
+    const [landingData, setLandingData] = useState(null);
+
+    const loadData = async () => {
+        const {success, msg, config} = await fetchSettings(['landing']);
+        if(success) {
+            setLandingData(config);
+        } else {
+            console.error('Failed to load settings:', msg);
+        }
+    }
+
+    useEffect(() => {
+        loadData();
+    }, []);
+
     return (
         <div className="ms-banner">
             <div className="container-fluid">
                 <div className="row">
                     <div className="col-lg-12 col-md-12">
                         <div className="ms_banner_img">
-                            <img src="images/banner.png" alt="" className="img-fluid"/>
+                            {
+                                landingData ?
+                                <img src={landingData?.landing_image} alt="Landing Image" className="img-fluid"/> :
+                                <CustomSkeleton width={511} height={539} />
+                            }
                         </div>
                         <div className="ms_banner_text">
-                            <h1>آلبوم های</h1>
-                            <h1 className="ms_color">منتشر شده این ماه !</h1>
+                            <h1>
+                                {
+                                    landingData ?
+                                    landingData.landing_title :
+                                    <CustomSkeleton width={150} />
+                                }
+                            </h1>
+                            <h1 className="ms_color">
+                                {
+                                    landingData ?
+                                    landingData.landing_subtitle :
+                                    <CustomSkeleton width={550} />
+                                }
+                            </h1>
                             <p>
-                                لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با
-                                استفاده از طراحان گرافیک است. <br/> چاپگرها و متون بلکه
-                                روزنامه و مجله در ستون و سطرآنچنان که لازم است و برای شرایط
-                                فعلی تکنولوژی مورد نیاز و کاربردهای متنوع با هدف بهبود
-                                ابزارهای کاربردی می باشد.{" "}
+                                {
+                                    landingData ?
+                                    landingData.landing_text :
+                                    <CustomSkeleton width={550} />
+                                }
                             </p>
                             <div className="ms_banner_btn">
                                 <a href="#" className="ms_btn">
