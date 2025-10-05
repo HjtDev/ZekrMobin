@@ -1,9 +1,34 @@
 import React, {useEffect, useState} from 'react'
 import fetchSettings  from '../../api/settings.js'
-import {Link} from "react-router-dom";
+import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
+import addClubUser from "../../api/club.js";
 
 const Footer = () => {
     const [settings, setSettings] = useState(null);
+
+    const [clubName, setClubName] = useState('');
+    const [clubEmail, setClubEmail] = useState('');
+    const [clubChanged, setClubChanged] = useState(false);
+
+    const handleClub = async () => {
+        if(!clubChanged) {
+            toast.warn('لطفا نام و ایمیل خود را وارد کنید.');
+            return
+        }
+        const {success, msg} = await addClubUser(clubName, clubEmail);
+        if(success) {
+            msg.forEach((element) => {
+                toast.success(element);
+            });
+            setClubName('');
+            setClubEmail('');
+        } else {
+            msg.forEach((element) => {
+                toast.error(element);
+            });
+        }
+    }
 
     const getSettings = async (sections) => {
         const {success, msg, config} = await fetchSettings(sections);
@@ -16,6 +41,10 @@ const Footer = () => {
     useEffect(() => {
         getSettings(['logo,footer_content, club, contact', 'social', 'rights']);
     }, []);
+
+    useEffect(() => {
+        setClubChanged(clubName.trim() && clubEmail.trim());
+    }, [clubName, clubEmail]);
 
     return (
         <div className="ms_footer_wrapper">
@@ -72,23 +101,36 @@ const Footer = () => {
                         <div className="footer_box footer_subscribe">
                             <h1 className="footer_title">{settings?.club_title}</h1>
                             <p>{settings?.club_text}</p>
-                            <form>
+                            <form autoComplete="off">
                                 <div className="form-group">
                                     <input
                                         type="text"
                                         className="form-control"
                                         placeholder="نام ..."
+                                        autoComplete="off"
+                                        name="name"
+                                        value={clubName}
+                                        onChange={(event) => {
+                                            setClubName(event.target.value);
+                                        }}
                                     />
                                 </div>
                                 <div className="form-group">
                                     <input
-                                        type="text"
+                                        type="email"
                                         className="form-control"
                                         placeholder="ایمیل ..."
+                                        autoComplete="off"
+                                        aria-autocomplete="hope"
+                                        name="email"
+                                        value={clubEmail}
+                                        onChange={(event) => {
+                                            setClubEmail(event.target.value)
+                                        }}
                                     />
                                 </div>
                                 <div className="form-group">
-                                    <a href="#" className="ms_btn">
+                                    <a type="submit" onClick={handleClub} className="ms_btn text-white" style={{cursor: "pointer"}}>
                                         عضویت در خبرنامه
                                     </a>
                                 </div>
