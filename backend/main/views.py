@@ -1,7 +1,9 @@
 from rest_framework.views import APIView
 from backend.mixins import ResponseBuilderMixin, GetDataMixin
 from rest_framework import status
-from .models import Setting
+from django.db.models import Q
+from .models import Setting, ClubMember
+from .serializers import ClubMemberSerializer
 
 
 class SettingView(APIView, ResponseBuilderMixin, GetDataMixin):
@@ -57,3 +59,41 @@ class SettingView(APIView, ResponseBuilderMixin, GetDataMixin):
             message='Successful retrieval',
             config=data
         )
+
+
+class Club(APIView, ResponseBuilderMixin, GetDataMixin):
+    throttle_scope = 'club'
+    
+    def post(self, request):
+        success, result = self.get_data(request, 'name', 'email')
+        
+        if not success:
+            return self.build_response(
+                status.HTTP_400_BAD_REQUEST,
+                message='Wrong or invalid input',
+                errors=result
+            )
+        
+        if ClubMember.objects.filter(Q(user=request.user) | Q(email=result['email'])).exists():
+            return self.build_response(
+                status.HTTP_409_CONFLICT,
+                message='This email is already registered',
+            )
+        
+        serializer = ClubMemberSerializer(data=result)
+        
+        if serializer.is_valid():
+            club_member = serializer.save()
+            if request.user.is_authenticated:
+                club_member.user = request.user
+            club_member.save()
+            return self.build_response(
+                status.HTTP_201_CREATED,
+                message='Club member added',
+            )
+        else:
+            return self.build_response(
+                status.HTTP_400_BAD_REQUEST,
+                message='Wrong name or email',
+                errors=serializer.errors
+            )
