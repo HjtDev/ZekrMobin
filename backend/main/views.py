@@ -10,7 +10,7 @@ class SettingView(APIView, ResponseBuilderMixin, GetDataMixin):
     throttle_scope = 'setting'
     
     def get(self, request):
-        success, result = self.get_data(request, ('section', lambda s: all(section.strip() in ('logo', 'footer_content', 'club', 'contact', 'social', 'rights') for section in s.split(','))))
+        success, result = self.get_data(request, ('section', lambda s: all(section.strip() in ('logo', 'landing', 'footer_content', 'club', 'contact', 'social', 'rights') for section in s.split(','))))
         
         if not success:
             return self.build_response(
@@ -21,6 +21,7 @@ class SettingView(APIView, ResponseBuilderMixin, GetDataMixin):
     
         section_map = {
             'logo': ['logo', 'open_logo'],
+            'landing': ['landing_title', 'landing_subtitle', 'landing_text', 'landing_image'],
             'footer_content': ['footer_title1', 'footer_text1', 'footer_title2', 'footer_text2', 'footer_img1', 'footer_img2', 'footer_img3'],
             'club': ['club_enabled', 'club_welcome_email_enabled', 'club_title', 'club_text'],
             'contact': ['contact_us_title', 'contact_us_phone', 'contact_us_email', 'contact_us_address'],

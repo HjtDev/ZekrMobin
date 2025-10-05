@@ -14,6 +14,13 @@ class SettingAdmin(admin.ModelAdmin):
             }
         ),
         (
+            'لندینگ',
+            {
+                'fields': ('landing_title', 'landing_subtitle', 'landing_text', 'landing_image'),
+                'classes': ('collapse',),
+            }
+        ),
+        (
             'بخش اول فوتر',
             {
                 'fields': ('footer_title1', 'footer_text1'),
