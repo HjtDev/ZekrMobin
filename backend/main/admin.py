@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Setting
+from .models import Setting, ClubMember, ClubMessage
 from django.shortcuts import redirect
 
 
@@ -75,3 +75,28 @@ class SettingAdmin(admin.ModelAdmin):
         if Setting.objects.count() == 1:
             perms['add'] = False
         return perms
+
+@admin.register(ClubMember)
+class ClubMemberAdmin(admin.ModelAdmin):
+    list_display = ['id', 'user', 'name', 'email']
+    list_filter = ('user',)
+    raw_id_fields = ('user',)
+    search_fields = ('id', 'user__name', 'name', 'email')
+    ordering = ('id',)
+    
+def send_action(modeladmin, request, queryset):
+    for message in queryset.all():
+        message.send(request)
+    
+send_action.short_description = 'ارسال پیام'
+    
+@admin.register(ClubMessage)
+class ClubMessageAdmin(admin.ModelAdmin):
+    list_display = ('id', 'is_ready', 'send_to')
+    list_filter = ('is_ready', 'send_to')
+    list_editable = ('is_ready', 'send_to')
+    readonly_fields = ('sent_to',)
+    search_fields = ('id', 'sent_to__name', 'message')
+    actions = (send_action,)
+    ordering = ('id',)
+    

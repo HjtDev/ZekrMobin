@@ -1,5 +1,11 @@
+from django.contrib import messages
 from django.db import models
 from django_resized import ResizedImageField
+from account.models import User
+from logging import getLogger
+
+
+logger = getLogger(__name__)
 
 
 class Setting(models.Model):
@@ -38,3 +44,60 @@ class Setting(models.Model):
     
     def __str__(self):
         return 'تنظیمات'
+
+class ClubMessage(models.Model):
+    class Meta:
+        verbose_name = 'پیام های خبرنامه'
+        verbose_name_plural = 'پیام های خبرنامه'
+    
+    class SendOptions(models.TextChoices):
+        EVERYONE = ('ارسال برای همه', 'ارسال برای همه')
+        MEMBERS_WHO_RECEIVED = ('ارسال برای کسانی که قبلا این پیام را گرفته اند', 'ارسال برای کسانی که قبلا این پیام را گرفته اند')
+        NEW_MEMBERS = ('ارسال برای اعضای جدید', 'ارسال برای اعضای جدید')
+        
+    message = models.TextField(max_length=1000, verbose_name='متن پیام')
+    is_ready = models.BooleanField(default=False, verbose_name='آماده ارسال')
+    send_to = models.CharField(max_length=50, choices=SendOptions.choices, verbose_name='ارسال برای')
+    sent_to = models.ManyToManyField('main.ClubMember', related_name='received_messages', verbose_name='ارسال شده برای')
+    
+    def __str__(self):
+        return self.message[:20] + '...'
+    
+    def send(self, request):
+        if not self.is_ready:
+            messages.warning(request, 'این پیام آماده ارسال نیست.')
+            return
+        settings = Setting.objects.first()
+        if not settings or not settings.club_enabled:
+            messages.warning(request, 'خبرنامه از طریق تنظیمات غیرفعال شده است.')
+            return
+        
+        if self.send_to == ClubMessage.SendOptions.EVERYONE:
+            list_of_members = ClubMember.objects.all()
+        elif self.send_to == ClubMessage.SendOptions.NEW_MEMBERS:
+            list_of_members = ClubMember.objects.exclude(id__in=self.sent_to.values_list('id', flat=True))
+        else:
+            list_of_members = self.sent_to.all()
+            
+        for member in list_of_members:
+            logger.info(f'Sent a club message to {member.name}')
+            self.sent_to.add(member)
+            messages.success(request, 'پیام(ها) با موفقیت ارسال شدند.')
+            
+    @staticmethod
+    def send_to_user(request, user: User):
+        logger.info(f'Send a club message to {user.name}')
+        messages.success(request, 'پیام(ها) با موفقیت ارسال شدند.')
+        
+
+class ClubMember(models.Model):
+    class Meta:
+        verbose_name = 'خبرنامه'
+        verbose_name_plural = 'خبرنامه'
+        
+    user = models.OneToOneField(User, related_name='club', on_delete=models.CASCADE, blank=True, null=True, verbose_name='کاربر')
+    name = models.CharField(max_length=60, verbose_name='نام')
+    email = models.EmailField(max_length=255, verbose_name='ایمیل', unique=True)
+    
+    def __str__(self):
+        return self.name
