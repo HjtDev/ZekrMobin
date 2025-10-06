@@ -45,7 +45,7 @@ class Setting(models.Model):
     landing_title = models.CharField(max_length=15, verbose_name='تیتر', help_text='تیتر سفید رنگ')
     landing_subtitle = models.CharField(max_length=30, verbose_name='زیرنویس', help_text='تیتر آبی رنگ')
     landing_text = models.TextField(max_length=250, verbose_name='توضیحات')
-    landing_image = ResizedImageField(upload_to='settings/landing/', crop=['middle', 'center'], quality=100, force_format='PNG', verbose_name='عکس', help_text='511 * 539')
+    landing_image = ResizedImageField(upload_to='settings/landing/', size=[511, 539], crop=['middle', 'center'], quality=100, force_format='PNG', verbose_name='عکس', help_text='511 * 539')
     
     def __str__(self):
         return 'تنظیمات'
