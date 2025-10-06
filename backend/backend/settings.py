@@ -47,8 +47,9 @@ INSTALLED_APPS = [
     'corsheaders',
     'main.apps.MainConfig',
     'account.apps.AccountConfig',
+    'media_center.apps.MediaCenterConfig',
     'rest_framework',
-    'drf_spectacular'
+    'drf_spectacular',
 ]
 
 MIDDLEWARE = [
@@ -67,8 +68,7 @@ ROOT_URLCONF = 'backend.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates']
-        ,
+        # 'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
