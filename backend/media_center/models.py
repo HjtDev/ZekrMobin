@@ -17,7 +17,7 @@ class Category(models.Model):
         verbose_name_plural = 'دسته بندی ها'
     
     name = models.CharField(max_length=50, verbose_name='اسم دسته بندی')
-    thumbnail = ResizedImageField(upload_to='category/thumbnails/')
+    thumbnail = ResizedImageField(upload_to='category/thumbnails/', verbose_name='عکس کاور')
     
     def __str__(self):
         return self.name
@@ -78,6 +78,21 @@ class File(models.Model):
         return self.name
     
 
+class Artist(models.Model):
+    class Meta:
+        verbose_name = 'مداح/نویسنده/خواننده'
+        verbose_name_plural = 'مداح/نویسنده/خواننده'
+    
+    name = models.CharField(max_length=50, verbose_name='اسم')
+    profile_picture = ResizedImageField(upload_to='Artists/', verbose_name='غکس پروفایل')
+    
+    def __str__(self):
+        return self.name
+    
+    def get_posts(self):
+        return self.medias.select_related('post').all().values_list('post', flat=True)
+
+
 class Media(models.Model):
     class Meta:
         verbose_name = 'رسانه'
@@ -85,8 +100,8 @@ class Media(models.Model):
         
     name = models.CharField(max_length=60, verbose_name='نام رسانه', help_text='دعای جوشن کبیر')
     post = models.ForeignKey('media_center.Post', related_name='medias', on_delete=models.SET_NULL, blank=True, null=True, verbose_name='پست')
+    artist = models.ForeignKey(Artist, related_name='medias', on_delete=models.SET_NULL, blank=True, null=True, verbose_name='مداح/نویسنده/خواننده')
     files = models.ManyToManyField(File, related_name='medias', verbose_name='فایل ها')
-
 
 
 class Post(models.Model):
@@ -94,9 +109,10 @@ class Post(models.Model):
         verbose_name = 'پست'
         verbose_name_plural = 'پست ها'
         
+    publisher = models.ForeignKey(User, related_name='posts', on_delete=models.SET_NULL, blank=True, null=True, verbose_name='منتشر کننده')
+    
     title = models.CharField(max_length=50, verbose_name='تیتر پست')
     thumbnail = ResizedImageField(upload_to=dynamic_post_path, size=[240, 240], crop=['middle', 'center'], quality=100, verbose_name='عکس کاور', help_text='140 * 40')
-    artist = models.CharField(max_length=50, verbose_name='مداح/نویسنده/خواننده ...')
 
     is_visible = models.BooleanField(default=True, verbose_name='نمایش در سایت')
     
