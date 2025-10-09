@@ -1,14 +1,12 @@
 from datetime import timedelta
-from django.conf import settings
 from django.db.models import Count, ExpressionWrapper, FloatField, F, QuerySet
 from django.utils import timezone
 from rest_framework.exceptions import ValidationError
 from rest_framework.views import APIView
-from backend.mixins import ResponseBuilderMixin, GetDataMixin
-from .models import Post
+from backend.mixins import ResponseBuilderMixin, GetDataMixin, CachedResponseMixin
+from .models import Post, Artist
 from rest_framework import status
-from .serializers import QuickPostSerializer, PostSerializer
-from django.core.cache import cache
+from .serializers import QuickPostSerializer, PostSerializer, ArtistSerializer
 
 
 class SinglePost(APIView, ResponseBuilderMixin, GetDataMixin):
@@ -46,22 +44,8 @@ class SinglePost(APIView, ResponseBuilderMixin, GetDataMixin):
             )
 
 
-class FilteredPosts(APIView, ResponseBuilderMixin, GetDataMixin):
+class FilteredPosts(APIView, ResponseBuilderMixin, GetDataMixin, CachedResponseMixin):
     throttle_scope = 'filtered-posts'
-    _cache_key = ''
-    _restored_from_cache = False
-    
-    def _get_cached(self):
-        ids = cache.get(self._cache_key)
-        if not ids or not isinstance(ids, list) or not all(self.is_id(i) for i in ids):
-            return None
-        else:
-            self._restored_from_cache = True
-            return Post.objects.filter(id__in=ids)
-        
-    def _store_cached(self, qs: QuerySet[Post]):
-        ids = list(qs.values_list('id', flat=True))
-        cache.set(self._cache_key, ids, timeout=settings.CACHE_TIMEOUT)
     
     def get_section_queryset(self, section: str) -> QuerySet[Post]:
         now = timezone.now()
@@ -69,7 +53,7 @@ class FilteredPosts(APIView, ResponseBuilderMixin, GetDataMixin):
         
         match section:
             case 'recent-posts':
-                qs = qs.order_by('-updated_at')
+                qs = qs.order_by('-updated_at').order_by('-views_count')
             case 'weekly-posts':
                 qs = qs.filter(updated_at__gte=now - timedelta(days=7)).annotate(
                     likes=Count('liked_by'),
@@ -89,17 +73,17 @@ class FilteredPosts(APIView, ResponseBuilderMixin, GetDataMixin):
     
     def get_selected_items(self, selector: str) -> QuerySet[Post]:
         if selector == 'all':
-            return self._get_cached() or Post.objects.filter(is_visible=True)
+            return self.get_cached(Post) or Post.objects.filter(is_visible=True)
         
         elif selector.startswith('ids:'):
             ids = selector.split(':', 1)[1].split(',')
             if not all(self.is_id(i) for i in ids):
                 raise ValidationError({selector: 'Invalid id in selector. ID must be a positive number.'})
-            return self._get_cached() or Post.objects.filter(is_visible=True, id__in=ids)
+            return self.get_cached(Post) or Post.objects.filter(is_visible=True, id__in=ids)
         
         elif selector.startswith('section:'):
             section = selector.split(':', 1)[1]
-            return self._get_cached() or self.get_section_queryset(section)
+            return self.get_cached(Post) or self.get_section_queryset(section)
         
         raise ValidationError({selector: 'Invalid selector'})
     
@@ -164,7 +148,7 @@ class FilteredPosts(APIView, ResponseBuilderMixin, GetDataMixin):
             filters = result['filters']
             limit = int(result.get('limit') or 0)
             
-            self._cache_key = f'posts:{selector}-{filters}'
+            self.set_cache_key(f'posts:{selector}-{filters}-{limit}')
             
             posts = self.get_selected_items(selector)
             
@@ -177,7 +161,7 @@ class FilteredPosts(APIView, ResponseBuilderMixin, GetDataMixin):
             posts = self.apply_filters(posts, filters)
             
             if not self._restored_from_cache:
-                self._store_cached(posts)
+                self.store_cached(posts)
             
             if limit > 0:
                 posts = posts[:limit]
@@ -201,3 +185,43 @@ class FilteredPosts(APIView, ResponseBuilderMixin, GetDataMixin):
                 message='Invalid parameters',
                 errors=e.detail
             )
+        
+
+class TopArtists(APIView, ResponseBuilderMixin, GetDataMixin, CachedResponseMixin):
+    throttle_rate = 'top-artists'
+    
+    def get(self, request):
+        success, result = self.get_data(request, ('limit', lambda l: isinstance(l, str) and l.isdigit()))
+        
+        if not success:
+            return self.build_response(
+                status=status.HTTP_400_BAD_REQUEST,
+                message='Invalid or missing parameter',
+                errors=result
+            )
+        
+        limit = int(result['limit']) or 0
+        self.set_cache_key(f'top-artists-{limit}')
+        
+        artists = self.get_cached(Artist)
+        if not artists:
+            artists_ids = Post.objects.filter(is_visible=True).order_by('medias__artist', '-views_count').distinct('medias__artist').values_list('medias__artist', flat=True)
+            artists = Artist.objects.filter(id__in=artists_ids)
+            
+        if not self._restored_from_cache:
+            self.store_cached(artists)
+            
+        if not artists.exists():
+            return self.build_response(
+                status=status.HTTP_404_NOT_FOUND,
+                message='Artist(s) not found'
+            )
+        
+        if limit > 0:
+            artists = artists[:limit]
+            
+        return self.build_response(
+            message='Successful retrieval',
+            artists=ArtistSerializer(artists, context={'request': request}, many=True).data,
+            is_cached=self._restored_from_cache
+        )

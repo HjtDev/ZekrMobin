@@ -1,8 +1,11 @@
+from django.conf import settings
+from django.db.models import QuerySet
 from rest_framework import status
 from rest_framework.response import Response
 from typing import Any, Callable, Mapping
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
+from django.core.cache import cache
 import re
 
 
@@ -93,3 +96,24 @@ class GetDataMixin:
     @staticmethod
     def is_id(value: str | int) -> bool:
         return (isinstance(value, str) and value.isdigit() and int(value) > 0) or (isinstance(value, int) and value > 0)
+    
+
+class CachedResponseMixin:
+    _cache_key = ''
+    _restored_from_cache = False
+    
+    
+    def get_cached(self, _Model):
+        ids = cache.get(self._cache_key)
+        if not ids or not isinstance(ids, list) or not all(GetDataMixin.is_id(i) for i in ids):
+            return None
+        else:
+            self._restored_from_cache = True
+            return _Model.objects.filter(id__in=ids)
+    
+    def store_cached(self, qs: QuerySet):
+        ids = list(qs.values_list('id', flat=True))
+        cache.set(self._cache_key, ids, timeout=settings.CACHE_TIMEOUT)
+        
+    def set_cache_key(self, key):
+        self._cache_key = key

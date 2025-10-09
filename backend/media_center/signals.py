@@ -6,4 +6,5 @@ from .models import Post
 
 @receiver([post_save, post_delete], sender=Post)
 def invalidate_post_cache(sender, instance: Post, **kwargs):
-    cache.delete_pattern('posts:*-*')
+    cache.delete_pattern('posts:*-*-*')
+    cache.delete_pattern('top-artists-*')

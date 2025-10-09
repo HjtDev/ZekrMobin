@@ -1,5 +1,5 @@
 from rest_framework.serializers import ModelSerializer, SerializerMethodField
-from .models import Post, Tag, Category
+from .models import Post, Tag, Category, Artist
 
 
 class TagSerializer(ModelSerializer):
@@ -72,3 +72,13 @@ class PostSerializer(ModelSerializer):
     def get_thumbnail(self, obj: Post):
         request = self.context.get('request', None)
         return request.build_absolute_uri(obj.thumbnail.url) if request else obj.thumbnail.url
+    
+    
+class ArtistSerializer(ModelSerializer):
+    class Meta:
+        model = Artist
+        fields = ('id', 'name', 'profile_picture')
+        
+    def get_profile_picture(self, obj: Artist):
+        request = self.context.get('request', None)
+        return request.build_absolute_uri(obj.profile_picture) if request else obj.profile_picture

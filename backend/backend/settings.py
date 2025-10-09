@@ -248,6 +248,7 @@ REST_FRAMEWORK = {
         'club': '5/minute',
         'single-post': '30/minute',
         'filtered-posts': '30/minute',
+        'top-artists': '30/minute'
     },
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema'
 }
