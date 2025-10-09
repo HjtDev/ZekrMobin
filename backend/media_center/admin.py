@@ -68,6 +68,7 @@ class ArtistAdmin(admin.ModelAdmin):
 class FileAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'quality', 'media_type')
     list_filter = ('quality', 'media_type')
+    readonly_fields = ('duration',)
     search_fields = ('name',)
     ordering = ('-id',)
     
@@ -76,7 +77,7 @@ class FileAdmin(admin.ModelAdmin):
             'fields': ('name', 'file')
         }),
         ('مشخصات', {
-            'fields': ('quality', 'media_type'),
+            'fields': ('quality', 'media_type', 'duration'),
             'classes': ('collapse',)
         }),
     )
@@ -100,15 +101,11 @@ class MediaAdmin(admin.ModelAdmin):
     )
 
 
-# -------------------------------
-# POST ADMIN
-# -------------------------------
-
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
-    list_display = ('id', 'title', 'publisher', 'is_visible', 'views_count', 'download_count', 'updated_at', 'created_at')
+    list_display = ('id', 'title', 'publisher', 'is_visible', 'recommended_by_site', 'views_count', 'updated_at', 'created_at')
     list_filter = ('publisher', 'is_visible', 'categories', 'tags', 'created_at', 'updated_at')
-    list_editable = ('is_visible',)
+    list_editable = ('is_visible', 'recommended_by_site')
     autocomplete_fields = ('publisher', 'liked_by', 'categories', 'tags')
     search_fields = ('id', 'title', 'publisher__name')
     ordering = ('-created_at',)
@@ -118,7 +115,7 @@ class PostAdmin(admin.ModelAdmin):
     
     fieldsets = (
         ('اطلاعات اصلی پست', {
-            'fields': ('title', 'thumbnail', 'publisher', 'is_visible')
+            'fields': ('title', 'thumbnail', 'publisher', 'recommended_by_site', 'is_visible')
         }),
         ('دسته‌بندی و تگ‌ها', {
             'fields': ('categories', 'tags'),

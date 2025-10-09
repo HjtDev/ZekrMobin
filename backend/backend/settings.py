@@ -102,10 +102,14 @@ CACHES = {
         'BACKEND': 'django_redis.cache.RedisCache',
         'LOCATION': env('REDIS_LOCATION'),
         'OPTIONS': {
-            'CLIENT_CLASS': 'django_redis.client.DefaultClient'
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+            'COMPRESSOR': 'django_redis.compressors.zlib.ZlibCompressor'
         }
     }
 }
+CACHE_TIMEOUT = 180
+SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+SESSION_CACHE_ALIAS = 'default'
 
 # User
 
@@ -241,7 +245,9 @@ REST_FRAMEWORK = {
         'signup': '5/minute',
         'logout': '5/minute',
         'setting': '30/minute',
-        'club': '5/minute'
+        'club': '5/minute',
+        'single-post': '30/minute',
+        'filtered-posts': '30/minute',
     },
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema'
 }

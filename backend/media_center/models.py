@@ -1,7 +1,14 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.text import slugify
 from django_resized import ResizedImageField
+from moviepy import VideoFileClip, AudioFileClip
 from account.models import User
+from logging import getLogger
+import mimetypes
+
+
+logger = getLogger(__name__)
 
 
 def dynamic_post_path(instance, filename):
@@ -48,7 +55,7 @@ class Tag(models.Model):
     def __str__(self):
         return self.name
     
-    
+
 class File(models.Model):
     class Meta:
         verbose_name = 'فایل'
@@ -71,11 +78,38 @@ class File(models.Model):
     name = models.CharField(max_length=70, verbose_name='نام مختصر فایل', help_text='مثال: دعای جوشن کبیر 1080P')
     quality = models.CharField(max_length=5, choices=QualityChoices.choices, verbose_name='کیفیت')
     media_type = models.CharField(max_length=7, choices=TypeChoices.choices, verbose_name='نوع فایل')
+    duration = models.PositiveIntegerField(default=0, verbose_name='مدت زمان رسانه', help_text='برحسب ثانیه')
     
     file = models.FileField(upload_to=dynamic_file_path, verbose_name='فایل')
     
     def __str__(self):
         return self.name
+    
+    def clean(self):
+        super().clean()
+
+        mime_type, _ = mimetypes.guess_type(self.file.name)
+        if not mime_type:
+            raise ValidationError('فرمت فایل قابل شناسایی نیست.')
+        
+        if self.media_type == self.TypeChoices.VIDEO and not mime_type.startswith('video'):
+            raise ValidationError('فایل انتخابی باید یک فایل ویدیویی باشد.')
+        elif self.media_type == self.TypeChoices.AUDIO and not mime_type.startswith('audio'):
+            raise ValidationError('فایل انتخابی باید یک فایل صوتی باشد.')
+        
+    def get_duration(self) -> int:
+        try:
+            clip = VideoFileClip(self.file.path) if self.media_type == self.TypeChoices.VIDEO else AudioFileClip(self.file.path)
+            return round(clip.duration, 2)
+        except Exception as e:
+            logger.error(f'Could not extract duration for {self.file.name}: {e}')
+            return 0
+        
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        duration = self.get_duration()
+        if duration != self.duration:
+            File.objects.filter(pk=self.pk).update(duration=duration)
     
 
 class Artist(models.Model):
@@ -117,6 +151,7 @@ class Post(models.Model):
     is_visible = models.BooleanField(default=True, verbose_name='نمایش در سایت')
     
     liked_by = models.ManyToManyField(User, related_name='liked_posts', blank=True, verbose_name='لایک شده توسط')
+    recommended_by_site = models.BooleanField(default=False, verbose_name='پیشنهادی سایت')
     
     views_count = models.PositiveIntegerField(default=0, verbose_name='بازدید')
     download_count = models.PositiveIntegerField(default=0, verbose_name='دانلود')
@@ -132,3 +167,15 @@ class Post(models.Model):
     
     def get_available_qualities(self):
         return list(self.medias.values_list('files__quality', flat=True))
+    
+    def get_media_duration(self) -> int:
+        medias = self.medias.prefetch_related('files').all()
+        total_duration = 0
+        
+        for media in medias:
+            first_file = media.files.first()
+            if first_file:
+                total_duration += first_file.duration
+
+        return total_duration
+    

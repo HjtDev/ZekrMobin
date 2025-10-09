@@ -15,6 +15,18 @@ class ResponseBuilderMixin:
 class GetDataMixin:
     EMAIL_REGEX = re.compile(r'^[\w\.-]+@[\w\.-]+\.\w+$')
     USERNAME_REGEX = re.compile(r'^[a-zA-Z][a-zA-Z0-9_.]{2,29}$')
+    FILTER_REGEX = re.compile(
+        r'^'
+        r'(?:'
+        r'[a-zA-Z0-9_]+:'
+        r'[a-zA-Z0-9_]+(?:,[a-zA-Z0-9_]+)*'
+        r')'
+        r'(?:;'
+        r'[a-zA-Z0-9_]+:'
+        r'[a-zA-Z0-9_]+(?:,[a-zA-Z0-9_]+)*'
+        r')*'
+        r'$'
+    )
     
     @staticmethod
     def validate_username(username):
