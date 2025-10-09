@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Setting, ClubMember, ClubMessage
+from .models import Setting, ClubMember, ClubMessage, MainPage
 from django.shortcuts import redirect
 
 
@@ -106,4 +106,76 @@ class ClubMessageAdmin(admin.ModelAdmin):
     search_fields = ('id', 'sent_to__name', 'message')
     actions = (send_action,)
     ordering = ('id',)
+
+@admin.register(MainPage)
+class MainPageAdmin(admin.ModelAdmin):
+    fieldsets = (
+        (
+            'بخش اول',
+            {
+                'fields': ('section1_title', 'section1_content'),
+                'classes': ('collapse',),
+            }
+        ),
+        (
+            'بخش دوم',
+            {
+                'fields': ('section2_title', 'section2_content'),
+                'classes': ('collapse',),
+            }
+        ),
+        (
+            'بخش سوم',
+            {
+                'fields': ('section3_title', 'section3_content'),
+                'classes': ('collapse',),
+            }
+        ),
+        (
+            'بخش چهارم',
+            {
+                'fields': ('section4_title', 'section4_content'),
+                'classes': ('collapse',),
+            }
+        ),
+        (
+            'بخش پنجم',
+            {
+                'fields': ('section5_title', 'section5_content'),
+                'classes': ('collapse',),
+            }
+        ),
+        (
+            'بخش ششم',
+            {
+                'fields': ('section6_title', 'section6_content'),
+                'classes': ('collapse',),
+            }
+        ),
+        (
+            'بخش هفتم',
+            {
+                'fields': ('section7_title', 'section7_content'),
+                'classes': ('collapse',),
+            }
+        ),
+    )
     
+    def has_add_permission(self, request):
+        return MainPage.objects.count() == 0
+    
+    def has_delete_permission(self, request, obj=None):
+        return False
+    
+    def changelist_view(self, request, extra_context=None):
+        qs = MainPage.objects.all()
+        if qs.count() == 1:
+            main_page = qs.first()
+            return redirect(f'/admin/main/mainpage/{main_page.pk}/change/')
+        return super().changelist_view(request, extra_context)
+    
+    def get_model_perms(self, request):
+        perms = super().get_model_perms(request)
+        if MainPage.objects.count() == 1:
+            perms['add'] = False
+        return perms

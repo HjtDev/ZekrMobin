@@ -106,3 +106,42 @@ class ClubMember(models.Model):
     
     def __str__(self):
         return self.name
+    
+    
+class MainPage(models.Model):
+    class Meta:
+        verbose_name = 'تنظیمات صفحه اصلی'
+        verbose_name_plural = 'تنظیمات صفحه اصلی'
+        
+    class SectionChoices(models.TextChoices):
+        RECENT_POSTS = ('recent-posts', 'پست های ترند اخیر')
+        WEEKLY_POSTS = ('weekly-posts', 'برترین های هفته')
+        NEW_POSTS = ('new-posts', 'پست های جدید')
+        LIVE_SUGGESTIONS = ('live-suggestions', 'پیشنهادی های سایت')
+        TOP_ARTISTS = ('top-artists', 'هنرمند های برتر')
+        TOP_ALBUM = ('top-album', 'دسته بندی های برتر')
+        TOP_USER_ALBUM = ('top-user-album', 'دسته بندی های پر مخاطب')
+        
+    section1_title = models.CharField(max_length=30, verbose_name='تیتر')
+    section1_content = models.CharField(max_length=30, choices=SectionChoices.choices, verbose_name='محتوا')
+    
+    section2_title = models.CharField(max_length=30, verbose_name='تیتر')
+    section2_content = models.CharField(max_length=30, choices=SectionChoices.choices, verbose_name='محتوا')
+    
+    section3_title = models.CharField(max_length=30, verbose_name='تیتر')
+    section3_content = models.CharField(max_length=30, choices=SectionChoices.choices, verbose_name='محتوا')
+    
+    section4_title = models.CharField(max_length=30, verbose_name='تیتر')
+    section4_content = models.CharField(max_length=30, choices=SectionChoices.choices, verbose_name='محتوا')
+    
+    section5_title = models.CharField(max_length=30, verbose_name='تیتر')
+    section5_content = models.CharField(max_length=30, choices=SectionChoices.choices, verbose_name='محتوا')
+    
+    section6_title = models.CharField(max_length=30, verbose_name='تیتر')
+    section6_content = models.CharField(max_length=30, choices=SectionChoices.choices, verbose_name='محتوا')
+    
+    section7_title = models.CharField(max_length=30, verbose_name='تیتر')
+    section7_content = models.CharField(max_length=30, choices=SectionChoices.choices, verbose_name='محتوا')
+    
+    def __str__(self):
+        return 'تنظیمات صفحه اصلی'
