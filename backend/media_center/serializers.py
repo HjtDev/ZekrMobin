@@ -16,6 +16,17 @@ class QuickCategorySerializer(ModelSerializer):
         read_only_fields = ('id',)
 
 
+class CategorySerializer(ModelSerializer):
+    class Meta:
+        model = Category
+        fields = ('id', 'name', 'thumbnail', 'recommended_by_site')
+        read_only_fields = ('id',)
+        
+    def get_thumbnail(self, obj):
+        request = self.context.get('request', None)
+        return request.build_absolute_uri(obj.thumbnail.url) if request else obj.thumbnail.url
+        
+        
 class QuickPostSerializer(ModelSerializer):
     duration = SerializerMethodField()
     artist = SerializerMethodField()
@@ -81,4 +92,4 @@ class ArtistSerializer(ModelSerializer):
         
     def get_profile_picture(self, obj: Artist):
         request = self.context.get('request', None)
-        return request.build_absolute_uri(obj.profile_picture) if request else obj.profile_picture
+        return request.build_absolute_uri(obj.profile_picture.url) if request else obj.profile_picture

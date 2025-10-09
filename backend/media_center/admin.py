@@ -11,13 +11,14 @@ class MediaInline(admin.TabularInline):
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name')
+    list_display = ('id', 'name', 'recommended_by_site')
+    list_editable = ('recommended_by_site',)
     search_fields = ('name',)
     ordering = ('-id',)
     
     fieldsets = (
         ('اطلاعات دسته‌بندی', {
-            'fields': ('name', 'thumbnail')
+            'fields': ('name', 'recommended_by_site', 'thumbnail')
         }),
     )
 
@@ -68,6 +69,7 @@ class ArtistAdmin(admin.ModelAdmin):
 class FileAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'quality', 'media_type')
     list_filter = ('quality', 'media_type')
+    list_per_page = 15
     readonly_fields = ('duration',)
     search_fields = ('name',)
     ordering = ('-id',)
@@ -87,6 +89,7 @@ class FileAdmin(admin.ModelAdmin):
 class MediaAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'post', 'artist')
     list_filter = ('post', 'artist', 'post__publisher')
+    list_per_page = 15
     autocomplete_fields = ('post', 'artist', 'files')
     search_fields = ('name', 'post__title', 'artist__name')
     ordering = ('-id',)
@@ -106,6 +109,7 @@ class PostAdmin(admin.ModelAdmin):
     list_display = ('id', 'title', 'publisher', 'is_visible', 'recommended_by_site', 'views_count', 'updated_at', 'created_at')
     list_filter = ('publisher', 'is_visible', 'categories', 'tags', 'created_at', 'updated_at')
     list_editable = ('is_visible', 'recommended_by_site')
+    list_per_page = 15
     autocomplete_fields = ('publisher', 'liked_by', 'categories', 'tags')
     search_fields = ('id', 'title', 'publisher__name')
     ordering = ('-created_at',)

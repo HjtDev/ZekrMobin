@@ -25,6 +25,7 @@ class Category(models.Model):
     
     name = models.CharField(max_length=50, verbose_name='اسم دسته بندی')
     thumbnail = ResizedImageField(upload_to='category/thumbnails/', verbose_name='عکس کاور')
+    recommended_by_site = models.BooleanField(default=False, verbose_name='دسته بندی منتخب')
     
     def __str__(self):
         return self.name

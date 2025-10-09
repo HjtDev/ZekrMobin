@@ -1,12 +1,12 @@
 from datetime import timedelta
-from django.db.models import Count, ExpressionWrapper, FloatField, F, QuerySet
+from django.db.models import Count, ExpressionWrapper, FloatField, F, QuerySet, Sum
 from django.utils import timezone
 from rest_framework.exceptions import ValidationError
 from rest_framework.views import APIView
 from backend.mixins import ResponseBuilderMixin, GetDataMixin, CachedResponseMixin
-from .models import Post, Artist
+from .models import Post, Artist, Category
 from rest_framework import status
-from .serializers import QuickPostSerializer, PostSerializer, ArtistSerializer
+from .serializers import QuickPostSerializer, PostSerializer, ArtistSerializer, CategorySerializer
 
 
 class SinglePost(APIView, ResponseBuilderMixin, GetDataMixin):
@@ -225,3 +225,47 @@ class TopArtists(APIView, ResponseBuilderMixin, GetDataMixin, CachedResponseMixi
             artists=ArtistSerializer(artists, context={'request': request}, many=True).data,
             is_cached=self._restored_from_cache
         )
+    
+
+class TopCategory(APIView, ResponseBuilderMixin, GetDataMixin, CachedResponseMixin):
+    throttle_rate = 'top-categories'
+    
+    def get(self, request):
+        success, result = self.get_data(request, 'user_rated', ('limit', lambda l: isinstance(l, str) and l.isdigit()))
+        if not success:
+            return self.build_response(
+                status=status.HTTP_400_BAD_REQUEST,
+                message='Invalid or missing parameter',
+                errors=result
+            )
+        
+        user_rated = self.convert_data_to_bool(result['user_rated'])
+        limit = int(result['limit']) or 0
+        
+        self.set_cache_key(f'top-category-{user_rated}-{limit}')
+        
+        categories = self.get_cached(Category)
+        if not categories:
+            if user_rated:
+                categories = Category.objects.prefetch_related('posts').annotate(rate=Sum('posts__liked_by')).order_by('-rate')
+            else:
+                categories = Category.objects.filter(recommended_by_site=True)
+                
+        if not categories.exists():
+            return self.build_response(
+                status=status.HTTP_404_NOT_FOUND,
+                message='Category(s) not found'
+            )
+            
+        if not self._restored_from_cache:
+            self.store_cached(categories)
+            
+        if limit > 0:
+            categories = categories[:limit]
+            
+        return self.build_response(
+            message='Successful retrieval',
+            categories=CategorySerializer(categories, context={'request': request}, many=True).data,
+            is_cached=self._restored_from_cache
+        )
+        
