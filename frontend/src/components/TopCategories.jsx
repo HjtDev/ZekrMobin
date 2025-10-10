@@ -1,176 +1,113 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { getMainPageData, getSectionData } from '../api/section-data.js'
 
 const TopCategories = () => {
+    const [pageData, setPageData] = useState(null)
+    const [pageContent, setPageContent] = useState(null)
+
+    const initializeSwiper = () => {
+        if (window.Swiper) {
+            if (window.categorySlider) {
+                window.categorySlider.destroy(true, true)
+            }
+
+            window.categorySlider = new window.Swiper('.ms_category_slider.swiper-container', {
+                slidesPerView: 6,
+                spaceBetween: 30,
+                loop: true,
+                speed: 1500,
+                navigation: {
+                    nextEl: '.swiper-button-prev-cat',
+                    prevEl: '.swiper-button-next-cat',
+                },
+                breakpoints: {
+                    1800: { slidesPerView: 4 },
+                    1400: { slidesPerView: 4 },
+                    992: { slidesPerView: 2, spaceBetween: 10 },
+                    768: { slidesPerView: 2, spaceBetween: 10 },
+                    640: { slidesPerView: 1, spaceBetween: 15 },
+                    480: { slidesPerView: 1 },
+                    375: { slidesPerView: 1, spaceBetween: 0 },
+                },
+            })
+        }
+    }
+
+    const loadPageData = async (section_id) => {
+        const { success, data } = await getSectionData(section_id)
+        if (success) {
+            setPageData(data)
+        }
+    }
+
+    const loadPageContent = async (section, filters, limit) => {
+        const { success, content } = await getMainPageData(section, filters, limit)
+        if (success) {
+            setPageContent(content)
+            setTimeout(() => {
+                initializeSwiper()
+            }, 10)
+        }
+    }
+
+    useEffect(() => {
+        loadPageData(6) // section id for top categories
+    }, [])
+
+    useEffect(() => {
+        if (pageData?.content) {
+            loadPageContent(pageData.content, '', 8)
+        }
+    }, [pageData])
+
     return (
-        <div className="ms_genres_wrapper">
-            <div className="row">
-                <div className="col-lg-12">
-                    <div className="ms_heading">
-                        <h1>سبک های پرمخاطب</h1>
-                        <span className="veiw_all">
-                <a href="#">مشاهده بیشتر</a>
-              </span>
-                    </div>
-                </div>
-                <div className="col-lg-4">
-                    <div className="ms_genres_box">
-                        <img src="images/genrs/img1.jpg" alt="" className="img-fluid"/>
-                        <div className="ms_main_overlay">
-                            <div className="ms_box_overlay"/>
-                            <div className="ms_play_icon">
-                                <img src="images/svg/play.svg" alt=""/>
-                            </div>
-                            <div className="ovrly_text_div">
-                  <span className="ovrly_text1">
-                    <a href="#">عاشقانه</a>
-                  </span>
-                            </div>
-                        </div>
-                        <div className="ms_box_overlay_on">
-                            <div className="ovrly_text_div">
-                  <span className="ovrly_text1">
-                    <a href="#">عاشقانه</a>
-                  </span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div className="col-lg-6">
-                    <div className="row">
-                        <div className="col-lg-4">
-                            <div className="ms_genres_box">
-                                <img
-                                    src="images/genrs/img2.jpg"
-                                    alt=""
-                                    className="img-fluid"
-                                />
-                                <div className="ms_main_overlay">
-                                    <div className="ms_box_overlay"/>
-                                    <div className="ms_play_icon">
-                                        <img src="images/svg/play.svg" alt=""/>
-                                    </div>
-                                    <div className="ovrly_text_div">
+        <div className="ms_fea_album_slider">
+            <div className="ms_heading">
+                <h1>{pageData?.title || 'دسته بندی های برتر'}</h1>
+                <span className="veiw_all">
+          <a href="#">مشاهده بیشتر</a>
+        </span>
+            </div>
+
+            <div className="ms_category_slider swiper-container">
+                <div className="swiper-wrapper">
+                    {pageContent ? (
+                        pageContent.map((category, index) => (
+                            <div data-category-id={category.id} key={index} className="swiper-slide">
+                                <div className="ms_genres_box">
+                                    <img src={category.thumbnail} alt={category.name} className="img-fluid" />
+                                    <div className="ms_main_overlay">
+                                        <div className="ms_box_overlay" />
+                                        <div className="ms_play_icon">
+                                            <img src="images/svg/play.svg" alt="" />
+                                        </div>
+                                        <div className="ovrly_text_div">
                       <span className="ovrly_text1">
-                        <a href="#">کلاسیک</a>
+                        <a href="#">{category.post_count} پست</a>
                       </span>
+                                        </div>
                                     </div>
-                                </div>
-                                <div className="ms_box_overlay_on">
-                                    <div className="ovrly_text_div">
+                                    <div className="ms_box_overlay_on">
+                                        <div className="ovrly_text_div">
                       <span className="ovrly_text1">
-                        <a href="#">کلاسیک</a>
+                        <a href="#">{category.name}</a>
                       </span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div className="col-lg-8">
-                            <div className="ms_genres_box">
-                                <img
-                                    src="images/genrs/img3.jpg"
-                                    alt=""
-                                    className="img-fluid"
-                                />
-                                <div className="ms_main_overlay">
-                                    <div className="ms_box_overlay"/>
-                                    <div className="ms_play_icon">
-                                        <img src="images/svg/play.svg" alt=""/>
-                                    </div>
-                                    <div className="ovrly_text_div">
-                      <span className="ovrly_text1">
-                        <a href="#">هیپ هاپ</a>
-                      </span>
-                                    </div>
-                                </div>
-                                <div className="ms_box_overlay_on">
-                                    <div className="ovrly_text_div">
-                      <span className="ovrly_text1">
-                        <a href="#">هیپ هاپ</a>
-                      </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-lg-8">
-                            <div className="ms_genres_box">
-                                <img
-                                    src="images/genrs/img5.jpg"
-                                    alt=""
-                                    className="img-fluid"
-                                />
-                                <div className="ms_main_overlay">
-                                    <div className="ms_box_overlay"/>
-                                    <div className="ms_play_icon">
-                                        <img src="images/svg/play.svg" alt=""/>
-                                    </div>
-                                    <div className="ovrly_text_div">
-                      <span className="ovrly_text1">
-                        <a href="#">شاد مجلسی</a>
-                      </span>
-                                    </div>
-                                </div>
-                                <div className="ms_box_overlay_on">
-                                    <div className="ovrly_text_div">
-                      <span className="ovrly_text1">
-                        <a href="#">شاد مجلسی</a>
-                      </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-lg-4">
-                            <div className="ms_genres_box">
-                                <img
-                                    src="images/genrs/img6.jpg"
-                                    alt=""
-                                    className="img-fluid"
-                                />
-                                <div className="ms_main_overlay">
-                                    <div className="ms_box_overlay"/>
-                                    <div className="ms_play_icon">
-                                        <img src="images/svg/play.svg" alt=""/>
-                                    </div>
-                                    <div className="ovrly_text_div">
-                      <span className="ovrly_text1">
-                        <a href="#">پاپ</a>
-                      </span>
-                                    </div>
-                                </div>
-                                <div className="ms_box_overlay_on">
-                                    <div className="ovrly_text_div">
-                      <span className="ovrly_text1">
-                        <a href="#">پاپ</a>
-                      </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div className="col-lg-2">
-                    <div className="ms_genres_box">
-                        <img src="images/genrs/img4.jpg" alt="" className="img-fluid"/>
-                        <div className="ms_main_overlay">
-                            <div className="ms_box_overlay"/>
-                            <div className="ms_play_icon">
-                                <img src="images/svg/play.svg" alt=""/>
-                            </div>
-                            <div className="ovrly_text_div">
-                  <span className="ovrly_text1">
-                    <a href="#">راک</a>
-                  </span>
-                            </div>
-                        </div>
-                        <div className="ms_box_overlay_on">
-                            <div className="ovrly_text_div">
-                  <span className="ovrly_text1">
-                    <a href="#">راک</a>
-                  </span>
-                            </div>
-                        </div>
-                    </div>
+                        ))
+                    ) : (
+                        <div className="loading" style={{ textAlign: 'center', padding: '2rem' }} />
+                    )}
                 </div>
             </div>
-        </div>)
+
+            {/* Arrows */}
+            <div className="swiper-button-next-cat slider_nav_next" />
+            <div className="swiper-button-prev-cat slider_nav_prev" />
+        </div>
+    )
 }
+
 export default TopCategories
