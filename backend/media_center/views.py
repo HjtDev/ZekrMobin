@@ -138,7 +138,7 @@ class FilteredPosts(APIView, ResponseBuilderMixin, GetDataMixin, CachedResponseM
         
         if not success:
             return self.build_response(
-                status=status.HTTP_400_BAD_REQUEST,
+                status.HTTP_400_BAD_REQUEST,
                 message='Invalid or missing argument',
                 errors=result
             )
@@ -154,7 +154,7 @@ class FilteredPosts(APIView, ResponseBuilderMixin, GetDataMixin, CachedResponseM
             
             if result['filters'] and not self.FILTER_REGEX.match(result['filters']):
                 return self.build_response(
-                    status=status.HTTP_400_BAD_REQUEST,
+                    status.HTTP_400_BAD_REQUEST,
                     message='Invalid filters'
                 )
             
@@ -166,9 +166,9 @@ class FilteredPosts(APIView, ResponseBuilderMixin, GetDataMixin, CachedResponseM
             if limit > 0:
                 posts = posts[:limit]
             
-            if not posts.exists():
+            if not posts:
                 return self.build_response(
-                    status=status.HTTP_404_NOT_FOUND,
+                    status.HTTP_404_NOT_FOUND,
                     message='Post(s) not found'
                 )
             
@@ -181,7 +181,7 @@ class FilteredPosts(APIView, ResponseBuilderMixin, GetDataMixin, CachedResponseM
         
         except ValidationError as e:
             return self.build_response(
-                status=status.HTTP_400_BAD_REQUEST,
+                status.HTTP_400_BAD_REQUEST,
                 message='Invalid parameters',
                 errors=e.detail
             )
@@ -195,7 +195,7 @@ class TopArtists(APIView, ResponseBuilderMixin, GetDataMixin, CachedResponseMixi
         
         if not success:
             return self.build_response(
-                status=status.HTTP_400_BAD_REQUEST,
+                status.HTTP_400_BAD_REQUEST,
                 message='Invalid or missing parameter',
                 errors=result
             )
@@ -213,7 +213,7 @@ class TopArtists(APIView, ResponseBuilderMixin, GetDataMixin, CachedResponseMixi
             
         if not artists.exists():
             return self.build_response(
-                status=status.HTTP_404_NOT_FOUND,
+                status.HTTP_404_NOT_FOUND,
                 message='Artist(s) not found'
             )
         
@@ -234,7 +234,7 @@ class TopCategory(APIView, ResponseBuilderMixin, GetDataMixin, CachedResponseMix
         success, result = self.get_data(request, 'user_rated', ('limit', lambda l: isinstance(l, str) and l.isdigit()))
         if not success:
             return self.build_response(
-                status=status.HTTP_400_BAD_REQUEST,
+                status.HTTP_400_BAD_REQUEST,
                 message='Invalid or missing parameter',
                 errors=result
             )
@@ -253,7 +253,7 @@ class TopCategory(APIView, ResponseBuilderMixin, GetDataMixin, CachedResponseMix
                 
         if not categories.exists():
             return self.build_response(
-                status=status.HTTP_404_NOT_FOUND,
+                status.HTTP_404_NOT_FOUND,
                 message='Category(s) not found'
             )
             
