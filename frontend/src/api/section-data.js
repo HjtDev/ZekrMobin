@@ -39,6 +39,12 @@ const contentMap = {
 
 }
 const getMainPageData = async (content_section, filters = '', limit = 0) => {
+    if(!content_section) {
+        return {
+            success: false,
+            content: null
+        }
+    }
     try {
         const res = await api.get(
             `${contentMap[content_section]}`,
