@@ -1,8 +1,10 @@
+from pyexpat.errors import messages
+
 from rest_framework.views import APIView
 from backend.mixins import ResponseBuilderMixin, GetDataMixin
 from rest_framework import status
 from django.db.models import Q
-from .models import Setting, ClubMember
+from .models import Setting, ClubMember, MainPage
 from .serializers import ClubMemberSerializer
 
 
@@ -98,3 +100,49 @@ class Club(APIView, ResponseBuilderMixin, GetDataMixin):
                 message='Wrong name or email',
                 errors=serializer.errors
             )
+        
+        
+class MainPageSections(APIView, ResponseBuilderMixin, GetDataMixin):
+    throttle_rate = 'main-page'
+    
+    def get(self, request):
+        success, result = self.get_data(request, ('section_id', self.is_id))
+        
+        if not success:
+            return self.build_response(
+                status.HTTP_400_BAD_REQUEST,
+                message='Invalid or missing argument',
+                errors=result
+            )
+        
+        section_id = result['section_id']
+        
+        if not 1 <= int(section_id) <= 7:
+            return self.build_response(
+                status.HTTP_400_BAD_REQUEST,
+                message='Invalid section id',
+                errors=[
+                    'section_id should be between 1 and 7'
+                ]
+            )
+        
+        main_page_data = MainPage.objects.first()
+        
+        if not main_page_data:
+            return self.build_response(
+                status.HTTP_404_NOT_FOUND,
+                message='Main page data is not configured yet'
+            )
+        
+        if hasattr(main_page_data, f'section{section_id}_title') and hasattr(main_page_data, f'section{section_id}_content'):
+            return self.build_response(
+                status.HTTP_200_OK,
+                message='Successful retrieval',
+                title=getattr(main_page_data, f'section{section_id}_title'),
+                content=getattr(main_page_data, f'section{section_id}_content')
+            )
+        
+        return self.build_response(
+            status.HTTP_422_UNPROCESSABLE_ENTITY,
+            message='This section is not available yet'
+        )
