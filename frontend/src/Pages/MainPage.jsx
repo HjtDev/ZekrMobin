@@ -8,7 +8,8 @@ import TopPosts from '../components/TopPosts.jsx'
 import TopArtists from '../components/TopArtists.jsx'
 import TopCategories from '../components/TopCategories.jsx'
 import WeeklyTop from '../components/WeeklyTop.jsx'
-import {useEffect} from "react";
+import LazySection from '../components/LazyLoader/LazySection.jsx';
+import { useEffect } from 'react';
 
 const MainPage = () => {
     useEffect(() => {
@@ -18,16 +19,34 @@ const MainPage = () => {
     }, []);
     return (
         <>
-            <Banner />
-            <RecentPosts/>
-            <WeeklyTop/>
-            <TopArtists/>
-            <Advertisements/>
-            <NewReleases/>
-            <TopPosts/>
-            <TopCategories/>
-            <Advertisements/>
-            <LiveSuggestions/>
+            <Banner/>
+            <LazySection>
+                <RecentPosts/>
+            </LazySection>
+            <LazySection>
+                <WeeklyTop/>
+            </LazySection>
+            <LazySection>
+                <TopArtists/>
+            </LazySection>
+            <LazySection>
+                <Advertisements/>
+            </LazySection>
+            <LazySection>
+                <NewReleases/>
+            </LazySection>
+            <LazySection>
+                <TopPosts/>
+            </LazySection>
+            <LazySection>
+                <TopCategories/>
+            </LazySection>
+            <LazySection>
+                <Advertisements/>
+            </LazySection>
+            <LazySection>
+                <LiveSuggestions/>
+            </LazySection>
         </>
     )
 }
