@@ -44,8 +44,7 @@ const TopArtists = () => {
         const { success, content } = await getMainPageData(section, filters, limit);
         if(success) {
             setPageContent(content);
-            setTimeout(() => {initializeSwiper();
-                console.log(pageData, pageContent)}, 10);
+            setTimeout(() => {initializeSwiper()}, 10);
         }
     }
 
@@ -72,7 +71,7 @@ const TopArtists = () => {
                     {
                         pageContent ?
                             pageContent.map((element, index) => (
-                                <div data-artist-id={element.id} className="swiper-slide">
+                                <div data-artist-id={element.id} key={index} className="swiper-slide">
                                     <div className="ms_rcnt_box">
                                         <div className="ms_rcnt_box_img">
                                             <img src={element.profile_picture} alt=""/>
@@ -136,7 +135,9 @@ const TopArtists = () => {
                                     </div>
                                 </div>
                             )) :
-                            <div className="loading" style={{textAlign: "center", padding: "2rem"}}></div>
+                            (
+                                <div className="loading" style={{textAlign: "center", padding: "2rem"}}></div>
+                            )
                     }
                 </div>
             </div>
