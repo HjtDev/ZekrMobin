@@ -17,15 +17,18 @@ class QuickCategorySerializer(ModelSerializer):
 
 
 class CategorySerializer(ModelSerializer):
+    post_count = SerializerMethodField()
     class Meta:
         model = Category
-        fields = ('id', 'name', 'thumbnail', 'recommended_by_site')
+        fields = ('id', 'name', 'post_count', 'thumbnail', 'recommended_by_site')
         read_only_fields = ('id',)
         
-    def get_thumbnail(self, obj):
+    def get_thumbnail(self, obj: Category):
         request = self.context.get('request', None)
         return request.build_absolute_uri(obj.thumbnail.url) if request else obj.thumbnail.url
-        
+    
+    def get_post_count(self, obj: Category):
+        return obj.posts.count()
         
 class QuickPostSerializer(ModelSerializer):
     duration = SerializerMethodField()

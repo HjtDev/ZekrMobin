@@ -24,7 +24,7 @@ class Category(models.Model):
         verbose_name_plural = 'دسته بندی ها'
     
     name = models.CharField(max_length=50, verbose_name='اسم دسته بندی')
-    thumbnail = ResizedImageField(upload_to='category/thumbnails/', verbose_name='عکس کاور')
+    thumbnail = ResizedImageField(upload_to='category/thumbnails/', size=[240, 240], verbose_name='عکس کاور')
     recommended_by_site = models.BooleanField(default=False, verbose_name='دسته بندی منتخب')
     
     def __str__(self):
@@ -119,7 +119,7 @@ class Artist(models.Model):
         verbose_name_plural = 'مداح/نویسنده/خواننده'
     
     name = models.CharField(max_length=50, verbose_name='اسم')
-    profile_picture = ResizedImageField(upload_to='Artists/', verbose_name='غکس پروفایل')
+    profile_picture = ResizedImageField(upload_to='Artists/', size=[240, 240], verbose_name='غکس پروفایل')
     
     def __str__(self):
         return self.name
