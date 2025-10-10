@@ -247,10 +247,12 @@ class TopCategory(APIView, ResponseBuilderMixin, GetDataMixin, CachedResponseMix
         categories = self.get_cached(Category)
         if not categories:
             if user_rated:
-                categories = Category.objects.prefetch_related('posts').annotate(rate=Sum('posts__liked_by')).order_by('-rate')
-            else:
                 categories = Category.objects.filter(recommended_by_site=True)
-                
+            else:
+                categories = Category.objects.prefetch_related('posts').all()
+            
+        categories = categories.annotate(rate=Sum('posts__liked_by')).order_by('-rate')
+        
         if not categories.exists():
             return self.build_response(
                 status.HTTP_404_NOT_FOUND,
