@@ -53,17 +53,17 @@ class FilteredPosts(APIView, ResponseBuilderMixin, GetDataMixin, CachedResponseM
         
         match section:
             case 'recent-posts':
-                qs = qs.order_by('-updated_at').order_by('-views_count')
+                qs = qs.order_by('-views_count')
             case 'weekly-posts':
                 qs = qs.filter(updated_at__gte=now - timedelta(days=7)).annotate(
                     likes=Count('liked_by'),
                     order=ExpressionWrapper(
-                        F('likes') * 0.7 + F('views_count') * 0.3,
+                        F('likes') * 0.4 + F('download_count') * 0.4 + F('views_count') * 0.2,
                         output_field=FloatField()
                     )
                 ).order_by('-order')
             case 'new-posts':
-                qs = qs.filter(created_at__gt=now - timedelta(hours=24)).order_by('-updated_at')
+                qs = qs.filter(created_at__gt=now - timedelta(hours=48)).order_by('-updated_at')
             case 'live-suggestions':
                 qs = qs.filter(recommended_by_site=True).order_by('-updated_at')
             case _:
@@ -160,11 +160,11 @@ class FilteredPosts(APIView, ResponseBuilderMixin, GetDataMixin, CachedResponseM
             
             posts = self.apply_filters(posts, filters)
             
-            if not self._restored_from_cache:
-                self.store_cached(posts)
-            
             if limit > 0:
                 posts = posts[:limit]
+            
+            if not self._restored_from_cache:
+                self.store_cached(posts)
             
             if not posts:
                 return self.build_response(
@@ -208,9 +208,6 @@ class TopArtists(APIView, ResponseBuilderMixin, GetDataMixin, CachedResponseMixi
             artists_ids = Post.objects.filter(is_visible=True).order_by('medias__artist', '-views_count').distinct('medias__artist').values_list('medias__artist', flat=True)
             artists = Artist.objects.filter(id__in=artists_ids)
             
-        if not self._restored_from_cache:
-            self.store_cached(artists)
-            
         if not artists.exists():
             return self.build_response(
                 status.HTTP_404_NOT_FOUND,
@@ -220,6 +217,9 @@ class TopArtists(APIView, ResponseBuilderMixin, GetDataMixin, CachedResponseMixi
         if limit > 0:
             artists = artists[:limit]
             
+        if not self._restored_from_cache:
+            self.store_cached(artists)
+        
         return self.build_response(
             message='Successful retrieval',
             artists=ArtistSerializer(artists, context={'request': request}, many=True).data,
@@ -259,12 +259,12 @@ class TopCategory(APIView, ResponseBuilderMixin, GetDataMixin, CachedResponseMix
                 message='Category(s) not found'
             )
             
-        if not self._restored_from_cache:
-            self.store_cached(categories)
-            
         if limit > 0:
             categories = categories[:limit]
-            
+        
+        if not self._restored_from_cache:
+            self.store_cached(categories)
+        
         return self.build_response(
             message='Successful retrieval',
             categories=CategorySerializer(categories, context={'request': request}, many=True).data,

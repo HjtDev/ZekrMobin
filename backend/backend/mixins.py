@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.db.models import QuerySet
+from django.db.models import QuerySet, Case, When
 from rest_framework import status
 from rest_framework.response import Response
 from typing import Any, Callable, Mapping
@@ -96,24 +96,34 @@ class GetDataMixin:
     @staticmethod
     def is_id(value: str | int) -> bool:
         return (isinstance(value, str) and value.isdigit() and int(value) > 0) or (isinstance(value, int) and value > 0)
-    
+
 
 class CachedResponseMixin:
     _cache_key = ''
     _restored_from_cache = False
     
-    
     def get_cached(self, _Model):
-        ids = cache.get(self._cache_key)
-        if not ids or not isinstance(ids, list) or not all(GetDataMixin.is_id(i) for i in ids):
+        data = cache.get(self._cache_key)
+        
+        if not data or 'ids' not in data or not isinstance(data['ids'], list) \
+                or not all(GetDataMixin.is_id(i) for i in data['ids']):
             return None
-        else:
-            self._restored_from_cache = True
-            return _Model.objects.filter(id__in=ids)
+        
+        self._restored_from_cache = True
+        ids = data['ids']
+        
+        # Preserve ordering from cached IDs
+        preserved = Case(*[When(pk=pk, then=pos) for pos, pk in enumerate(ids)])
+        qs = _Model.objects.filter(pk__in=ids).order_by(preserved)
+        return qs
     
     def store_cached(self, qs: QuerySet):
         ids = list(qs.values_list('id', flat=True))
-        cache.set(self._cache_key, ids, timeout=settings.CACHE_TIMEOUT)
-        
+        ordering = list(qs.query.order_by) if qs.query.order_by else None
+        cache.set(self._cache_key, {
+            'ids': ids,
+            'ordering': ordering
+        }, timeout=settings.CACHE_TIMEOUT)
+    
     def set_cache_key(self, key):
         self._cache_key = key
