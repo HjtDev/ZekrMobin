@@ -1,7 +1,12 @@
-import React, {useEffect} from 'react'
+import React, {useEffect, useState} from 'react'
+import { getSectionData, getMainPageData } from '../api/section-data.js';
+import {Await} from "react-router-dom";
 
 const LiveSuggestion = () => {
-    useEffect(() => {
+    const [pageData, setPageData] = useState(null);
+    const [pageContent, setPageContent] = useState(null);
+
+    const initializeSwiper = () => {
         if (window.Swiper) {
             if (window.radioSlider) {
                 window.radioSlider.destroy(true, true);
@@ -14,8 +19,8 @@ const LiveSuggestion = () => {
                 loop: true,
                 speed: 1500,
                 navigation: {
-                    nextEl: '.swiper-button-next4',
-                    prevEl: '.swiper-button-prev4',
+                    nextEl: '.swiper-button-prev4',
+                    prevEl: '.swiper-button-next4',
                 },
                 breakpoints: {
                     1800: {slidesPerView: 4},
@@ -28,647 +33,112 @@ const LiveSuggestion = () => {
                 },
             });
         }
+    }
+
+    const loadPageData = async (section_id) => {
+        const { success, data } = await getSectionData(section_id);
+        if(success) {
+            setPageData(data);
+        }
+    }
+
+    const loadPageContent = async (section, filters, limit) => {
+        const { success, content } = await getMainPageData(section, filters, limit);
+        if(success) {
+            setPageContent(content);
+            setTimeout(() => {initializeSwiper()}, 10);
+        }
+    }
+
+    useEffect(() => {
+        loadPageData(7);
     }, []);
+
+    useEffect(() => {
+        if(pageData?.content) {
+            loadPageContent(pageData.content, '', 6);
+        }
+    }, [pageData]);
+
     return (
         <div className="ms_radio_wrapper">
             <div className="ms_heading">
-                <h1>رادیو پخش زنده</h1>
+                <h1>{pageData?.title}</h1>
                 <span className="veiw_all">
                     <a href="#">مشاهده بیشتر</a>
                 </span>
             </div>
             <div className="ms_radio_slider swiper-container">
                 <div className="swiper-wrapper">
-                    <div className="swiper-slide">
-                        <div className="ms_rcnt_box">
-                            <div className="ms_rcnt_box_img">
-                                <img src="images/radio/img1.jpg" alt=""/>
-                                <div className="ms_main_overlay">
-                                    <div className="ms_box_overlay"/>
-                                    <div className="ms_more_icon">
-                                        <img src="images/svg/more.svg" alt=""/>
-                                    </div>
-                                    <ul className="more_option">
-                                        <li>
-                                            <a href="#">
+                    {
+                        pageContent ?
+                            pageContent.map((post, index) => (
+                                <div className="swiper-slide" data-post-id={post.id} key={index}>
+                                    <div className="ms_rcnt_box">
+                                        <div className="ms_rcnt_box_img">
+                                            <img src={post.thumbnail} alt={post.title}/>
+                                            <div className="ms_main_overlay">
+                                                <div className="ms_box_overlay"/>
+                                                <div className="ms_more_icon">
+                                                    <img src="images/svg/more.svg" alt=""/>
+                                                </div>
+                                                <ul className="more_option">
+                                                    <li>
+                                                        <a href="#">
                           <span className="opt_icon">
                             <span className="icon icon_fav"/>
                           </span>
-                                                علاقه مندی ها
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
+                                                            علاقه مندی ها
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="#">
                           <span className="opt_icon">
                             <span className="icon icon_queue"/>
                           </span>
-                                                افزودن به لیست
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
+                                                            افزودن به لیست
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="#">
                           <span className="opt_icon">
                             <span className="icon icon_dwn"/>
                           </span>
-                                                دانلود
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
+                                                            دانلود
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="#">
                           <span className="opt_icon">
                             <span className="icon icon_playlst"/>
                           </span>
-                                                افزودن به پلی لیست
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
+                                                            افزودن به پلی لیست
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="#">
                           <span className="opt_icon">
                             <span className="icon icon_share"/>
                           </span>
-                                                اشتراک گذاری
-                                            </a>
-                                        </li>
-                                    </ul>
-                                    <div className="ms_play_icon">
-                                        <img src="images/svg/play.svg" alt=""/>
+                                                            اشتراک گذاری
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                                <div className="ms_play_icon">
+                                                    <img src="images/svg/play.svg" alt=""/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="ms_rcnt_box_text">
+                                            <h3>
+                                                <a href="#">{post.title}</a>
+                                            </h3>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div className="ms_rcnt_box_text">
-                                <h3>
-                                    <a href="#">Top Trendings</a>
-                                </h3>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="swiper-slide">
-                        <div className="ms_rcnt_box">
-                            <div className="ms_rcnt_box_img">
-                                <img src="images/radio/img2.jpg" alt=""/>
-                                <div className="ms_main_overlay">
-                                    <div className="ms_box_overlay"/>
-                                    <div className="ms_more_icon">
-                                        <img src="images/svg/more.svg" alt=""/>
-                                    </div>
-                                    <ul className="more_option">
-                                        <li>
-                                            <a href="#">
-                          <span className="opt_icon">
-                            <span className="icon icon_fav"/>
-                          </span>
-                                                علاقه مندی ها
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                          <span className="opt_icon">
-                            <span className="icon icon_queue"/>
-                          </span>
-                                                افزودن به لیست
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                          <span className="opt_icon">
-                            <span className="icon icon_dwn"/>
-                          </span>
-                                                دانلود
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                          <span className="opt_icon">
-                            <span className="icon icon_playlst"/>
-                          </span>
-                                                افزودن به پلی لیست
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                          <span className="opt_icon">
-                            <span className="icon icon_share"/>
-                          </span>
-                                                اشتراک گذاری
-                                            </a>
-                                        </li>
-                                    </ul>
-                                    <div className="ms_play_icon">
-                                        <img src="images/svg/play.svg" alt=""/>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="ms_rcnt_box_text">
-                                <h3>
-                                    <a href="#">New Romantic Charts</a>
-                                </h3>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="swiper-slide">
-                        <div className="ms_rcnt_box">
-                            <div className="ms_rcnt_box_img">
-                                <img src="images/radio/img3.jpg" alt=""/>
-                                <div className="ms_main_overlay">
-                                    <div className="ms_box_overlay"/>
-                                    <div className="ms_more_icon">
-                                        <img src="images/svg/more.svg" alt=""/>
-                                    </div>
-                                    <ul className="more_option">
-                                        <li>
-                                            <a href="#">
-                          <span className="opt_icon">
-                            <span className="icon icon_fav"/>
-                          </span>
-                                                علاقه مندی ها
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                          <span className="opt_icon">
-                            <span className="icon icon_queue"/>
-                          </span>
-                                                افزودن به لیست
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                          <span className="opt_icon">
-                            <span className="icon icon_dwn"/>
-                          </span>
-                                                دانلود
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                          <span className="opt_icon">
-                            <span className="icon icon_playlst"/>
-                          </span>
-                                                افزودن به پلی لیست
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                          <span className="opt_icon">
-                            <span className="icon icon_share"/>
-                          </span>
-                                                اشتراک گذاری
-                                            </a>
-                                        </li>
-                                    </ul>
-                                    <div className="ms_play_icon">
-                                        <img src="images/svg/play.svg" alt=""/>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="ms_rcnt_box_text">
-                                <h3>
-                                    <a href="#">Dance Beats - Hip Hops</a>
-                                </h3>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="swiper-slide">
-                        <div className="ms_rcnt_box">
-                            <div className="ms_rcnt_box_img">
-                                <img src="images/radio/img4.jpg" alt=""/>
-                                <div className="ms_main_overlay">
-                                    <div className="ms_box_overlay"/>
-                                    <div className="ms_more_icon">
-                                        <img src="images/svg/more.svg" alt=""/>
-                                    </div>
-                                    <ul className="more_option">
-                                        <li>
-                                            <a href="#">
-                          <span className="opt_icon">
-                            <span className="icon icon_fav"/>
-                          </span>
-                                                علاقه مندی ها
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                          <span className="opt_icon">
-                            <span className="icon icon_queue"/>
-                          </span>
-                                                افزودن به لیست
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                          <span className="opt_icon">
-                            <span className="icon icon_dwn"/>
-                          </span>
-                                                دانلود
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                          <span className="opt_icon">
-                            <span className="icon icon_playlst"/>
-                          </span>
-                                                افزودن به پلی لیست
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                          <span className="opt_icon">
-                            <span className="icon icon_share"/>
-                          </span>
-                                                اشتراک گذاری
-                                            </a>
-                                        </li>
-                                    </ul>
-                                    <div className="ms_play_icon">
-                                        <img src="images/svg/play.svg" alt=""/>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="ms_rcnt_box_text">
-                                <h3>
-                                    <a href="#">Workout Time</a>
-                                </h3>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="swiper-slide">
-                        <div className="ms_rcnt_box">
-                            <div className="ms_rcnt_box_img">
-                                <img src="images/radio/img5.jpg" alt=""/>
-                                <div className="ms_main_overlay">
-                                    <div className="ms_box_overlay"/>
-                                    <div className="ms_more_icon">
-                                        <img src="images/svg/more.svg" alt=""/>
-                                    </div>
-                                    <ul className="more_option">
-                                        <li>
-                                            <a href="#">
-                          <span className="opt_icon">
-                            <span className="icon icon_fav"/>
-                          </span>
-                                                علاقه مندی ها
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                          <span className="opt_icon">
-                            <span className="icon icon_queue"/>
-                          </span>
-                                                افزودن به لیست
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                          <span className="opt_icon">
-                            <span className="icon icon_dwn"/>
-                          </span>
-                                                دانلود
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                          <span className="opt_icon">
-                            <span className="icon icon_playlst"/>
-                          </span>
-                                                افزودن به پلی لیست
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                          <span className="opt_icon">
-                            <span className="icon icon_share"/>
-                          </span>
-                                                اشتراک گذاری
-                                            </a>
-                                        </li>
-                                    </ul>
-                                    <div className="ms_play_icon">
-                                        <img src="images/svg/play.svg" alt=""/>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="ms_rcnt_box_text">
-                                <h3>
-                                    <a href="#">Best Classics Of All Time</a>
-                                </h3>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="swiper-slide">
-                        <div className="ms_rcnt_box">
-                            <div className="ms_rcnt_box_img">
-                                <img src="images/radio/img6.jpg" alt=""/>
-                                <div className="ms_main_overlay">
-                                    <div className="ms_box_overlay"/>
-                                    <div className="ms_more_icon">
-                                        <img src="images/svg/more.svg" alt=""/>
-                                    </div>
-                                    <ul className="more_option">
-                                        <li>
-                                            <a href="#">
-                          <span className="opt_icon">
-                            <span className="icon icon_fav"/>
-                          </span>
-                                                علاقه مندی ها
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                          <span className="opt_icon">
-                            <span className="icon icon_queue"/>
-                          </span>
-                                                افزودن به لیست
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                          <span className="opt_icon">
-                            <span className="icon icon_dwn"/>
-                          </span>
-                                                دانلود
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                          <span className="opt_icon">
-                            <span className="icon icon_playlst"/>
-                          </span>
-                                                افزودن به پلی لیست
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                          <span className="opt_icon">
-                            <span className="icon icon_share"/>
-                          </span>
-                                                اشتراک گذاری
-                                            </a>
-                                        </li>
-                                    </ul>
-                                    <div className="ms_play_icon">
-                                        <img src="images/svg/play.svg" alt=""/>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="ms_rcnt_box_text">
-                                <h3>
-                                    <a href="#">Heart Broken - Soul Music</a>
-                                </h3>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="swiper-slide">
-                        <div className="ms_rcnt_box">
-                            <div className="ms_rcnt_box_img">
-                                <img src="images/radio/img1.jpg" alt=""/>
-                                <div className="ms_main_overlay">
-                                    <div className="ms_box_overlay"/>
-                                    <div className="ms_more_icon">
-                                        <img src="images/svg/more.svg" alt=""/>
-                                    </div>
-                                    <ul className="more_option">
-                                        <li>
-                                            <a href="#">
-                          <span className="opt_icon">
-                            <span className="icon icon_fav"/>
-                          </span>
-                                                علاقه مندی ها
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                          <span className="opt_icon">
-                            <span className="icon icon_queue"/>
-                          </span>
-                                                افزودن به لیست
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                          <span className="opt_icon">
-                            <span className="icon icon_dwn"/>
-                          </span>
-                                                دانلود
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                          <span className="opt_icon">
-                            <span className="icon icon_playlst"/>
-                          </span>
-                                                افزودن به پلی لیست
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                          <span className="opt_icon">
-                            <span className="icon icon_share"/>
-                          </span>
-                                                اشتراک گذاری
-                                            </a>
-                                        </li>
-                                    </ul>
-                                    <div className="ms_play_icon">
-                                        <img src="images/svg/play.svg" alt=""/>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="ms_rcnt_box_text">
-                                <h3>
-                                    <a href="#">Dream Your Moments (Duet)</a>
-                                </h3>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="swiper-slide">
-                        <div className="ms_rcnt_box">
-                            <div className="ms_rcnt_box_img">
-                                <img src="images/radio/img2.jpg" alt=""/>
-                                <div className="ms_main_overlay">
-                                    <div className="ms_box_overlay"/>
-                                    <div className="ms_more_icon">
-                                        <img src="images/svg/more.svg" alt=""/>
-                                    </div>
-                                    <ul className="more_option">
-                                        <li>
-                                            <a href="#">
-                          <span className="opt_icon">
-                            <span className="icon icon_fav"/>
-                          </span>
-                                                علاقه مندی ها
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                          <span className="opt_icon">
-                            <span className="icon icon_queue"/>
-                          </span>
-                                                افزودن به لیست
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                          <span className="opt_icon">
-                            <span className="icon icon_dwn"/>
-                          </span>
-                                                دانلود
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                          <span className="opt_icon">
-                            <span className="icon icon_playlst"/>
-                          </span>
-                                                افزودن به پلی لیست
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                          <span className="opt_icon">
-                            <span className="icon icon_share"/>
-                          </span>
-                                                اشتراک گذاری
-                                            </a>
-                                        </li>
-                                    </ul>
-                                    <div className="ms_play_icon">
-                                        <img src="images/svg/play.svg" alt=""/>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="ms_rcnt_box_text">
-                                <h3>
-                                    <a href="#">Until I Met You</a>
-                                </h3>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="swiper-slide">
-                        <div className="ms_rcnt_box">
-                            <div className="ms_rcnt_box_img">
-                                <img src="images/radio/img3.jpg" alt=""/>
-                                <div className="ms_main_overlay">
-                                    <div className="ms_box_overlay"/>
-                                    <div className="ms_more_icon">
-                                        <img src="images/svg/more.svg" alt=""/>
-                                    </div>
-                                    <ul className="more_option">
-                                        <li>
-                                            <a href="#">
-                          <span className="opt_icon">
-                            <span className="icon icon_fav"/>
-                          </span>
-                                                علاقه مندی ها
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                          <span className="opt_icon">
-                            <span className="icon icon_queue"/>
-                          </span>
-                                                افزودن به لیست
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                          <span className="opt_icon">
-                            <span className="icon icon_dwn"/>
-                          </span>
-                                                دانلود
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                          <span className="opt_icon">
-                            <span className="icon icon_playlst"/>
-                          </span>
-                                                افزودن به پلی لیست
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                          <span className="opt_icon">
-                            <span className="icon icon_share"/>
-                          </span>
-                                                اشتراک گذاری
-                                            </a>
-                                        </li>
-                                    </ul>
-                                    <div className="ms_play_icon">
-                                        <img src="images/svg/play.svg" alt=""/>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="ms_rcnt_box_text">
-                                <h3>
-                                    <a href="#">Gimme Some Courage</a>
-                                </h3>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="swiper-slide">
-                        <div className="ms_rcnt_box">
-                            <div className="ms_rcnt_box_img">
-                                <img src="images/radio/img4.jpg" alt=""/>
-                                <div className="ms_main_overlay">
-                                    <div className="ms_box_overlay"/>
-                                    <div className="ms_more_icon">
-                                        <img src="images/svg/more.svg" alt=""/>
-                                    </div>
-                                    <ul className="more_option">
-                                        <li>
-                                            <a href="#">
-                          <span className="opt_icon">
-                            <span className="icon icon_fav"/>
-                          </span>
-                                                علاقه مندی ها
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                          <span className="opt_icon">
-                            <span className="icon icon_queue"/>
-                          </span>
-                                                افزودن به لیست
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                          <span className="opt_icon">
-                            <span className="icon icon_dwn"/>
-                          </span>
-                                                دانلود
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                          <span className="opt_icon">
-                            <span className="icon icon_playlst"/>
-                          </span>
-                                                افزودن به پلی لیست
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                          <span className="opt_icon">
-                            <span className="icon icon_share"/>
-                          </span>
-                                                اشتراک گذاری
-                                            </a>
-                                        </li>
-                                    </ul>
-                                    <div className="ms_play_icon">
-                                        <img src="images/svg/play.svg" alt=""/>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="ms_rcnt_box_text">
-                                <h3>
-                                    <a href="#">Dark Alley Acoustic</a>
-                                </h3>
-                            </div>
-                        </div>
-                    </div>
+                            )) :
+                            <div className="loading" style={{textAlign: "center", padding: "2rem"}}></div>
+                    }
                 </div>
             </div>
             {/* Add Arrows */}
