@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { getSectionData, getMainPageData } from "../api/section-data.js";
+import { getSectionData, getMainPageData } from '../api/section-data.js';
+import MediaPortal from './MediaPlayer/MediaPortal.jsx';
 
 const RecentPosts = () => {
     const initializeSwiper = () => {
@@ -7,8 +8,6 @@ const RecentPosts = () => {
             if (window.recentSwiper) {
                 window.recentSwiper.destroy(true, true);
             }
-
-            // Re-init
             window.recentSwiper = new window.Swiper('.ms_rcnt_slider .swiper-container', {
                 slidesPerView: 6,
                 spaceBetween: 30,
@@ -31,10 +30,9 @@ const RecentPosts = () => {
         }
     }
 
-    const loading = '';
-
     const [sectionData, setSectionData] = useState(null);
     const [content, setContent] = useState(null);
+    const [isOpen, setIsOpen] = useState({});
 
     const loadRecentPosts = async (section_id) => {
         const { success, data } = await getSectionData(section_id);
@@ -62,50 +60,57 @@ const RecentPosts = () => {
             <div className="ms_heading">
                 <h1>{sectionData?.title}</h1>
                 <span className="veiw_all">
-            <a href="#">مشاهده بیشتر</a>
-          </span>
+                    <a href="#">مشاهده بیشتر</a>
+                </span>
             </div>
             <div className="swiper-container">
                 <div className="swiper-wrapper">
-                    {content ? (
-                        content.map((item, index) => (
-                            <div className="swiper-slide" key={index}>
-                                <div className="ms_rcnt_box">
-                                    <div className="ms_rcnt_box_img">
-                                        <img src={item?.thumbnail} alt={item?.title} />
-                                        <div className="ms_main_overlay">
-                                            <div className="ms_box_overlay" />
-                                            <div className="ms_more_icon">
-                                                <img src="images/svg/more.svg" alt="More" />
-                                            </div>
-                                            <ul className="more_option">
-                                                <li><a href="#"><span className="opt_icon"><span className="icon icon_fav" /></span> علاقه مندی ها</a></li>
-                                                <li><a href="#"><span className="opt_icon"><span className="icon icon_queue" /></span> افزودن به لیست</a></li>
-                                                <li><a href="#"><span className="opt_icon"><span className="icon icon_dwn" /></span> دانلود</a></li>
-                                                <li><a href="#"><span className="opt_icon"><span className="icon icon_playlst" /></span> افزودن به پلی لیست</a></li>
-                                                <li><a href="#"><span className="opt_icon"><span className="icon icon_share" /></span> اشتراک گذاری</a></li>
-                                            </ul>
+                    {content ? content.map((item, index) => (
+                        <div className="swiper-slide" key={index}>
+                            <div className="ms_rcnt_box">
+                                <div className="ms_rcnt_box_img">
+                                    <img src={item?.thumbnail} alt={item?.title} />
+                                    <div className="ms_main_overlay">
+                                        <div onClick={() => setIsOpen(prev => ({...prev, [item.id]: true}))}>
+                                            <div className="ms_box_overlay"/>
                                             <div className="ms_play_icon">
-                                                <img src="images/svg/play.svg" alt="Play" />
+                                                <img src="images/svg/play.svg" alt="Play"/>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div className="ms_rcnt_box_text">
-                                        <h3><a href="#">{item?.title}</a></h3>
-                                        <p>{item?.artist.name}</p>
+                                        <div className="ms_more_icon">
+                                            <img src="images/svg/more.svg" alt="More" />
+                                        </div>
+                                        <ul className="more_option">
+                                            <li><a href="#"><span className="opt_icon"><span className="icon icon_fav" /></span> علاقه مندی ها</a></li>
+                                            <li><a href="#"><span className="opt_icon"><span className="icon icon_queue" /></span> افزودن به لیست</a></li>
+                                            <li><a href="#"><span className="opt_icon"><span className="icon icon_dwn" /></span> دانلود</a></li>
+                                            <li><a href="#"><span className="opt_icon"><span className="icon icon_playlst" /></span> افزودن به پلی لیست</a></li>
+                                            <li><a href="#"><span className="opt_icon"><span className="icon icon_share" /></span> اشتراک گذاری</a></li>
+                                        </ul>
                                     </div>
                                 </div>
+                                <div className="ms_rcnt_box_text">
+                                    <h3><a href="#">{item?.title}</a></h3>
+                                    <p>{item?.artist.name}</p>
+                                </div>
+
+                                {isOpen[item.id] && (
+                                    <MediaPortal
+                                        isOpen={isOpen[item.id]}
+                                        onClose={() => setIsOpen(prev => ({ ...prev, [item.id]: false }))}
+                                        postID={item.id}
+                                    />
+                                )}
                             </div>
-                        ))
-                    ) : (
-                        <div className="loading" style={{ textAlign: 'center', padding: '2rem' }}>Loading...</div>
+                        </div>
+                    )) : (
+                        <div className="loading" style={{ textAlign: 'center', padding: '2rem' }}></div>
                     )}
                 </div>
             </div>
-            {/* Add Arrows */}
             <div className="swiper-button-next slider_nav_next"/>
             <div className="swiper-button-prev slider_nav_prev"/>
         </div>
     )
 }
-export default RecentPosts
+export default RecentPosts;

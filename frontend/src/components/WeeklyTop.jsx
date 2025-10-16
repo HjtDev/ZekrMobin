@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { getMainPageData, getSectionData } from "../api/section-data.js";
+import MediaPortal from "./MediaPlayer/MediaPortal.jsx";
 
 const WeeklyTop = () => {
     const [pageData, setPageData] = useState(null);
     const [pageContent, setPageContent] = useState([]);
+    const [isOpen, setIsOpen] = useState({});
 
     const getWeeklyData = async (section_id) => {
         const { success, data } = await getSectionData(section_id);
@@ -25,7 +27,7 @@ const WeeklyTop = () => {
         }
     }, [pageData]);
 
-    // Helper to split posts into 3 groups of 5
+    // Split posts into columns of 5
     const chunkArray = (arr, size) => {
         const result = [];
         for (let i = 0; i < arr.length; i += size) {
@@ -56,10 +58,16 @@ const WeeklyTop = () => {
                             {col.map((post, index) => (
                                 <div key={post.id} className="ms_weekly_box">
                                     <div className="weekly_right">
-                    <span className="w_top_no">
-                      {(colIndex * 5 + index + 1).toString().padStart(2, "0")}
-                    </span>
-                                        <div className="w_top_song">
+                                        <span className="w_top_no">
+                                            {(colIndex * 5 + index + 1).toString().padStart(2, "0")}
+                                        </span>
+                                        <div
+                                            className="w_top_song"
+                                            onClick={() =>
+                                                setIsOpen((prev) => ({ ...prev, [post.id]: true }))
+                                            }
+                                            style={{ cursor: "pointer" }}
+                                        >
                                             <div className="w_tp_song_img">
                                                 <img
                                                     src={post.thumbnail || "images/weekly/default.jpg"}
@@ -79,58 +87,75 @@ const WeeklyTop = () => {
                                             </div>
                                         </div>
                                     </div>
+
                                     <div className="weekly_left">
-                    <span className="w_song_time">
-                      {Math.floor(post.duration / 60)}:
-                        {(post.duration % 60).toString().padStart(2, "0")}
-                    </span>
+                                        <span className="w_song_time">{post.duration}</span>
                                         <span className="ms_more_icon" data-other={1}>
-                      <img src="images/svg/more.svg" alt="More" />
-                    </span>
+                                            <img src="images/svg/more.svg" alt="More" />
+                                        </span>
                                     </div>
+
                                     <ul className="more_option">
                                         <li>
                                             <a href="#">
-                        <span className="opt_icon">
-                          <span className="icon icon_fav" />
-                        </span>
+                                                <span className="opt_icon">
+                                                    <span className="icon icon_fav" />
+                                                </span>
                                                 علاقه مندی ها
                                             </a>
                                         </li>
                                         <li>
                                             <a href="#">
-                        <span className="opt_icon">
-                          <span className="icon icon_queue" />
-                        </span>
+                                                <span className="opt_icon">
+                                                    <span className="icon icon_queue" />
+                                                </span>
                                                 افزودن به لیست
                                             </a>
                                         </li>
                                         <li>
                                             <a href="#">
-                        <span className="opt_icon">
-                          <span className="icon icon_dwn" />
-                        </span>
+                                                <span className="opt_icon">
+                                                    <span className="icon icon_dwn" />
+                                                </span>
                                                 دانلود
                                             </a>
                                         </li>
                                         <li>
                                             <a href="#">
-                        <span className="opt_icon">
-                          <span className="icon icon_playlst" />
-                        </span>
+                                                <span className="opt_icon">
+                                                    <span className="icon icon_playlst" />
+                                                </span>
                                                 افزودن به پلی لیست
                                             </a>
                                         </li>
                                         <li>
                                             <a href="#">
-                        <span className="opt_icon">
-                          <span className="icon icon_share" />
-                        </span>
+                                                <span className="opt_icon">
+                                                    <span className="icon icon_share" />
+                                                </span>
                                                 اشتراک گذاری
                                             </a>
                                         </li>
                                     </ul>
-                                    {index < col.length - 1 && <div className="ms_divider" style={{marginTop: "20px", marginBottom: "-30px"}} />}
+
+                                    {/* Divider between items */}
+                                    {index < col.length - 1 && (
+                                        <div
+                                            className="ms_divider"
+                                            style={{ marginTop: "20px", marginBottom: "-30px" }}
+                                        />
+                                    )}
+
+                                    {/* 🟢 Media Modal */}
+                                    {isOpen[post.id] && (
+                                        <MediaPortal
+                                            isOpen={isOpen[post.id]}
+                                            onClose={() =>
+                                                setIsOpen((prev) => ({ ...prev, [post.id]: false }))
+                                            }
+                                            postID={post.id}
+                                        />
+                                    )}
                                 </div>
                             ))}
                         </div>

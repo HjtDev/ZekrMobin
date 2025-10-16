@@ -1,0 +1,37 @@
+.playlist-scrollbar-hidden::-webkit-scrollbar {
+    display: none;
+    width: 0 !important; /* Ensures no space is left behind */
+    height: 0 !important;
+}
+
+.modal-scrollbar-hidden::-webkit-scrollbar {
+    display: none;
+    width: 0 !important;
+    height: 0 !important;
+}
+
+.right-border {
+    border-radius: 0 6rem 6rem 0;
+}
+
+.left-border {
+    border-radius: 6rem 0 0 6rem;
+}
+
+.modal-content {
+    width: 80% !important;
+    margin: 0 auto;
+    max-width: 100%;
+}
+
+
+
+@media (max-width: 992px) {
+    .modal-content {
+        width: 100% !important;
+
+
+        margin: 0;
+        border-radius: 0;
+    }
+}

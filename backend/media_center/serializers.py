@@ -1,5 +1,5 @@
 from rest_framework.serializers import ModelSerializer, SerializerMethodField
-from .models import Post, Tag, Category, Artist
+from .models import Post, Tag, Category, Artist, Media, File
 
 
 class TagSerializer(ModelSerializer):
@@ -29,6 +29,32 @@ class CategorySerializer(ModelSerializer):
     
     def get_post_count(self, obj: Category):
         return obj.posts.count()
+    
+    
+class FileSerializer(ModelSerializer):
+    duration = SerializerMethodField()
+    
+    class Meta:
+        model = File
+        fields = ('id', 'name', 'quality', 'media_type', 'duration', 'file')
+        
+    def get_files(self, obj: File):
+        request = self.context.get('request', None)
+        return request.build_absolute_uri(obj.file.url) if request else obj.file.url
+    
+    def get_duration(self, obj: File):
+        return f'{obj.duration//60}:{obj.duration%60:02d}'
+    
+    
+class MediaSerializer(ModelSerializer):
+    files = SerializerMethodField()
+    
+    class Meta:
+        model = Media
+        fields = ('id', 'name', 'artist', 'files')
+        
+    def get_files(self, obj: Media):
+        return FileSerializer(obj.files.all(), many=True, context=self.context).data
         
 class QuickPostSerializer(ModelSerializer):
     duration = SerializerMethodField()
@@ -38,16 +64,17 @@ class QuickPostSerializer(ModelSerializer):
     class Meta:
         model = Post
         fields = ('id', 'title', 'thumbnail', 'artist', 'duration', 'is_liked')
-        
+    
     def get_duration(self, obj: Post):
-        return obj.get_media_duration()
+        duration = obj.get_media_duration()
+        return f'{duration//60}:{duration%60:02d}'
     
     def get_artist(self, obj: Post):
         artist = obj.medias.first().artist
         return {
             'id': artist.id,
             'name': artist.name
-        }
+        } if artist else None
     
     def get_is_liked(self, obj: Post):
         request = self.context.get('request', None)
@@ -59,6 +86,7 @@ class QuickPostSerializer(ModelSerializer):
     
 
 class PostSerializer(ModelSerializer):
+    media = SerializerMethodField()
     duration = SerializerMethodField()
     artist = SerializerMethodField()
     is_liked = SerializerMethodField()
@@ -67,10 +95,14 @@ class PostSerializer(ModelSerializer):
     
     class Meta:
         model = Post
-        fields = ('id', 'title', 'thumbnail', 'artist', 'duration', 'is_liked', 'categories', 'tags', 'created_at', 'updated_at')
+        fields = ('id', 'title', 'thumbnail', 'artist', 'duration', 'is_liked', 'categories', 'tags', 'media', 'created_at', 'updated_at')
+        
+    def get_media(self, obj: Post):
+        return MediaSerializer(obj.medias.all(), many=True, context=self.context).data
     
     def get_duration(self, obj: Post):
-        return obj.get_media_duration()
+        duration = obj.get_media_duration()
+        return f'{duration//60}:{duration%60:02d}'
     
     def get_artist(self, obj: Post):
         artist = obj.medias.first().artist
