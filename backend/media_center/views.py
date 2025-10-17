@@ -34,6 +34,12 @@ class SinglePost(APIView, ResponseBuilderMixin, GetDataMixin):
             post = Post.objects.exclude(is_visible=False).get(id=result['id'])
             serializer = QuickPostSerializer if 'quick' in request.query_params and self.convert_data_to_bool(request.query_params.get('quick')) else PostSerializer
             
+            post.views_count += 1
+            if request.user.is_authenticated:
+                print('Adding to history:', post, request.user)
+                request.user.add_to_history(post)
+            post.save()
+            
             return self.build_response(
                 message='Successful retrieval',
                 post=serializer(post, context={'request': request}).data
@@ -274,7 +280,7 @@ class TopCategory(APIView, ResponseBuilderMixin, GetDataMixin, CachedResponseMix
         )
     
     
-class PostComment(APIView, ResponseBuilderMixin, GetDataMixin, CachedResponseMixin):
+class PostComment(APIView, ResponseBuilderMixin, GetDataMixin):
     throttle_scope = 'comments'
     permission_classes = (SafeAuthentication,)
     
@@ -341,4 +347,71 @@ class PostComment(APIView, ResponseBuilderMixin, GetDataMixin, CachedResponseMix
                 message='Post not found'
             )
         
+        
+class PostLike(APIView, ResponseBuilderMixin, GetDataMixin):
+    throttle_scope = 'like'
+    permission_classes = (IsAuthenticated,)
+    
+    def get(self, request):
+        success, result = self.get_data(request, ('id', self.is_id))
+        
+        if not success:
+            return self.build_response(
+                status.HTTP_400_BAD_REQUEST,
+                message='Invalid or missing parameter',
+                errors=result
+            )
+        
+        try:
+            post = Post.objects.prefetch_related('liked_by').filter(is_visible=True).get(id=result['id'])
+            if post.liked_by.filter(id=request.user.id).exists():
+                post.liked_by.remove(request.user)
+                return self.build_response(
+                    status.HTTP_200_OK,
+                    message='Like removed successfully',
+                    is_liked=False
+                )
+            else:
+                post.liked_by.add(request.user)
+                return self.build_response(
+                    status.HTTP_200_OK,
+                    message='Like added successfully',
+                    is_liked=True
+                )
+        except Post.DoesNotExist:
+            return self.build_response(
+                status.HTTP_404_NOT_FOUND,
+                message='Post not found'
+            )
+        
+        
+class PostDownload(APIView, ResponseBuilderMixin, GetDataMixin):
+    throttle_scope = 'download'
+
+    def get(self, request):
+        success, result = self.get_data(request, ('id', self.is_id))
+        
+        if not success:
+            return self.build_response(
+                status.HTTP_400_BAD_REQUEST,
+                message='Invalid or missing parameter',
+                errors=result
+            )
+        
+        try:
+            post = Post.objects.prefetch_related('medias__files').filter(is_visible=True).get(id=result['id'])
+            post.download_count += 1
+            post.save()
+            links = [request.build_absolute_uri(f.file.url) for media in post.medias.all() for f in media.files.all()]
+            
+            return self.build_response(
+                status.HTTP_200_OK,
+                message='Download links are ready to use',
+                links=links
+            )
+        except Post.DoesNotExist:
+            return self.build_response(
+                status.HTTP_404_NOT_FOUND,
+                message='Post not found'
+            )
             
