@@ -4,9 +4,13 @@ import '@vidstack/react/player/styles/base.css';
 import '@vidstack/react/player/styles/plyr/theme.css';
 import { MediaPlayer, MediaProvider } from '@vidstack/react';
 import { PlyrLayout, plyrLayoutIcons } from '@vidstack/react/player/layouts/plyr';
-import api from "../../api/api.js";
+import api from '../../api/api.js';
 import '../../assets/css/MediaPortal.css'
-import CustomSkeleton from "../CustomSkeleton.jsx";
+import CustomSkeleton from '../CustomSkeleton.jsx';
+import LazySection from '../LazyLoader/LazySection.jsx';
+import { getComments, createComments } from '../../api/comment.js';
+import { toast } from 'react-toastify';
+import { useAuth } from '../../contexts/AuthContext.jsx';
 
 const modalRoot = document.getElementById("modal-root");
 
@@ -136,8 +140,6 @@ const PlaylistContainer = ({ media = [], activeMediaId, onSelect }) => {
     const playlistContainerStyle = {
         maxHeight: '75vh',
         overflowY: 'auto',
-        paddingRight: '8px',
-        paddingTop: '8px',
         msOverflowStyle: 'none',
         scrollbarWidth: 'none',
     };
@@ -156,32 +158,56 @@ const PlaylistContainer = ({ media = [], activeMediaId, onSelect }) => {
     );
 };
 
-const CommentInput = () => (
-    <div className="d-flex" style={{ marginBottom: "15rem" }}>
-        <div className="flex-grow-1">
+const CommentInput = ({ postID }) => {
+    const { isLoggedIn } = useAuth();
+
+    const [commentContent, setCommentContent] = useState('');
+    const sendComment = async (postID, commentContent) => {
+        if(!isLoggedIn) {
+            toast.warning('ابتدا یک حساب کاربری بسازید.');
+            return
+        }
+        toast.info('در حال ثبت نظر...');
+        const { success, msg } = await createComments(postID, commentContent);
+        msg.forEach((message, index) => {
+            if(success) {
+                toast.success(message);
+            } else {
+                toast.error(message);
+            }
+        })
+        setCommentContent('');
+    }
+
+    return (
+        <div className="d-flex" style={{marginBottom: "15rem"}}>
+            <div className="flex-grow-1">
             <textarea
                 className="form-control"
                 style={commentAreaStyle}
                 rows="3"
                 placeholder="نظر شما درباره پست ..."
+                value={commentContent}
+                onChange={(e) => setCommentContent(e.target.value)}
             />
-            <div className="text-end" style={{ marginTop: "15rem" }}>
-                <button className="btn btn-outline-secondary me-2 right-border" style={buttonStyle}>
-                    لغو
-                </button>
-                <button className="btn btn-primary left-border" disabled style={buttonStyle}>
-                    ارسال
-                </button>
+                <div className="text-end" style={{marginTop: "15rem"}}>
+                    <button className="btn btn-outline-secondary me-2 right-border" style={buttonStyle} onClick={() => setCommentContent('')}>
+                        لغو
+                    </button>
+                    <button className="btn btn-primary left-border" style={buttonStyle} onClick={() => sendComment(postID, commentContent)}>
+                        ارسال
+                    </button>
+                </div>
             </div>
         </div>
-    </div>
-);
+    )
+};
 
 const CommentItem = ({ username, time, text }) => (
     <div className="d-flex" style={commentItemStyle}>
         <div className="flex-grow-1">
             <div className="d-flex align-items-center mb-1">
-                <p className="mb-0 fw-bold me-2" style={{ fontSize: '14px', color: '#A0A0A0' }}>{username}</p>
+                <p className="mb-0 fw-bold" style={{ fontSize: '14px', color: '#A0A0A0', marginLeft: "5rem" }}>{username}</p>
                 <small className="text-muted" style={{ fontSize: '12px' }}>{time}</small>
             </div>
             <p className="mb-0" style={{ fontSize: '15px' }}>{text}</p>
@@ -189,29 +215,39 @@ const CommentItem = ({ username, time, text }) => (
     </div>
 );
 
-const CommentSection = () => {
+const CommentSection = ({ postID }) => {
+    const [comments, setComments] = useState(null);
+
+    useEffect(() => {
+        const getPostComment = async () => {
+            const { success, msg, comments } = await getComments(postID);
+            setComments(comments);
+            msg.forEach((message) => {
+                if(success) {
+                    toast.success(message);
+                } else {
+                    toast.error(message);
+                }
+            });
+        }
+
+        getPostComment();
+    }, []);
+
     return (
         <div style={{ marginTop: "15rem" }}>
             <h4 className="text-light mb-4" style={{ fontSize: '22px' }}>
                 <i className="fa fa-comment text-primary" style={{ marginLeft: "5rem" }}></i>
                 <small>نظرات</small>
             </h4>
-            <CommentInput />
-            <CommentItem
-                username="Ali A."
-                time="5 hours ago"
-                text="ماشاءالله. صوتی دلنشین و آرام‌بخش. خدا قوت."
-            />
-            <CommentItem
-                username="Sara J."
-                time="1 day ago"
-                text="Can you please upload the full version of دعای کمیل next time? Thank you!"
-            />
-            <CommentItem
-                username="Mohammad H."
-                time="3 days ago"
-                text="The recording quality is excellent. May God reward your efforts."
-            />
+            <CommentInput postID={postID} />
+            {
+                comments ?
+                    comments.map((comment) => (
+                        <CommentItem username={comment.user} time={comment.time_since} text={comment.content} />
+                    )) :
+                    <p className="font-weight-bold text-center text-muted" style={{ fontSize: "25rem", marginTop: "35rem" }}>نظری وجود ندارد</p>
+            }
         </div>
     );
 };
@@ -359,7 +395,6 @@ const MediaPortal = ({ isOpen, onClose, postID }) => {
                                 poster={post?.thumbnail}  // 🖼 Use poster prop for thumbnail
                                 aspectRatio={isMobile ? '9/16' : '16/9'}
                                 src={activeMedia?.files?.map((file) => {
-                                    // determine MIME type
                                     let mimeType = 'video/mp4';
                                     if (file.media_type === 'audio') {
                                         if (file.file.endsWith('.opus')) mimeType = 'audio/ogg';
@@ -367,13 +402,13 @@ const MediaPortal = ({ isOpen, onClose, postID }) => {
                                         else if (file.file.endsWith('.wav')) mimeType = 'audio/wav';
                                     } else if (file.media_type === 'video') {
                                         if (file.file.endsWith('.webm')) mimeType = 'video/webm';
-                                        else mimeType = 'video/mp4'; // do not use mkv
+                                        else mimeType = 'video/mp4';
                                     }
 
                                     return {
                                         src: file.file,
                                         type: mimeType,
-                                        label: file.quality || '',   // 🏷 quality menu
+                                        label: file.quality || '',
                                         default: file.id === activeQuality?.id
                                     };
                                 })}
@@ -381,7 +416,7 @@ const MediaPortal = ({ isOpen, onClose, postID }) => {
                                 <MediaProvider />
                                 <PlyrLayout
                                     icons={plyrLayoutIcons}
-                                    thumbnails={post?.thumbnail} // optional poster in PlyrLayout
+                                    thumbnails={post?.thumbnail}
                                 />
                             </MediaPlayer>
 
@@ -390,12 +425,28 @@ const MediaPortal = ({ isOpen, onClose, postID }) => {
                                 رسانه‌ای برای پخش موجود نیست.
                             </div>
                         )}
+                        <div className="row justify-content-between align-items-center text-center option-container">
+                            <div className="col-3 hover-info">
+                                <a href="#" className="text-muted"><span className={`fa fa-thumbs-up d-block ${post?.is_liked ? 'text-info' : ''}`} style={{ cursor: "pointer" }}></span>لایک</a>
+                            </div>
+                            <div className="col-3 hover-info">
+                                <a href="#" className="text-muted"><span className="fa fa-share d-block" style={{ cursor: "pointer" }}></span>اشتراک گذاری</a>
+                            </div>
+                            <div className="col-3 hover-info">
+                                <a href="#" className="text-muted"><span className="fa fa-list d-block" style={{ cursor: "pointer" }}></span>پست های دیگر</a>
+                            </div>
+                            <div className="col-3 hover-info">
+                                <a href="#" className="text-muted"><span className="fa fa-download d-block" style={{ cursor: "pointer" }}></span>دانلود</a>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 <div className="row mt-5">
                     <div className="col-12">
-                        <CommentSection />
+                        <LazySection>
+                            <CommentSection postID={postID} />
+                        </LazySection>
                     </div>
                 </div>
             </div>
