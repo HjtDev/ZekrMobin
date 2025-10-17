@@ -2,11 +2,13 @@ from datetime import timedelta
 from django.db.models import Count, ExpressionWrapper, FloatField, F, QuerySet, Sum
 from django.utils import timezone
 from rest_framework.exceptions import ValidationError
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from backend.mixins import ResponseBuilderMixin, GetDataMixin, CachedResponseMixin
-from .models import Post, Artist, Category
+from .models import Post, Artist, Category, Comment
 from rest_framework import status
-from .serializers import QuickPostSerializer, PostSerializer, ArtistSerializer, CategorySerializer
+from .serializers import QuickPostSerializer, PostSerializer, ArtistSerializer, CategorySerializer, CommentSerializer
+from .permissions import SafeAuthentication
 
 
 class SinglePost(APIView, ResponseBuilderMixin, GetDataMixin):
@@ -63,7 +65,7 @@ class FilteredPosts(APIView, ResponseBuilderMixin, GetDataMixin, CachedResponseM
                     )
                 ).order_by('-order')
             case 'new-posts':
-                qs = qs.filter(created_at__gt=now - timedelta(hours=48)).order_by('-updated_at')
+                qs = qs.filter(created_at__gt=now - timedelta(hours=148)).order_by('-updated_at')
             case 'live-suggestions':
                 qs = qs.filter(recommended_by_site=True).order_by('-updated_at')
             case _:
@@ -270,4 +272,73 @@ class TopCategory(APIView, ResponseBuilderMixin, GetDataMixin, CachedResponseMix
             categories=CategorySerializer(categories, context={'request': request}, many=True).data,
             is_cached=self._restored_from_cache
         )
+    
+    
+class PostComment(APIView, ResponseBuilderMixin, GetDataMixin, CachedResponseMixin):
+    throttle_scope = 'comments'
+    permission_classes = (SafeAuthentication,)
+    
+    def get(self, request):
+        success, result = self.get_data(request, ('id', self.is_id))
         
+        if not success:
+            return self.build_response(
+                status.HTTP_400_BAD_REQUEST,
+                message='Invalid or missing parameter',
+                errors=result
+            )
+        
+        try:
+            post = Post.objects.filter(is_visible=True).get(id=result['id'])
+            comments = post.comments.filter(is_verified=True)
+            
+            if not comments.exists():
+                return self.build_response(
+                    status.HTTP_204_NO_CONTENT
+                )
+        
+            return self.build_response(
+                message='Successful retrieval',
+                comments=CommentSerializer(comments, many=True).data
+            )
+        
+        except Post.DoesNotExist:
+            return self.build_response(
+                status.HTTP_404_NOT_FOUND,
+                message='Post not found'
+            )
+    
+    def post(self, request):
+        success, result = self.get_data(request, ('content', lambda c: bool(c.strip())), ('id', self.is_id))
+        if not success:
+            return self.build_response(
+                status.HTTP_400_BAD_REQUEST,
+                message='Invalid or missing parameter',
+                errors=result
+            )
+        
+        if Comment.objects.filter(post__id=result['id'], user=request.user).exists():
+            return self.build_response(
+                status.HTTP_409_CONFLICT,
+                message='You have already commented on this post'
+            )
+        
+        try:
+            post = Post.objects.filter(is_visible=True).get(id=result['id'])
+            comment = Comment.objects.create(post=post, user=request.user, content=result['content'])
+            if comment:
+                return self.build_response(
+                    status.HTTP_201_CREATED,
+                    message='Comment created successfully'
+                )
+            else:
+                return self.build_response(
+                    status.HTTP_400_BAD_REQUEST
+                )
+        except Post.DoesNotExist:
+            return self.build_response(
+                status.HTTP_404_NOT_FOUND,
+                message='Post not found'
+            )
+        
+            

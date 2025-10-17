@@ -42,6 +42,8 @@ class Comment(models.Model):
     
     is_verified = models.BooleanField(default=False, verbose_name='نمایش در سایت')
     
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='تاریخ ایجاد')
+    
     def __str__(self):
         return f'نظر {self.user.name} بر روی پست {self.post.title}'
     

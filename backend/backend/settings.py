@@ -228,7 +228,6 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.BasicAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny',
@@ -249,7 +248,8 @@ REST_FRAMEWORK = {
         'single-post': '30/minute',
         'filtered-posts': '30/minute',
         'top-artists': '30/minute',
-        'main-page': '40/minute'
+        'main-page': '40/minute',
+        'comments': '10/minute'
     },
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema'
 }
