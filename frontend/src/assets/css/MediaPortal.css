@@ -1,0 +1,66 @@
+.playlist-scrollbar-hidden::-webkit-scrollbar {
+    display: none;
+    width: 0 !important; /* Ensures no space is left behind */
+    height: 0 !important;
+}
+
+.modal-scrollbar-hidden::-webkit-scrollbar {
+    display: none;
+    width: 0 !important;
+    height: 0 !important;
+}
+
+.right-border {
+    border-radius: 0 6rem 6rem 0;
+}
+
+.left-border {
+    border-radius: 6rem 0 0 6rem;
+}
+
+.modal-content {
+    width: 80% !important;
+    margin: 0 auto;
+    max-width: 100%;
+}
+
+.hover-info {
+    transition: all 360ms ease-in 60ms;
+    margin-top: 3rem;
+}
+
+.hover-info .fa {
+    display: inline-block;
+    transform-origin: center center;
+    transition: all 600ms ease 60ms;
+}
+
+.hover-info:hover {
+    color: #17a2b8;
+    /*background-color: #151C2A;*/
+    /*box-shadow: #151C2A 1px 1px 12px;*/
+}
+
+.hover-info:hover .fa {
+    transform: scale(1.3);
+    color: #17a2b8;
+}
+
+.option-container {
+    background-color: rgba(103, 108, 122, 0.12);
+    box-shadow: #1b1e21 1px 1px 10px;
+    border-radius: 4rem;
+    padding: 8rem;
+    width: 100%;
+    margin: 0 auto 8rem auto;
+}
+
+@media (max-width: 992px) {
+    .modal-content {
+        width: 100% !important;
+
+
+        margin: 0;
+        border-radius: 0;
+    }
+}

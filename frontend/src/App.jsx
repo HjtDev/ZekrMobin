@@ -44,7 +44,7 @@ function App() {
                     </Routes>
                 </div>
                 <Footer />
-                <Player />
+                {/*<Player />*/}
             </div>
             <PlayerModals />
             <LanguagePopup />

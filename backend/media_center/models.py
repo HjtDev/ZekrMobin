@@ -63,18 +63,18 @@ class File(models.Model):
         verbose_name_plural = 'فایل ها'
         
     class QualityChoices(models.TextChoices):
-        quality_144p = ('144P', '144P')
-        quality_240p = ('240P', '240P')
-        quality_360p = ('360P', '360P')
-        quality_480p = ('480P', '480P')
-        quality_720p = ('720P', '720P')
-        quality_1080p = ('1080P', '1080P')
-        quality_2k = ('2K', '2K')
-        quality_4k = ('4K', '4K')
+        quality_144p = ('144p', '144P')
+        quality_240p = ('240p', '240P')
+        quality_360p = ('360p', '360P')
+        quality_480p = ('480p', '480P')
+        quality_720p = ('720p', '720P')
+        quality_1080p = ('1080p', '1080P')
+        quality_2k = ('2560p', '2K')
+        quality_4k = ('4k', '4K')
         
     class TypeChoices(models.TextChoices):
-        VIDEO = ('ویدئویی',  'ویدئویی')
-        AUDIO = ('صوتی', 'صوتی')
+        VIDEO = ('video',  'ویدئویی')
+        AUDIO = ('audio', 'صوتی')
         
     name = models.CharField(max_length=70, verbose_name='نام مختصر فایل', help_text='مثال: دعای جوشن کبیر 1080P')
     quality = models.CharField(max_length=5, choices=QualityChoices.choices, verbose_name='کیفیت')
