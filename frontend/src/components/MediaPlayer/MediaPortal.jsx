@@ -15,7 +15,7 @@ import likePost from '../../api/like.js';
 import downloadPost from '../../api/download.js';
 import ShareLink from '../NativeShare/ShareLink.jsx';
 import getSuggestedPosts from '../../api/suggestion.js';
-import toJalaliDate from "../../assets/jalaali-conventor.js";
+import toJalaliDate from "../../assets/js/jalaali-conventor.js";
 
 const modalRoot = document.getElementById("modal-root");
 
