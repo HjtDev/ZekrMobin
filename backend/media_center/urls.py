@@ -10,6 +10,7 @@ urlpatterns = [
     path('posts/post/comments/', views.PostComment.as_view(), name='comment'),
     path('posts/post/like/', views.PostLike.as_view(), name='like'),
     path('posts/post/download/', views.PostDownload.as_view(), name='download'),
+    path('posts/post/suggestion/', views.PostSuggestion.as_view(), name='suggestion'),
     path('top_artists/', views.TopArtists.as_view(), name='top_artists'),
     path('top_categories/', views.TopCategory.as_view(), name='top_categories'),
 ]

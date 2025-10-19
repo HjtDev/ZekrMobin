@@ -7,6 +7,7 @@ from .models import Post, Artist, Category
 @receiver([post_save, post_delete], sender=Post)
 def invalidate_post_cache(sender, instance: Post, **kwargs):
     cache.delete_pattern('posts:*-*-*')
+    cache.delete_pattern(f'suggestion-{instance.id}')
     
     
 @receiver([post_save, post_delete], sender=Artist)

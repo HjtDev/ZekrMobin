@@ -415,3 +415,38 @@ class PostDownload(APIView, ResponseBuilderMixin, GetDataMixin):
                 message='Post not found'
             )
             
+            
+class PostSuggestion(APIView, ResponseBuilderMixin, GetDataMixin, CachedResponseMixin):
+    throttle_scope = 'suggestion'
+    
+    def get(self, request):
+        success, result = self.get_data(request, ('id', self.is_id))
+        
+        if not success:
+            return self.build_response(
+                status.HTTP_400_BAD_REQUEST,
+                message='Invalid or missing parameter',
+                errors=result
+            )
+        
+        try:
+            post = Post.objects.get(id=result['id'])
+            if not post.is_visible:
+                raise Post.DoesNotExist
+            
+            self.set_cache_key(f'suggestion-{post.id}')
+            suggestion = self.get_cached(Post) or Post.objects.exclude(id=post.id).filter(is_visible=True, categories__id__in=list(post.categories.values_list('id', flat=True))).order_by('-updated_at')
+            if not self._restored_from_cache:
+                self.store_cached(suggestion)
+            
+            return self.build_response(
+                status.HTTP_200_OK,
+                message='Suggested posts based on category',
+                posts=list(suggestion.values_list('id', flat=True)),
+                is_cached=self._restored_from_cache
+            )
+        except Post.DoesNotExist:
+            return self.build_response(
+                status.HTTP_404_NOT_FOUND,
+                message='Post not found'
+            )
