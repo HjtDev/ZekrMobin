@@ -1,5 +1,6 @@
 from rest_framework.serializers import ModelSerializer, SerializerMethodField
-from .models import Post, Tag, Category, Artist, Media, File
+from .models import Post, Tag, Category, Artist, Media, File, Comment
+from django.utils.timezone import now
 
 
 class TagSerializer(ModelSerializer):
@@ -128,3 +129,33 @@ class ArtistSerializer(ModelSerializer):
     def get_profile_picture(self, obj: Artist):
         request = self.context.get('request', None)
         return request.build_absolute_uri(obj.profile_picture.url) if request else obj.profile_picture
+    
+    
+class CommentSerializer(ModelSerializer):
+    user = SerializerMethodField()
+    time_since = SerializerMethodField()
+    class Meta:
+        model = Comment
+        fields = ('id', 'content', 'user', 'time_since')
+        read_only_fields = ('id',)
+        
+    def get_user(self, obj: Comment):
+        return obj.user.username if obj.user else 'بی نام'
+
+
+    def get_time_since(self, obj: Comment):
+        delta = now() - obj.created_at
+        seconds = delta.total_seconds()
+        
+        if seconds < 60:
+            return f"{int(seconds)} ثانیه پیش"
+        elif seconds < 3600:
+            minutes = int(seconds // 60)
+            return f"{minutes} دقیقه پیش"
+        elif seconds < 86400:
+            hours = int(seconds // 3600)
+            return f"{hours} ساعت پیش"
+        else:
+            days = int(seconds // 86400)
+            return f"{days} روز پیش"
+    

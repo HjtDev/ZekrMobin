@@ -38,9 +38,9 @@ class TagAdmin(admin.ModelAdmin):
 
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'post', 'is_verified')
+    list_display = ('id', 'user', 'post', 'is_verified', 'created_at')
     list_editable = ('is_verified',)
-    list_filter = ('user', 'post', 'is_verified')
+    list_filter = ('user', 'post', 'is_verified', 'created_at')
     autocomplete_fields = ('user', 'post')
     search_fields = ('user__name', 'user__email', 'post__title')
     ordering = ('-id',)

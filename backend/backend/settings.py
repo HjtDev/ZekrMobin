@@ -228,7 +228,6 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.BasicAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny',
@@ -238,8 +237,8 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_THROTTLE_RATES': {
         'admin': '10/second',
-        'csrf': '10/minute',
-        'profile': '10/minute',
+        'csrf': '50/minute',
+        'profile': '50/minute',
         'edit_profile': '3/minute',
         'login': '5/minute',
         'signup': '5/minute',
@@ -249,7 +248,11 @@ REST_FRAMEWORK = {
         'single-post': '30/minute',
         'filtered-posts': '30/minute',
         'top-artists': '30/minute',
-        'main-page': '40/minute'
+        'main-page': '40/minute',
+        'comments': '10/minute',
+        'like': '30/minute',
+        'download': '100/hour',
+        'suggestion': '30/minute'
     },
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema'
 }

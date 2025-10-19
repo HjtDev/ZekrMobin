@@ -2,11 +2,13 @@ from datetime import timedelta
 from django.db.models import Count, ExpressionWrapper, FloatField, F, QuerySet, Sum
 from django.utils import timezone
 from rest_framework.exceptions import ValidationError
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from backend.mixins import ResponseBuilderMixin, GetDataMixin, CachedResponseMixin
-from .models import Post, Artist, Category
+from .models import Post, Artist, Category, Comment
 from rest_framework import status
-from .serializers import QuickPostSerializer, PostSerializer, ArtistSerializer, CategorySerializer
+from .serializers import QuickPostSerializer, PostSerializer, ArtistSerializer, CategorySerializer, CommentSerializer
+from .permissions import SafeAuthentication
 
 
 class SinglePost(APIView, ResponseBuilderMixin, GetDataMixin):
@@ -31,6 +33,12 @@ class SinglePost(APIView, ResponseBuilderMixin, GetDataMixin):
         try:
             post = Post.objects.exclude(is_visible=False).get(id=result['id'])
             serializer = QuickPostSerializer if 'quick' in request.query_params and self.convert_data_to_bool(request.query_params.get('quick')) else PostSerializer
+            
+            post.views_count += 1
+            if request.user.is_authenticated:
+                print('Adding to history:', post, request.user)
+                request.user.add_to_history(post)
+            post.save()
             
             return self.build_response(
                 message='Successful retrieval',
@@ -63,7 +71,7 @@ class FilteredPosts(APIView, ResponseBuilderMixin, GetDataMixin, CachedResponseM
                     )
                 ).order_by('-order')
             case 'new-posts':
-                qs = qs.filter(created_at__gt=now - timedelta(hours=48)).order_by('-updated_at')
+                qs = qs.filter(created_at__gt=now - timedelta(hours=148)).order_by('-updated_at')
             case 'live-suggestions':
                 qs = qs.filter(recommended_by_site=True).order_by('-updated_at')
             case _:
@@ -270,4 +278,175 @@ class TopCategory(APIView, ResponseBuilderMixin, GetDataMixin, CachedResponseMix
             categories=CategorySerializer(categories, context={'request': request}, many=True).data,
             is_cached=self._restored_from_cache
         )
+    
+    
+class PostComment(APIView, ResponseBuilderMixin, GetDataMixin):
+    throttle_scope = 'comments'
+    permission_classes = (SafeAuthentication,)
+    
+    def get(self, request):
+        success, result = self.get_data(request, ('id', self.is_id))
         
+        if not success:
+            return self.build_response(
+                status.HTTP_400_BAD_REQUEST,
+                message='Invalid or missing parameter',
+                errors=result
+            )
+        
+        try:
+            post = Post.objects.filter(is_visible=True).get(id=result['id'])
+            comments = post.comments.filter(is_verified=True)
+            
+            if not comments.exists():
+                return self.build_response(
+                    status.HTTP_204_NO_CONTENT
+                )
+        
+            return self.build_response(
+                message='Successful retrieval',
+                comments=CommentSerializer(comments, many=True).data
+            )
+        
+        except Post.DoesNotExist:
+            return self.build_response(
+                status.HTTP_404_NOT_FOUND,
+                message='Post not found'
+            )
+    
+    def post(self, request):
+        success, result = self.get_data(request, ('content', lambda c: bool(c.strip())), ('id', self.is_id))
+        if not success:
+            return self.build_response(
+                status.HTTP_400_BAD_REQUEST,
+                message='Invalid or missing parameter',
+                errors=result
+            )
+        
+        if Comment.objects.filter(post__id=result['id'], user=request.user).exists():
+            return self.build_response(
+                status.HTTP_409_CONFLICT,
+                message='You have already commented on this post'
+            )
+        
+        try:
+            post = Post.objects.filter(is_visible=True).get(id=result['id'])
+            comment = Comment.objects.create(post=post, user=request.user, content=result['content'])
+            if comment:
+                return self.build_response(
+                    status.HTTP_201_CREATED,
+                    message='Comment created successfully'
+                )
+            else:
+                return self.build_response(
+                    status.HTTP_400_BAD_REQUEST
+                )
+        except Post.DoesNotExist:
+            return self.build_response(
+                status.HTTP_404_NOT_FOUND,
+                message='Post not found'
+            )
+        
+        
+class PostLike(APIView, ResponseBuilderMixin, GetDataMixin):
+    throttle_scope = 'like'
+    permission_classes = (IsAuthenticated,)
+    
+    def get(self, request):
+        success, result = self.get_data(request, ('id', self.is_id))
+        
+        if not success:
+            return self.build_response(
+                status.HTTP_400_BAD_REQUEST,
+                message='Invalid or missing parameter',
+                errors=result
+            )
+        
+        try:
+            post = Post.objects.prefetch_related('liked_by').filter(is_visible=True).get(id=result['id'])
+            if post.liked_by.filter(id=request.user.id).exists():
+                post.liked_by.remove(request.user)
+                return self.build_response(
+                    status.HTTP_200_OK,
+                    message='Like removed successfully',
+                    is_liked=False
+                )
+            else:
+                post.liked_by.add(request.user)
+                return self.build_response(
+                    status.HTTP_200_OK,
+                    message='Like added successfully',
+                    is_liked=True
+                )
+        except Post.DoesNotExist:
+            return self.build_response(
+                status.HTTP_404_NOT_FOUND,
+                message='Post not found'
+            )
+        
+        
+class PostDownload(APIView, ResponseBuilderMixin, GetDataMixin):
+    throttle_scope = 'download'
+
+    def get(self, request):
+        success, result = self.get_data(request, ('id', self.is_id))
+        
+        if not success:
+            return self.build_response(
+                status.HTTP_400_BAD_REQUEST,
+                message='Invalid or missing parameter',
+                errors=result
+            )
+        
+        try:
+            post = Post.objects.prefetch_related('medias__files').filter(is_visible=True).get(id=result['id'])
+            post.download_count += 1
+            post.save()
+            links = [request.build_absolute_uri(f.file.url) for media in post.medias.all() for f in media.files.all()]
+            
+            return self.build_response(
+                status.HTTP_200_OK,
+                message='Download links are ready to use',
+                links=links
+            )
+        except Post.DoesNotExist:
+            return self.build_response(
+                status.HTTP_404_NOT_FOUND,
+                message='Post not found'
+            )
+            
+            
+class PostSuggestion(APIView, ResponseBuilderMixin, GetDataMixin, CachedResponseMixin):
+    throttle_scope = 'suggestion'
+    
+    def get(self, request):
+        success, result = self.get_data(request, ('id', self.is_id))
+        
+        if not success:
+            return self.build_response(
+                status.HTTP_400_BAD_REQUEST,
+                message='Invalid or missing parameter',
+                errors=result
+            )
+        
+        try:
+            post = Post.objects.get(id=result['id'])
+            if not post.is_visible:
+                raise Post.DoesNotExist
+            
+            self.set_cache_key(f'suggestion-{post.id}')
+            suggestion = self.get_cached(Post) or Post.objects.exclude(id=post.id).filter(is_visible=True, categories__id__in=list(post.categories.values_list('id', flat=True))).order_by('-updated_at')
+            if not self._restored_from_cache:
+                self.store_cached(suggestion)
+            
+            return self.build_response(
+                status.HTTP_200_OK,
+                message='Suggested posts based on category',
+                posts=list(suggestion.values_list('id', flat=True)),
+                is_cached=self._restored_from_cache
+            )
+        except Post.DoesNotExist:
+            return self.build_response(
+                status.HTTP_404_NOT_FOUND,
+                message='Post not found'
+            )

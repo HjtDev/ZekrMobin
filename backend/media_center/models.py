@@ -3,7 +3,6 @@ from django.db import models
 from django.utils.text import slugify
 from django_resized import ResizedImageField
 from moviepy import VideoFileClip, AudioFileClip
-from account.models import User
 from logging import getLogger
 import mimetypes
 
@@ -36,11 +35,13 @@ class Comment(models.Model):
         verbose_name = 'نظر'
         verbose_name_plural = 'نظرات'
     
-    user = models.ForeignKey(User, related_name='comments', on_delete=models.CASCADE, verbose_name='کاربر')
+    user = models.ForeignKey('account.User', related_name='comments', on_delete=models.CASCADE, verbose_name='کاربر')
     post = models.ForeignKey('media_center.Post', related_name='comments', on_delete=models.CASCADE, verbose_name='پست')
     content = models.TextField(max_length=500, verbose_name='کامنت')
     
     is_verified = models.BooleanField(default=False, verbose_name='نمایش در سایت')
+    
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='تاریخ ایجاد')
     
     def __str__(self):
         return f'نظر {self.user.name} بر روی پست {self.post.title}'
@@ -144,14 +145,14 @@ class Post(models.Model):
         verbose_name = 'پست'
         verbose_name_plural = 'پست ها'
         
-    publisher = models.ForeignKey(User, related_name='posts', on_delete=models.SET_NULL, blank=True, null=True, verbose_name='منتشر کننده')
+    publisher = models.ForeignKey('account.User', related_name='posts', on_delete=models.SET_NULL, blank=True, null=True, verbose_name='منتشر کننده')
     
     title = models.CharField(max_length=50, verbose_name='تیتر پست')
     thumbnail = ResizedImageField(upload_to=dynamic_post_path, size=[240, 240], crop=['middle', 'center'], quality=100, verbose_name='عکس کاور', help_text='140 * 40')
 
     is_visible = models.BooleanField(default=True, verbose_name='نمایش در سایت')
     
-    liked_by = models.ManyToManyField(User, related_name='liked_posts', blank=True, verbose_name='لایک شده توسط')
+    liked_by = models.ManyToManyField('account.User', related_name='liked_posts', blank=True, verbose_name='لایک شده توسط')
     recommended_by_site = models.BooleanField(default=False, verbose_name='پیشنهادی سایت')
     
     views_count = models.PositiveIntegerField(default=0, verbose_name='بازدید')
