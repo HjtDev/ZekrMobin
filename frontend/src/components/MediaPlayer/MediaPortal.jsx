@@ -11,10 +11,14 @@ import LazySection from '../LazyLoader/LazySection.jsx';
 import { getComments, createComments } from '../../api/comment.js';
 import { toast } from 'react-toastify';
 import { useAuth } from '../../contexts/AuthContext.jsx';
+import likePost from '../../api/like.js';
+import downloadPost from '../../api/download.js';
+import ShareLink from '../NativeShare/ShareLink.jsx';
+import getSuggestedPosts from '../../api/suggestion.js';
+import toJalaliDate from "../../assets/jalaali-conventor.js";
 
 const modalRoot = document.getElementById("modal-root");
 
-// --- helper: debounce (used for resize) ---
 const debounce = (func, delay) => {
     let timeoutId;
     return function(...args) {
@@ -159,9 +163,9 @@ const PlaylistContainer = ({ media = [], activeMediaId, onSelect }) => {
 };
 
 const CommentInput = ({ postID }) => {
-    const { isLoggedIn } = useAuth();
 
     const [commentContent, setCommentContent] = useState('');
+    const { isLoggedIn } = useAuth();
     const sendComment = async (postID, commentContent) => {
         if(!isLoggedIn) {
             toast.warning('ابتدا یک حساب کاربری بسازید.');
@@ -169,7 +173,7 @@ const CommentInput = ({ postID }) => {
         }
         toast.info('در حال ثبت نظر...');
         const { success, msg } = await createComments(postID, commentContent);
-        msg.forEach((message, index) => {
+        msg.forEach((message) => {
             if(success) {
                 toast.success(message);
             } else {
@@ -260,6 +264,64 @@ const MediaPortal = ({ isOpen, onClose, postID }) => {
     const [activeMedia, setActiveMedia] = useState(null);
     const [activeQuality, setActiveQuality] = useState(null);
     const [loading, setLoading] = useState(false);
+    const { isLoggedIn } = useAuth();
+
+    const getDownloadLink = async () => {
+        if(!post) {
+            toast.warning('این پست قابل دانلود نیست.');
+        }
+        const { success, msg, links } = await downloadPost(post.id);
+        const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+        if(success) {
+            msg.forEach((message) => {
+                toast.success(message);
+            });
+            await delay(1000);
+            for(const link of links) {
+                window.open(link);
+                await delay(250);
+            }
+        } else {
+            msg.forEach((message) => {
+                toast.error(message);
+            });
+        }
+    }
+
+    const updateLike = async () => {
+        if(!isLoggedIn) {
+            toast.warning('ابتدا یک حساب کاربری بسازید.');
+            return;
+        }
+        if(!post) {
+            toast.warning('این پست قابل لایک کردن نیست.');
+            return;
+        }
+        const { success, msg, is_liked } = await likePost(post.id);
+        msg.forEach((message) => {
+            if(success) {
+                toast.success(message);
+            } else {
+                toast.error(message);
+            }
+        });
+        if(success) {
+            setPost((prev) => ({...prev, "is_liked": is_liked}));
+        }
+    }
+
+    const getSuggestionList = async () => {
+        if(!post) {
+            toast.warning('مشکلی پیش آمد لطفا بعدا تلاش کنید.');
+        }
+        const { success, posts } = await getSuggestedPosts(post.id);
+        if(success) {
+            toast.success('در حال بارگزاری پست ها');
+            console.log('Posts:', posts);
+        } else {
+            toast.error('پستی برای پیشنهاد وجود ندارد.');
+        }
+    }
 
     // fetch post when postID changes
     useEffect(() => {
@@ -390,53 +452,107 @@ const MediaPortal = ({ isOpen, onClose, postID }) => {
                         {loading ? (
                             <CustomSkeleton height={500} />
                         ) : activeQuality ? (
-                            <MediaPlayer
-                                title={post?.title || 'Media Player'}
-                                poster={post?.thumbnail}  // 🖼 Use poster prop for thumbnail
-                                aspectRatio={isMobile ? '9/16' : '16/9'}
-                                src={activeMedia?.files?.map((file) => {
-                                    let mimeType = 'video/mp4';
-                                    if (file.media_type === 'audio') {
-                                        if (file.file.endsWith('.opus')) mimeType = 'audio/ogg';
-                                        else if (file.file.endsWith('.mp3')) mimeType = 'audio/mpeg';
-                                        else if (file.file.endsWith('.wav')) mimeType = 'audio/wav';
-                                    } else if (file.media_type === 'video') {
-                                        if (file.file.endsWith('.webm')) mimeType = 'video/webm';
-                                        else mimeType = 'video/mp4';
+                            <div className='d-flex justify-content-center align-items-center flex-column' style={{ marginBottom: "15rem"}}>
+                                {
+                                    activeMedia?.files?.[0].media_type === "audio" &&
+                                        <img
+                                            src={post.thumbnail}
+                                            alt={post.title}
+                                            style={{
+                                                width: isMobile ? '100%' : '450px',
+                                                borderRadius: '12px',
+                                                marginBottom: '5rem',
+                                                objectFit: 'cover',
+                                                boxShadow: '1px 1px 12px'
+                                            }}
+                                        />
+                                }
+                                <MediaPlayer
+                                    title={post?.title || 'Media Player'}
+                                    poster={post?.thumbnail}
+                                    aspectRatio={
+                                        activeMedia?.files?.[0]?.media_type === "audio"
+                                            ? "9/1"
+                                            : (isMobile ? "9/16" : "16/9")
                                     }
+                                    src={activeMedia?.files?.map((file) => {
+                                        let mimeType = 'video/mp4';
+                                        if (file.media_type === 'audio') {
+                                            if (file.file.endsWith('.opus')) mimeType = 'audio/ogg';
+                                            else if (file.file.endsWith('.mp3')) mimeType = 'audio/mpeg';
+                                            else if (file.file.endsWith('.wav')) mimeType = 'audio/wav';
+                                        } else if (file.media_type === 'video') {
+                                            if (file.file.endsWith('.webm')) mimeType = 'video/webm';
+                                            else mimeType = 'video/mp4';
+                                        }
 
-                                    return {
-                                        src: file.file,
-                                        type: mimeType,
-                                        label: file.quality || '',
-                                        default: file.id === activeQuality?.id
-                                    };
-                                })}
-                            >
-                                <MediaProvider />
-                                <PlyrLayout
-                                    icons={plyrLayoutIcons}
-                                    thumbnails={post?.thumbnail}
-                                />
-                            </MediaPlayer>
+                                        return {
+                                            src: file.file,
+                                            type: mimeType,
+                                            label: file.quality || '',
+                                            default: file.id === activeQuality?.id
+                                        };
+                                    })}
+                                >
+                                    <MediaProvider/>
+                                    <PlyrLayout
+                                        icons={plyrLayoutIcons}
+                                        thumbnails={post?.thumbnail}
+                                    />
+                                </MediaPlayer>
+                            </div>
 
                         ) : (
                             <div className="text-center text-light py-5">
                                 رسانه‌ای برای پخش موجود نیست.
                             </div>
                         )}
+                        <div className="text-gray d-flex justify-content-between align-items-center" style={{ fontWeight: "bold", marginBottom: "15rem" }}>
+                            <h2 className='text-right w-100' style={{ fontWeight: "bold", fontSize: "20rem", color: "gray" }}>{post?.title}</h2>
+                        </div>
                         <div className="row justify-content-between align-items-center text-center option-container">
                             <div className="col-3 hover-info">
-                                <a href="#" className="text-muted"><span className={`fa fa-thumbs-up d-block ${post?.is_liked ? 'text-info' : ''}`} style={{ cursor: "pointer" }}></span>لایک</a>
+                                <a href="#" onClick={() => updateLike()} className="text-muted"><span className={`fa fa-thumbs-up d-block ${post?.is_liked ? 'text-info' : ''}`} style={{ cursor: "pointer" }}></span>لایک</a>
                             </div>
                             <div className="col-3 hover-info">
-                                <a href="#" className="text-muted"><span className="fa fa-share d-block" style={{ cursor: "pointer" }}></span>اشتراک گذاری</a>
+                                <ShareLink url={`${window.location.origin}/?play=${post?.id}`} title={post?.title} text="check this out..." className="text-muted">
+                                    <span className="fa fa-share d-block" style={{ cursor: "pointer" }}></span>اشتراک
+                                </ShareLink>
                             </div>
                             <div className="col-3 hover-info">
-                                <a href="#" className="text-muted"><span className="fa fa-list d-block" style={{ cursor: "pointer" }}></span>پست های دیگر</a>
+                                <a href="#" onClick={() => getSuggestionList()} className="text-muted"><span className="fa fa-list d-block" style={{ cursor: "pointer" }}></span>پیشنهادی</a>
                             </div>
                             <div className="col-3 hover-info">
-                                <a href="#" className="text-muted"><span className="fa fa-download d-block" style={{ cursor: "pointer" }}></span>دانلود</a>
+                                <a href={activeMedia?.files?.[0]?.file} target="_blank" className="text-muted"><span className="fa fa-download d-block" style={{ cursor: "pointer" }}></span>دانلود</a>
+                            </div>
+                        </div>
+                        <div className="text-gray d-flex justify-content-between align-items-center" style={{ fontWeight: "bold", marginTop: "10rem", marginBottom: "10rem" }}>
+                            <p className='text-right w-100'>تاریخ انتشار: {post?.created_at && toJalaliDate(post?.created_at)}</p>
+                            <div style={{
+                                display: "flex",
+                                flexDirection: "row",
+                                flexWrap: "wrap",
+                                gap: "8px",
+                                width: "100%"
+                            }}>
+                                {post?.tags?.map(tag => (
+                                    <a
+                                        href="#"
+                                        key={tag.id}
+                                        style={{
+                                            backgroundColor: "rgba(20,27,42,0.64)",
+                                            boxShadow: "1px 1px 5px #0000000109",
+                                            color: "#ffffff",
+                                            borderRadius: "12px",
+                                            padding: "4px 10px",
+                                            fontSize: "15rem",
+                                            fontWeight: "500",
+                                            border: "1px solid #08306b",
+                                        }}
+                                    >
+            {tag.name || '—'}
+        </a>
+                                ))}
                             </div>
                         </div>
                     </div>

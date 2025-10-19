@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { toast } from 'react-toastify';
 
 const api = axios.create({
     baseURL: import.meta.env.VITE_API_BASE_URL,
@@ -18,6 +19,19 @@ api.interceptors.request.use((config) => {
     }
     return config;
 });
+
+api.interceptors.response.use(
+    (response) => response,
+    (err) => {
+        if(err.response && err.response.status === 429) {
+            console.warn('Too many requests...');
+            toast.error('درخواست های زیادی از طرف شما ارسال شده است لطفا کمی صبر کنید.');
+            toast.warning('دسترسی شما به طور موقت محدود شد.')
+            return Promise.resolve({  data: null, status: 429, handled: true });
+        }
+        return Promise.reject(err);
+    }
+)
 
 export const refreshCSRF = async () => {
     try {

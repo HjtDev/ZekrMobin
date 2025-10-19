@@ -57,9 +57,17 @@ const getMainPageData = async (content_section, filters = '', limit = 0) => {
                 }
             }
         );
-        return {
-            success: true,
-            content: res?.data.posts || res?.data.artists || res?.data.categories
+        if(res.status === 200) {
+            return {
+                success: true,
+                content: res?.data.posts || res?.data.artists || res?.data.categories
+            }
+        } else {
+            console.error('Failed to retrieve section content:', content_section, res.data);
+            return {
+                success: false,
+                content: null
+            }
         }
     } catch (err) {
         console.error('Failed to retrieve section content:', content_section, err?.response.data || err.message);
