@@ -36,7 +36,6 @@ class SinglePost(APIView, ResponseBuilderMixin, GetDataMixin):
             
             post.views_count += 1
             if request.user.is_authenticated:
-                print('Adding to history:', post, request.user)
                 request.user.add_to_history(post)
             post.save()
             
@@ -71,7 +70,7 @@ class FilteredPosts(APIView, ResponseBuilderMixin, GetDataMixin, CachedResponseM
                     )
                 ).order_by('-order')
             case 'new-posts':
-                qs = qs.filter(created_at__gt=now - timedelta(hours=148)).order_by('-updated_at')
+                qs = qs.filter(created_at__gt=now - timedelta(hours=348)).order_by('-updated_at')
             case 'live-suggestions':
                 qs = qs.filter(recommended_by_site=True).order_by('-updated_at')
             case _:
