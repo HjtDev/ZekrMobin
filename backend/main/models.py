@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.core.exceptions import ValidationError
 from django.db import models
 from django_resized import ResizedImageField
 from account.models import User
@@ -108,6 +109,7 @@ class ClubMember(models.Model):
         return self.name
     
     
+    
 class MainPage(models.Model):
     class Meta:
         verbose_name = 'تنظیمات صفحه اصلی'
@@ -122,6 +124,11 @@ class MainPage(models.Model):
         TOP_ALBUM = ('top-album', 'دسته بندی های برتر')
         TOP_USER_ALBUM = ('top-user-album', 'دسته بندی های پر مخاطب')
         
+    @staticmethod
+    def validate_category_sections(value):
+        if value not in (MainPage.SectionChoices.TOP_ALBUM, MainPage.SectionChoices.TOP_USER_ALBUM):
+            raise ValidationError('بخش پنجم و ششم باید دسته بندی های برتر یا دسته بندی های پر مخاطب باشد.')
+        
     section1_title = models.CharField(max_length=30, verbose_name='تیتر')
     section1_content = models.CharField(max_length=30, choices=SectionChoices.choices, verbose_name='محتوا')
     
@@ -135,10 +142,10 @@ class MainPage(models.Model):
     section4_content = models.CharField(max_length=30, choices=SectionChoices.choices, verbose_name='محتوا')
     
     section5_title = models.CharField(max_length=30, verbose_name='تیتر')
-    section5_content = models.CharField(max_length=30, choices=SectionChoices.choices, verbose_name='محتوا')
+    section5_content = models.CharField(max_length=30, choices=SectionChoices.choices, validators=[validate_category_sections], verbose_name='محتوا')
     
     section6_title = models.CharField(max_length=30, verbose_name='تیتر')
-    section6_content = models.CharField(max_length=30, choices=SectionChoices.choices, verbose_name='محتوا')
+    section6_content = models.CharField(max_length=30, choices=SectionChoices.choices, validators=[validate_category_sections], verbose_name='محتوا')
     
     section7_title = models.CharField(max_length=30, verbose_name='تیتر')
     section7_content = models.CharField(max_length=30, choices=SectionChoices.choices, verbose_name='محتوا')
