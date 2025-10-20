@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react'
 import { getMainPageData, getSectionData } from '../api/section-data.js';
+import truncateText from "../assets/js/utility.js";
 
 const TopPosts = () => {
     const [pageData, setPageData] = useState(null);
@@ -130,7 +131,7 @@ const TopPosts = () => {
                                         </div>
                                         <div className="ms_rcnt_box_text">
                                             <h3>
-                                                <a href="#">{category.name}</a>
+                                                <a href="#">{truncateText(category?.name, 50, 45)}</a>
                                             </h3>
                                             <p>دسته بندی منتخب - {category.post_count} پست</p>
                                         </div>

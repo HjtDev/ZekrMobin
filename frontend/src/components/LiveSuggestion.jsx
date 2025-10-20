@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getSectionData, getMainPageData } from '../api/section-data.js';
 import MediaPortal from './MediaPlayer/MediaPortal.jsx';
+import truncateText from "../assets/js/utility.js";
 
 const LiveSuggestion = () => {
     const [pageData, setPageData] = useState(null);
@@ -146,7 +147,7 @@ const LiveSuggestion = () => {
 
                                     <div className="ms_rcnt_box_text">
                                         <h3>
-                                            <a href="#">{post.title}</a>
+                                            <a href="#">{truncateText(post?.title, 50, 45)}</a>
                                         </h3>
                                     </div>
 

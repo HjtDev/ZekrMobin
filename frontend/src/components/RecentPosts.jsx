@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { getSectionData, getMainPageData } from '../api/section-data.js';
 import MediaPortal from './MediaPlayer/MediaPortal.jsx';
+import truncateText from "../assets/js/utility.js";
 
 const RecentPosts = () => {
     const initializeSwiper = () => {
@@ -90,7 +91,7 @@ const RecentPosts = () => {
                                     </div>
                                 </div>
                                 <div className="ms_rcnt_box_text">
-                                    <h3><a href="#">{item?.title}</a></h3>
+                                    <h3><a href="#">{truncateText(item?.title, 50, 45)}</a></h3>
                                     <p>{item?.artist.name}</p>
                                 </div>
 

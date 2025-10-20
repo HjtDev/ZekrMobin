@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react'
 import { getMainPageData, getSectionData } from '../api/section-data.js';
+import truncateText from "../assets/js/utility.js";
 
 const TopArtists = () => {
     const [pageData, setPageData] = useState(null);
@@ -129,7 +130,7 @@ const TopArtists = () => {
                                         </div>
                                         <div className="ms_rcnt_box_text">
                                             <h3>
-                                                <a href="#">{element.name}</a>
+                                                <a href="#">{truncateText(element?.name, 50, 45)}</a>
                                             </h3>
                                         </div>
                                     </div>
