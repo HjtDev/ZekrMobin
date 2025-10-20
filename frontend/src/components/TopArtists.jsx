@@ -78,51 +78,6 @@ const TopArtists = () => {
                                             <img src={element.profile_picture} alt=""/>
                                             <div className="ms_main_overlay">
                                                 <div className="ms_box_overlay"/>
-                                                <div className="ms_more_icon">
-                                                    <img src="images/svg/more.svg" alt=""/>
-                                                </div>
-                                                <ul className="more_option">
-                                                    <li>
-                                                        <a href="#">
-                                                          <span className="opt_icon">
-                                                            <span className="icon icon_fav"/>
-                                                          </span>
-                                                            علاقه مندی ها
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="#">
-                          <span className="opt_icon">
-                            <span className="icon icon_queue"/>
-                          </span>
-                                                            افزودن به لیست
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="#">
-                          <span className="opt_icon">
-                            <span className="icon icon_dwn"/>
-                          </span>
-                                                            دانلود
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="#">
-                          <span className="opt_icon">
-                            <span className="icon icon_playlst"/>
-                          </span>
-                                                            افزودن به پلی لیست
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="#">
-                          <span className="opt_icon">
-                            <span className="icon icon_share"/>
-                          </span>
-                                                            اشتراک گذاری
-                                                        </a>
-                                                    </li>
-                                                </ul>
                                                 <div className="ms_play_icon">
                                                     <img src="images/svg/play.svg" alt=""/>
                                                 </div>

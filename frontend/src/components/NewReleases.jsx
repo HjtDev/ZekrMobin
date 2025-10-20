@@ -99,7 +99,7 @@ const NewReleases = () => {
 
                                         <div className="w_tp_song_name">
                                             <h3>
-                                                <a href="#">{truncateText(post?.title, 50, 45)}</a>
+                                                <a href="#">{truncateText(post?.title, 15, 20)}</a>
                                             </h3>
                                             <p>{post.artist?.name || "ناشناس"}</p>
                                         </div>
