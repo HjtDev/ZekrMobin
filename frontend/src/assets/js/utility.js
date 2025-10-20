@@ -1,6 +1,6 @@
-const truncateText = (text) => {
+const truncateText = (text, characters) => {
     if(!text) return '';
-    return /Mobi|Androind/.test(navigator.userAgent) ? text.length > 5 ? text.slice(0, 4) + '...' : text : text
+    return /Mobi|Androind/.test(navigator.userAgent) ? text.length > characters ? text.slice(0, characters - 4) + '...' : text : text
 }
 
 export default truncateText;
