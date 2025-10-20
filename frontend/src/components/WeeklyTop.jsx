@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { getMainPageData, getSectionData } from "../api/section-data.js";
 import MediaPortal from "./MediaPlayer/MediaPortal.jsx";
+import truncateText from "../assets/js/utility.js";
 
 const WeeklyTop = () => {
     const [pageData, setPageData] = useState(null);
@@ -81,7 +82,7 @@ const WeeklyTop = () => {
                                             </div>
                                             <div className="w_tp_song_name">
                                                 <h3>
-                                                    <a href="#">{post.title}</a>
+                                                    <a href="#">{truncateText(post?.title, -1, 25)}</a>
                                                 </h3>
                                                 <p>{post.artist?.name || "ناشناس"}</p>
                                             </div>

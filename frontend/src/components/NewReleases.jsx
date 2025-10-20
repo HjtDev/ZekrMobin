@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getMainPageData, getSectionData } from '../api/section-data.js';
 import MediaPortal from './MediaPlayer/MediaPortal.jsx';
+import truncateText from "../assets/js/utility.js";
 
 const NewReleases = () => {
     const [pageData, setPageData] = useState(null);
@@ -98,14 +99,13 @@ const NewReleases = () => {
 
                                         <div className="w_tp_song_name">
                                             <h3>
-                                                <a href="#">{post.title}</a>
+                                                <a href="#">{truncateText(post?.title, 50, 45)}</a>
                                             </h3>
                                             <p>{post.artist?.name || "ناشناس"}</p>
                                         </div>
                                     </div>
 
                                     <div className="weekly_right">
-                                        {/* ✅ Use backend formatted duration */}
                                         <span className="w_song_time">{post.duration}</span>
                                     </div>
 

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { getMainPageData, getSectionData } from '../api/section-data.js'
+import truncateText from "../assets/js/utility.js";
 
 const TopCategories = () => {
     const [pageData, setPageData] = useState(null)
@@ -90,7 +91,7 @@ const TopCategories = () => {
                                     <div className="ms_box_overlay_on">
                                         <div className="ovrly_text_div">
                       <span className="ovrly_text1">
-                        <a href="#">{category.name}</a>
+                        <a href="#">{truncateText(category?.name, 50, 45)}</a>
                       </span>
                                         </div>
                                     </div>
