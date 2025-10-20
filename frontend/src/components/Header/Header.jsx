@@ -1,6 +1,7 @@
 import React, {useState} from 'react'
 import { useAuth } from "../../contexts/AuthContext.jsx";
 import {Link} from "react-router-dom";
+import truncateText from "../../assets/js/utility.js";
 
 const Header = () => {
     const {user, isLoggedIn, logout} = useAuth();
@@ -17,7 +18,7 @@ const Header = () => {
     const LoggedInButtons = (
         <div className="ms_top_btn">
             <a href="#" onClick={toggleUserDropDown} role="button" className="ms_admin_name">
-                {user?.name}
+                {truncateText(user?.name)}
                 {
                     user?.profile_picture ?
                     <img src={import.meta.env.VITE_BASE_URL + user.profile_picture} className="ms_pro_name" alt="User Profile Picture"/> :
@@ -78,18 +79,8 @@ const Header = () => {
                         placeholder="جستجوی آهنگ، خواننده و ..."
                     />
                     <span className="search_icon">
-              <img src="images/svg/search.svg" alt=""/>
-            </span>
-                </div>
-                <div className="ms_top_trend">
-            <span>
-              <a href="#" className="ms_color">
-                آهنگ های پربازدید :
-              </a>
-            </span>{" "}
-                    <span className="top_marquee">
-              <a href="#">Dream your moments</a>
-            </span>
+                        <img src="images/svg/search.svg" alt="Search Icon"/>
+                    </span>
                 </div>
             </div>
             <div className="ms_top_right">

@@ -12,6 +12,7 @@
   "dependencies": {
     "@vidstack/react": "^1.12.13",
     "axios": "^1.12.2",
+    "jalaali-js": "^1.2.8",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-intersection-observer": "^9.16.0",
