@@ -12,7 +12,7 @@ class SettingView(APIView, ResponseBuilderMixin, GetDataMixin):
     throttle_scope = 'setting'
     
     def get(self, request):
-        success, result = self.get_data(request, ('section', lambda s: all(section.strip() in ('logo', 'landing', 'footer_content', 'club', 'contact', 'social', 'rights') for section in s.split(','))))
+        success, result = self.get_data(request, ('section', lambda s: all(section.strip() in ('logo', 'landing', 'footer_content', 'club', 'contact', 'social', 'rights', 'ad') for section in s.split(','))))
         
         if not success:
             return self.build_response(
@@ -28,7 +28,8 @@ class SettingView(APIView, ResponseBuilderMixin, GetDataMixin):
             'club': ['club_enabled', 'club_welcome_email_enabled', 'club_title', 'club_text'],
             'contact': ['contact_us_title', 'contact_us_phone', 'contact_us_email', 'contact_us_address'],
             'social': ['telegram_link', 'whatsapp_link', 'facebook_link', 'linkedin_link', 'twitter_link'],
-            'rights': ['rights_text']
+            'rights': ['rights_text'],
+            'ad': ['ad1_image', 'ad2_image']
         }
         
         setting = Setting.objects.first()

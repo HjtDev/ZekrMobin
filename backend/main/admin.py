@@ -62,6 +62,13 @@ class SettingAdmin(admin.ModelAdmin):
                 'classes': ('collapse',),
             }
         ),
+        (
+            'تبلیغات',
+            {
+                'fields': ('ad1_image', 'ad2_image'),
+                'classes': ('collapse',),
+            }
+        ),
     )
     
     def has_add_permission(self, request):

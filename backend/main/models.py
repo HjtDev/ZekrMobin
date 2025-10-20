@@ -48,6 +48,9 @@ class Setting(models.Model):
     landing_text = models.TextField(max_length=250, verbose_name='توضیحات')
     landing_image = ResizedImageField(upload_to='settings/landing/', size=[511, 539], crop=['middle', 'center'], quality=100, force_format='PNG', verbose_name='عکس', help_text='511 * 539')
     
+    ad1_image = ResizedImageField(upload_to='settings/ads/', size=[728, 90], crop=['middle', 'center'], quality=100, force_format='JPEG', blank=True, null=True, verbose_name='تبلیغ اول', help_text='728 * 90')
+    ad2_image = ResizedImageField(upload_to='settings/ads/', size=[728, 90], crop=['middle', 'center'], quality=100, force_format='JPEG', blank=True, null=True, verbose_name='تبلیغ دوم', help_text='728 * 90')
+    
     def __str__(self):
         return 'تنظیمات'
 
@@ -110,6 +113,10 @@ class ClubMember(models.Model):
     
     
     
+def validate_category_sections(value):
+    if value not in (MainPage.SectionChoices.TOP_ALBUM, MainPage.SectionChoices.TOP_USER_ALBUM):
+        raise ValidationError('بخش پنجم و ششم باید دسته بندی های برتر یا دسته بندی های پر مخاطب باشد.')
+    
 class MainPage(models.Model):
     class Meta:
         verbose_name = 'تنظیمات صفحه اصلی'
@@ -124,10 +131,6 @@ class MainPage(models.Model):
         TOP_ALBUM = ('top-album', 'دسته بندی های برتر')
         TOP_USER_ALBUM = ('top-user-album', 'دسته بندی های پر مخاطب')
         
-    @staticmethod
-    def validate_category_sections(value):
-        if value not in (MainPage.SectionChoices.TOP_ALBUM, MainPage.SectionChoices.TOP_USER_ALBUM):
-            raise ValidationError('بخش پنجم و ششم باید دسته بندی های برتر یا دسته بندی های پر مخاطب باشد.')
         
     section1_title = models.CharField(max_length=30, verbose_name='تیتر')
     section1_content = models.CharField(max_length=30, choices=SectionChoices.choices, verbose_name='محتوا')
