@@ -1,6 +1,23 @@
-import React from 'react'
+import React, {useEffect, useState} from 'react'
+import { Link } from 'react-router-dom';
+import fetchSettings from '../../api/settings.js';
+import { toast } from 'react-toastify';
 
 const Sidebar = () => {
+    const [logos, setLogos] = useState(null);
+    useEffect(() => {
+        const getLogo = async () => {
+            const { success, msg, config } = await fetchSettings(["logo"]);
+            if(success) {
+                setLogos(config);
+                console.log(success, msg, config, logos);
+            } else {
+                toast.error("در دریافت لوگو سایت مشکلی پیش آمد.");
+                console.error(msg);
+            }
+        }
+        getLogo();
+    }, []);
     return (
         <div className="ms_sidemenu_wrapper">
             <div className="ms_nav_close">
@@ -9,25 +26,25 @@ const Sidebar = () => {
             <div className="ms_sidemenu_inner">
                 <div className="ms_logo_inner">
                     <div className="ms_logo">
-                        <a href="../../../index.html">
-                            <img src="images/logo.png" alt="" className="img-fluid" />
-                        </a>
+                        <Link to="/">
+                            <img src={logos?.logo} alt="" className="img-fluid" />
+                        </Link>
                     </div>
                     <div className="ms_logo_open">
-                        <a href="../../../index.html">
-                            <img src="images/open_logo.png" alt="" className="img-fluid" />
-                        </a>
+                        <Link to="/">
+                            <img src={logos?.open_logo} alt="" className="img-fluid" />
+                        </Link>
                     </div>
                 </div>
                 <div className="ms_nav_wrapper">
                     <ul>
                         <li>
-                            <a href="../../../index.html" className="active" title="خانه">
-                <span className="nav_icon">
-                  <span className="icon icon_discover" />
-                </span>
+                            <Link to="/">
+                                <span className="nav_icon">
+                                    <span className="icon icon_discover"/>
+                                </span>
                                 <span className="nav_text">خانه</span>
-                            </a>
+                            </Link>
                         </li>
                         <li>
                             <a href="album.html" title="آلبوم ها">
