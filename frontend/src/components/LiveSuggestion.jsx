@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { getSectionData, getMainPageData } from '../api/section-data.js';
 import MediaPortal from './MediaPlayer/MediaPortal.jsx';
 import truncateText from "../assets/js/utility.js";
+import {DownloadButton, LikeButton, ShareButton} from "../assets/js/quickActions.jsx";
 
 const LiveSuggestion = () => {
     const [pageData, setPageData] = useState(null);
@@ -100,48 +101,13 @@ const LiveSuggestion = () => {
                                             <div className="ms_more_icon">
                                                 <img src="images/svg/more.svg" alt="More" />
                                             </div>
+
                                             <ul className="more_option">
-                                                <li>
-                                                    <a href="#">
-                                                        <span className="opt_icon">
-                                                            <span className="icon icon_fav" />
-                                                        </span>
-                                                        علاقه مندی ها
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="#">
-                                                        <span className="opt_icon">
-                                                            <span className="icon icon_queue" />
-                                                        </span>
-                                                        افزودن به لیست
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="#">
-                                                        <span className="opt_icon">
-                                                            <span className="icon icon_dwn" />
-                                                        </span>
-                                                        دانلود
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="#">
-                                                        <span className="opt_icon">
-                                                            <span className="icon icon_playlst" />
-                                                        </span>
-                                                        افزودن به پلی لیست
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="#">
-                                                        <span className="opt_icon">
-                                                            <span className="icon icon_share" />
-                                                        </span>
-                                                        اشتراک گذاری
-                                                    </a>
-                                                </li>
+                                                <LikeButton postID={post?.id}/>
+                                                <DownloadButton postID={post?.id}/>
+                                                <ShareButton postID={post?.id}/>
                                             </ul>
+
                                         </div>
                                     </div>
 

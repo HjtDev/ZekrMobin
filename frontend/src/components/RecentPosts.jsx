@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { getSectionData, getMainPageData } from '../api/section-data.js';
 import MediaPortal from './MediaPlayer/MediaPortal.jsx';
-import truncateText from "../assets/js/utility.js";
+import truncateText from '../assets/js/utility.js';
+import { LikeButton, DownloadButton, ShareButton } from '../assets/js/quickActions.jsx';
 
 const RecentPosts = () => {
     const initializeSwiper = () => {
@@ -82,11 +83,9 @@ const RecentPosts = () => {
                                             <img src="images/svg/more.svg" alt="More" />
                                         </div>
                                         <ul className="more_option">
-                                            <li><a href="#"><span className="opt_icon"><span className="icon icon_fav" /></span> علاقه مندی ها</a></li>
-                                            <li><a href="#"><span className="opt_icon"><span className="icon icon_queue" /></span> افزودن به لیست</a></li>
-                                            <li><a href="#"><span className="opt_icon"><span className="icon icon_dwn" /></span> دانلود</a></li>
-                                            <li><a href="#"><span className="opt_icon"><span className="icon icon_playlst" /></span> افزودن به پلی لیست</a></li>
-                                            <li><a href="#"><span className="opt_icon"><span className="icon icon_share" /></span> اشتراک گذاری</a></li>
+                                            <LikeButton postID={item?.id} />
+                                            <DownloadButton postID={item?.id} />
+                                            <ShareButton postID={item?.id} />
                                         </ul>
                                     </div>
                                 </div>
