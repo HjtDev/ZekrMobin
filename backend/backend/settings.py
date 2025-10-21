@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'corsheaders',
+    'mptt',
     'main.apps.MainConfig',
     'account.apps.AccountConfig',
     'media_center.apps.MediaCenterConfig',

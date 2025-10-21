@@ -1,4 +1,5 @@
 from django.contrib import admin
+from mptt.admin import DraggableMPTTAdmin
 from .models import Post, Media, File, Category, Tag, Comment, Artist
 
 
@@ -10,17 +11,23 @@ class MediaInline(admin.TabularInline):
 
 
 @admin.register(Category)
-class CategoryAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'recommended_by_site')
-    list_editable = ('recommended_by_site',)
+class CategoryAdmin(DraggableMPTTAdmin):
+    mptt_indent_field = "name"
+    list_display = ('tree_actions', 'indented_title')
     search_fields = ('name',)
-    ordering = ('-id',)
-    
     fieldsets = (
         ('اطلاعات دسته‌بندی', {
             'fields': ('name', 'recommended_by_site', 'thumbnail')
         }),
+        ('درختچه', {
+            'fields': ('parent', 'get_children'),
+        }),
     )
+    readonly_fields = ('get_children',)
+    
+    def get_children(self, obj: Category):
+        return ', '.join(obj.get_children().values_list('name', flat=True))
+    get_children.short_description = 'دسته بندی ها فرزند'
 
 
 @admin.register(Tag)
