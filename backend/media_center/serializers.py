@@ -28,6 +28,8 @@ class CategorySerializer(ModelSerializer):
         read_only_fields = ('id',)
         
     def get_thumbnail(self, obj: Category):
+        if not obj.thumbnail:
+            return None
         request = self.context.get('request', None)
         return request.build_absolute_uri(obj.thumbnail.url) if request else obj.thumbnail.url
     

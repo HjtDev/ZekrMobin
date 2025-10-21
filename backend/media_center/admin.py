@@ -13,7 +13,8 @@ class MediaInline(admin.TabularInline):
 @admin.register(Category)
 class CategoryAdmin(DraggableMPTTAdmin):
     mptt_indent_field = "name"
-    list_display = ('tree_actions', 'indented_title')
+    list_display = ('tree_actions', 'indented_title', 'recommended_by_site')
+    list_editable = ('recommended_by_site',)
     search_fields = ('name',)
     fieldsets = (
         ('اطلاعات دسته‌بندی', {

@@ -24,7 +24,7 @@ class Category(MPTTModel):
         verbose_name_plural = 'دسته بندی ها'
     
     name = models.CharField(max_length=50, verbose_name='اسم دسته بندی')
-    thumbnail = ResizedImageField(upload_to='category/thumbnails/', size=[240, 240], verbose_name='عکس کاور')
+    thumbnail = ResizedImageField(upload_to='category/thumbnails/', size=[240, 240], blank=True, null=True, verbose_name='عکس کاور')
     recommended_by_site = models.BooleanField(default=False, verbose_name='دسته بندی منتخب')
     
     parent = TreeForeignKey(
@@ -38,6 +38,15 @@ class Category(MPTTModel):
     
     def __str__(self):
         return self.name
+    
+    def clean(self):
+        if not self.parent and not self.thumbnail:
+            raise ValidationError({'thumbnail': 'دسته بندی پدر باید یک عکس کاور داشته باشد.'})
+        return super().clean()
+    
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
 
 
 class Comment(models.Model):
