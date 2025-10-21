@@ -232,7 +232,7 @@ class TopArtists(APIView, ResponseBuilderMixin, GetDataMixin, CachedResponseMixi
             artists=ArtistSerializer(artists, context={'request': request}, many=True).data,
             is_cached=self._restored_from_cache
         )
-    
+
 
 class TopCategory(APIView, ResponseBuilderMixin, GetDataMixin, CachedResponseMixin):
     throttle_rate = 'top-categories'
@@ -253,28 +253,29 @@ class TopCategory(APIView, ResponseBuilderMixin, GetDataMixin, CachedResponseMix
         
         categories = self.get_cached(Category)
         if not categories:
+            qs = Category.objects.filter(parent__isnull=True).prefetch_related('posts', 'children')
             if user_rated:
-                categories = Category.objects.filter(recommended_by_site=True)
-            else:
-                categories = Category.objects.prefetch_related('posts').all()
+                qs = qs.filter(recommended_by_site=True)
             
-        categories = categories.annotate(rate=Sum('posts__liked_by')).order_by('-rate')
+            qs = qs.annotate(rate=Count('posts__liked_by')).order_by('-rate').distinct()
+            
+            if limit > 0:
+                qs = qs[:limit]
+            categories = qs
         
         if not categories.exists():
             return self.build_response(
                 status.HTTP_404_NOT_FOUND,
                 message='Category(s) not found'
             )
-            
-        if limit > 0:
-            categories = categories[:limit]
         
         if not self._restored_from_cache:
             self.store_cached(categories)
         
+        serializer = CategorySerializer(categories, many=True, context={'request': request})
         return self.build_response(
             message='Successful retrieval',
-            categories=CategorySerializer(categories, context={'request': request}, many=True).data,
+            categories=serializer.data,
             is_cached=self._restored_from_cache
         )
     

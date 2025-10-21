@@ -4,6 +4,7 @@ from django.utils.text import slugify
 from django_resized import ResizedImageField
 from moviepy import VideoFileClip, AudioFileClip
 from logging import getLogger
+from mptt.models import MPTTModel, TreeForeignKey
 import mimetypes
 
 
@@ -17,7 +18,7 @@ def dynamic_file_path(instance, filename):
     return f'Files/file-{slugify(instance.name)}/{filename}'
 
 
-class Category(models.Model):
+class Category(MPTTModel):
     class Meta:
         verbose_name = 'دسته بندی'
         verbose_name_plural = 'دسته بندی ها'
@@ -25,6 +26,15 @@ class Category(models.Model):
     name = models.CharField(max_length=50, verbose_name='اسم دسته بندی')
     thumbnail = ResizedImageField(upload_to='category/thumbnails/', size=[240, 240], verbose_name='عکس کاور')
     recommended_by_site = models.BooleanField(default=False, verbose_name='دسته بندی منتخب')
+    
+    parent = TreeForeignKey(
+        'self',
+        on_delete=models.CASCADE,
+        related_name='children',
+        null=True,
+        blank=True,
+        verbose_name='دسته بندی پدر'
+    )
     
     def __str__(self):
         return self.name

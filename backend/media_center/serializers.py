@@ -18,10 +18,13 @@ class QuickCategorySerializer(ModelSerializer):
 
 
 class CategorySerializer(ModelSerializer):
+    children = SerializerMethodField()
     post_count = SerializerMethodField()
+    thumbnail = SerializerMethodField()
+    
     class Meta:
         model = Category
-        fields = ('id', 'name', 'post_count', 'thumbnail', 'recommended_by_site')
+        fields = ('id', 'name', 'post_count', 'thumbnail', 'recommended_by_site', 'children')
         read_only_fields = ('id',)
         
     def get_thumbnail(self, obj: Category):
@@ -30,6 +33,10 @@ class CategorySerializer(ModelSerializer):
     
     def get_post_count(self, obj: Category):
         return obj.posts.count()
+    
+    def get_children(self, obj: Category):
+        children = obj.get_children()
+        return CategorySerializer(children, many=True, context=self.context).data if children.exists() else []
     
     
 class FileSerializer(ModelSerializer):
