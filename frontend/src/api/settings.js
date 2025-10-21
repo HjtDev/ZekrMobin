@@ -1,6 +1,6 @@
 import api from './api.js';
 
-const validSections = ['logo', 'landing', 'footer_content', 'club', 'contact', 'social', 'rights']
+const validSections = ['logo', 'landing', 'footer_content', 'club', 'contact', 'social', 'rights', 'ad']
 
 const fetchSettings = async (sections) => {
     if(!Array.isArray(sections)) {

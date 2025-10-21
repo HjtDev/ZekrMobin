@@ -48,7 +48,7 @@ const MainPage = () => {
                 <TopArtists/>
             </LazySection>
             <LazySection>
-                <Advertisements/>
+                <Advertisements adID={1} />
             </LazySection>
             <LazySection>
                 <NewReleases/>
@@ -60,7 +60,7 @@ const MainPage = () => {
                 <TopCategories/>
             </LazySection>
             <LazySection>
-                <Advertisements/>
+                <Advertisements adID={2} />
             </LazySection>
             <LazySection>
                 <LiveSuggestions/>
