@@ -7,7 +7,7 @@ const Advertisements = ({ adID }) => {
         const getAdImage = async () => {
             const { success, msg, config } = await fetchSettings(["ad"]);
             if(success) {
-                setAdvertisement(config[`ad${adID}_image`])
+                setAdvertisement(config[`ad${adID}_image`]);
             } else {
                 console.error("Failed to fetch advertisement: ", msg);
             }

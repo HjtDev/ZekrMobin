@@ -49,9 +49,16 @@ class SettingView(APIView, ResponseBuilderMixin, GetDataMixin):
         for field in selected_fields:
             if hasattr(setting, field):
                 value = getattr(setting, field)
-                if hasattr(value, 'url'):
-                    value = request.build_absolute_uri(value.url)
-                data[field] = value
+                try:
+                    if value and hasattr(value, 'url'):
+                        value = request.build_absolute_uri(value.url)
+                except AttributeError:
+                    pass
+                finally:
+                    if value:
+                        data[field] = value
+                    else:
+                        continue
                 
         if not data:
             return self.build_response(

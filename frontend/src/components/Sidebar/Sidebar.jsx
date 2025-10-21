@@ -10,7 +10,6 @@ const Sidebar = () => {
             const { success, msg, config } = await fetchSettings(["logo"]);
             if(success) {
                 setLogos(config);
-                console.log(success, msg, config, logos);
             } else {
                 toast.error("در دریافت لوگو سایت مشکلی پیش آمد.");
                 console.error(msg);
