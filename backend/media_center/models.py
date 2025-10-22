@@ -167,7 +167,7 @@ class Post(models.Model):
     publisher = models.ForeignKey('account.User', related_name='posts', on_delete=models.SET_NULL, blank=True, null=True, verbose_name='منتشر کننده')
     
     title = models.CharField(max_length=50, verbose_name='تیتر پست')
-    thumbnail = ResizedImageField(upload_to=dynamic_post_path, size=[240, 240], crop=['middle', 'center'], quality=100, verbose_name='عکس کاور', help_text='140 * 40')
+    thumbnail = ResizedImageField(upload_to=dynamic_post_path, size=[240, 240], crop=['middle', 'center'], quality=100, verbose_name='عکس کاور', help_text='240 * 240')
 
     is_visible = models.BooleanField(default=True, verbose_name='نمایش در سایت')
     
