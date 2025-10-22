@@ -1,4 +1,6 @@
 from datetime import timedelta
+
+from django.contrib.postgres.search import SearchQuery, SearchVector, SearchRank
 from django.db.models import Count, ExpressionWrapper, FloatField, F, QuerySet, Sum
 from django.utils import timezone
 from rest_framework.exceptions import ValidationError
@@ -137,7 +139,15 @@ class FilteredPosts(APIView, ResponseBuilderMixin, GetDataMixin, CachedResponseM
                     posts = posts.order_by('updated_at')
                 case 'suggested':
                     posts = posts.filter(recommended_by_site=True).order_by('-updated_at')
-        
+                case 'search':
+                    query = values[0].strip()
+                    if not query:
+                        pass
+                    query = SearchQuery(query)
+                    search_vector = SearchVector('title', 'categories__name', 'tags__name')
+                    
+                    posts = (posts.annotate(rank=SearchRank(search_vector, query)).order_by('-rank'))
+                
         return posts.distinct()
     
     def get(self, request):

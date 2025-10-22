@@ -5,6 +5,8 @@ from django_resized import ResizedImageField
 from moviepy import VideoFileClip, AudioFileClip
 from logging import getLogger
 from mptt.models import MPTTModel, TreeForeignKey
+from django.contrib.postgres.indexes import GinIndex
+from django.contrib.postgres.search import SearchVectorField
 import mimetypes
 
 
@@ -163,6 +165,9 @@ class Post(models.Model):
     class Meta:
         verbose_name = 'پست'
         verbose_name_plural = 'پست ها'
+        indexes = [
+            GinIndex(fields=['search_vector']),
+        ]
         
     publisher = models.ForeignKey('account.User', related_name='posts', on_delete=models.SET_NULL, blank=True, null=True, verbose_name='منتشر کننده')
     
@@ -179,6 +184,8 @@ class Post(models.Model):
     
     categories = models.ManyToManyField(Category, related_name='posts', verbose_name='دسته بندی ها')
     tags = models.ManyToManyField(Tag, related_name='posts', verbose_name='تگ ها')
+    
+    search_vector = SearchVectorField(null=True)
     
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='تاریخ انتشار')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='آخرین تغییر')
