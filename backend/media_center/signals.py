@@ -9,7 +9,7 @@ from django.db.models import F
 @receiver([post_save, m2m_changed], sender=Post)
 def update_search_vector(sender, instance: Post, **kwargs):
     Post.objects.filter(pk=instance.pk).update(
-        search_vector=SearchVector(instance.title, weight='A')
+        search_vector=SearchVector('title' , weight='A')
     )
 
 @receiver([post_save, post_delete], sender=Post)

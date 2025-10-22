@@ -1,7 +1,7 @@
 from datetime import timedelta
 
 from django.contrib.postgres.search import SearchQuery, SearchVector, SearchRank
-from django.db.models import Count, ExpressionWrapper, FloatField, F, QuerySet, Sum
+from django.db.models import Count, ExpressionWrapper, FloatField, F, QuerySet, Sum, When, Case
 from django.utils import timezone
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
@@ -460,3 +460,40 @@ class PostSuggestion(APIView, ResponseBuilderMixin, GetDataMixin, CachedResponse
                 status.HTTP_404_NOT_FOUND,
                 message='Post not found'
             )
+        
+    
+class UserPosts(APIView, ResponseBuilderMixin, GetDataMixin):
+    throttle_scope = 'user-posts'
+    permission_classes = (IsAuthenticated,)
+    
+    def get(self, request):
+        success, result = self.get_data(request, ('section', lambda s: s in ('history', 'liked')))
+        
+        if not success:
+            return self.build_response(
+                status.HTTP_400_BAD_REQUEST,
+                message='"section" must be "history" or "liked"',
+                errors=result
+            )
+        
+        try:
+            ids = [int(i) for i in request.user.history.split(',') if i.strip()]
+            posts = request.user.liked_posts.all() if result['section'] == 'liked' else\
+                (Post.objects.filter(is_visible=True, id__in=ids)
+                 .order_by(Case(*[When(id=id, then=pos) for pos, id in enumerate(ids)])))
+        except ValueError:
+            return self.build_response(
+                status.HTTP_404_NOT_FOUND,
+                message='There is no item in your history'
+            )
+        
+        if not posts.exists():
+            return self.build_response(
+                status.HTTP_404_NOT_FOUND,
+                message='Post not found'
+            )
+        
+        return self.build_response(
+            message='Successful retrieval',
+            posts=QuickPostSerializer(posts, context={'request': request}, many=True).data
+        )
