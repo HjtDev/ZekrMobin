@@ -30,7 +30,7 @@ const getUserPosts = async (listOf) => {
     } catch (err) {
         if(err?.response.status === 403) {
             return {
-                success: true,
+                success: false,
                 msg: ['لطفا ابتدا به حساب کاربری خود وارد شوید.'],
                 posts: null
             }
