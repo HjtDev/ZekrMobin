@@ -367,10 +367,11 @@ const MediaPortal = ({ isOpen, onClose, postID }) => {
                 if (!cancelled) setLoading(false);
             }
         };
-
-        fetchPost();
+        if(isOpen) {
+            fetchPost();
+        }
         return () => { cancelled = true; };
-    }, [postID]);
+    }, [postID, isOpen]);
 
     // resize listener (debounced)
     useEffect(() => {

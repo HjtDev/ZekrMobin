@@ -143,7 +143,7 @@ const Footer = () => {
                             <ul className="foo_con_info">
                                 <li>
                                     <div className="foo_con_icon">
-                                        <img src="images/svg/phone.svg" alt="telephone svg"/>
+                                        <img src="/images/svg/phone.svg" alt="telephone svg"/>
                                     </div>
                                     <div className="foo_con_data">
                                         <span className="con-title">تلفن های تماس :</span>
@@ -152,7 +152,7 @@ const Footer = () => {
                                 </li>
                                 <li>
                                     <div className="foo_con_icon">
-                                        <img src="images/svg/message.svg" alt="Message Us SVG"/>
+                                        <img src="/images/svg/message.svg" alt="Message Us SVG"/>
                                     </div>
                                     <div className="foo_con_data">
                                         <span className="con-title">ایمیل ما :</span>
@@ -161,7 +161,7 @@ const Footer = () => {
                                 </li>
                                 <li>
                                     <div className="foo_con_icon">
-                                        <img src="images/svg/add.svg" alt="Address SVG"/>
+                                        <img src="/images/svg/add.svg" alt="Address SVG"/>
                                     </div>
                                     <div className="foo_con_data">
                                         <span className="con-title">آدرس :</span>

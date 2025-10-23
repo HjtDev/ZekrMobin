@@ -11,8 +11,10 @@ import RegisterPopups from './components/Header/RegisterPopups.jsx';
 import Loading from './components/Loading.jsx'
 import NotFound from './Pages/NotFound.jsx'
 import Profile from './Pages/Profile.jsx';
+import History from './Pages/History.jsx';
 import { ToastContainer, Bounce } from 'react-toastify';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import LikedPosts from "./Pages/LikedPosts.jsx";
 
 
 function App() {
@@ -40,6 +42,8 @@ function App() {
                     <Routes>
                         <Route path='/' element={<MainPage />} />
                         <Route path='/profile' element={<Profile />} />
+                        <Route path='/profile/history/' element={<History />} />
+                        <Route path='/profile/liked/' element={<LikedPosts />} />
                         <Route path='*' element={<NotFound />} />
                     </Routes>
                 </div>

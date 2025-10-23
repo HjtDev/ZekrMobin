@@ -79,7 +79,7 @@ const Header = () => {
                         placeholder="جستجوی آهنگ، خواننده و ..."
                     />
                     <span className="search_icon">
-                        <img src="images/svg/search.svg" alt="Search Icon"/>
+                        <img src="/images/svg/search.svg" alt="Search Icon"/>
                     </span>
                 </div>
             </div>
