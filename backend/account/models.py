@@ -41,18 +41,13 @@ def validate_username(username):
     if not GetDataMixin.validate_username(username):
         raise ValidationError('نام کاربری باید: با یک حرف شروع شود - بین ۳ تا ۳۰ کاراکتر باشد - شامل کاراکتر های خاص نباشد.')
     
-def validate_history(history):
-    pattern = re.compile(r'^(\d+(,\d+)*)?$')
-    if not pattern.match(history):
-        raise ValidationError('تاریخچه باید در این فرمت باشد. id1,id2,id3')
-
 class User(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=30, unique=True, verbose_name='نام کاربری', validators=[validate_username])
     email = models.EmailField(max_length=255, blank=True, null=True, verbose_name='ایمیل')
     name = models.CharField(max_length=60, verbose_name='نام')
     profile_picture = ResizedImageField(upload_to=profile_directory_path, blank=True, null=True, default='Profiles/default_profile.png', verbose_name='تصویر پروفایل')
     
-    history = models.CharField(max_length=120, blank=True, null=True, validators=[validate_history], verbose_name='تاریخچه')
+    history = models.CharField(max_length=500, blank=True, null=True, verbose_name='تاریخچه')
     
     is_active = models.BooleanField(default=True, verbose_name='دسترسی به حساب')
     is_staff = models.BooleanField(default=False, verbose_name='کارمند سایت')
@@ -75,7 +70,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         post_id = str(post.id)
         ids = self.history.split(',') if self.history else []
         ids = [i for i in ids if i != post_id]
-        ids.append(post_id)
+        ids.insert(0, post_id)
         ids = ids[-20:]
         self.history = ','.join(ids)
         self.save(update_fields=['history'])

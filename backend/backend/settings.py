@@ -253,7 +253,8 @@ REST_FRAMEWORK = {
         'comments': '10/minute',
         'like': '30/minute',
         'download': '100/hour',
-        'suggestion': '30/minute'
+        'suggestion': '30/minute',
+        'user-posts': '100/minute',
     },
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema'
 }
