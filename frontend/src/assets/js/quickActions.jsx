@@ -97,7 +97,7 @@ const quickAction = async (postID, action, isLoggedIn) => {
 }
 
 
-const LikeButton = ({ postID }) => {
+const LikeButton = ({ postID, callAfterAction }) => {
     const { isLoggedIn } = useAuth();
     return (
         <li>
@@ -107,6 +107,9 @@ const LikeButton = ({ postID }) => {
                 onClick={(e) => {
                     e.preventDefault();
                     quickAction(postID, "like", isLoggedIn);
+                    if(callAfterAction) {
+                        callAfterAction(postID);
+                    }
                 }}
             >
                 <span className="opt_icon">

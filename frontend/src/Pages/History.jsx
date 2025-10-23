@@ -3,7 +3,6 @@ import { useAuth } from '../contexts/AuthContext.jsx';
 import { Navigate, useNavigate } from 'react-router-dom';
 import getUserPosts from '../api/user-posts.js';
 import { toast } from 'react-toastify';
-import customSkeleton from '../components/CustomSkeleton.jsx';
 import CustomSkeleton from "../components/CustomSkeleton.jsx";
 import MediaPortal from '../components/MediaPlayer/MediaPortal.jsx';
 
