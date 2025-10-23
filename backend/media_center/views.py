@@ -241,22 +241,21 @@ class TopArtists(APIView, ResponseBuilderMixin, GetDataMixin, CachedResponseMixi
         limit = int(result['limit']) or 0
         self.set_cache_key(f'top-artists-{limit}')
         
-        artists = self.get_cached(Artist)
-        if not artists:
+        artists, _ = self.get_cached(Artist)
+        if not self._restored_from_cache:
             artists_ids = Post.objects.filter(is_visible=True).order_by('medias__artist', '-views_count').distinct('medias__artist').values_list('medias__artist', flat=True)
             artists = Artist.objects.filter(id__in=artists_ids)
             
-        if not artists.exists():
+            if limit > 0:
+                artists = artists[:limit]
+                
+            self.store_cached(artists)
+            
+        if not artists:
             return self.build_response(
                 status.HTTP_404_NOT_FOUND,
                 message='Artist(s) not found'
             )
-        
-        if limit > 0:
-            artists = artists[:limit]
-            
-        if not self._restored_from_cache:
-            self.store_cached(artists)
         
         return self.build_response(
             message='Successful retrieval',
@@ -282,8 +281,8 @@ class TopCategory(APIView, ResponseBuilderMixin, GetDataMixin, CachedResponseMix
         
         self.set_cache_key(f'top-category-{user_rated}-{limit}')
         
-        categories = self.get_cached(Category)
-        if not categories:
+        categories, _ = self.get_cached(Category)
+        if not self._restored_from_cache:
             qs = Category.objects.filter(parent__isnull=True).prefetch_related('posts', 'children')
             if user_rated:
                 qs = qs.filter(recommended_by_site=True)
@@ -293,15 +292,14 @@ class TopCategory(APIView, ResponseBuilderMixin, GetDataMixin, CachedResponseMix
             if limit > 0:
                 qs = qs[:limit]
             categories = qs
+            
+            self.store_cached(categories)
         
-        if not categories.exists():
+        if not categories:
             return self.build_response(
                 status.HTTP_404_NOT_FOUND,
                 message='Category(s) not found'
             )
-        
-        if not self._restored_from_cache:
-            self.store_cached(categories)
         
         serializer = CategorySerializer(categories, many=True, context={'request': request})
         return self.build_response(

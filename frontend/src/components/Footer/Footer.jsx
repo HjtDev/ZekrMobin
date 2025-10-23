@@ -47,7 +47,7 @@ const Footer = () => {
     }, [clubName, clubEmail]);
 
     return (
-        <div className="ms_footer_wrapper">
+        <div className="ms_footer_wrapper" style={{marginBottom: 0}}>
             <div className="ms_footer_logo">
                 <Link to="/">
                     <img src={settings?.open_logo} alt="Footer Logo"/>

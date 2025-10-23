@@ -122,11 +122,9 @@ class CachedResponseMixin:
         return qs, pagination if pagination else qs  # Keeping it integratable with other apps that don't use pagination
     
     def store_cached(self, qs: QuerySet, pagination: dict = None) -> None:
-        ids = list(qs.values_list('id', flat=True))
-        ordering = list(qs.query.order_by) if qs.query.order_by else None
+        ids = list(p.id for p in qs)
         cache.set(self._cache_key, {
             'ids': ids,
-            'ordering': ordering,
             'pagination': pagination
         }, timeout=settings.CACHE_TIMEOUT)
     
