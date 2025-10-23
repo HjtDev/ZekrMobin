@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.core.paginator import Paginator, Page
 from django.db.models import QuerySet, Case, When
 from rest_framework import status
 from rest_framework.response import Response
@@ -103,27 +104,30 @@ class CachedResponseMixin:
     _cache_key = ''
     _restored_from_cache = False
     
-    def get_cached(self, _Model):
+    def get_cached(self, _Model, pagination: bool = False):
         data = cache.get(self._cache_key)
         
         if not data or 'ids' not in data or not isinstance(data['ids'], list) \
                 or not all(GetDataMixin.is_id(i) for i in data['ids']):
-            return None
+            return None, None if pagination else None  # Keeping it integratable with other apps that don't use pagination
         
         self._restored_from_cache = True
         ids = data['ids']
+        pagination = data['pagination']
         
         # Preserve ordering from cached IDs
         preserved = Case(*[When(pk=pk, then=pos) for pos, pk in enumerate(ids)])
         qs = _Model.objects.filter(pk__in=ids).order_by(preserved)
-        return qs
+        
+        return qs, pagination if pagination else qs  # Keeping it integratable with other apps that don't use pagination
     
-    def store_cached(self, qs: QuerySet):
+    def store_cached(self, qs: QuerySet, pagination: dict = None) -> None:
         ids = list(qs.values_list('id', flat=True))
         ordering = list(qs.query.order_by) if qs.query.order_by else None
         cache.set(self._cache_key, {
             'ids': ids,
-            'ordering': ordering
+            'ordering': ordering,
+            'pagination': pagination
         }, timeout=settings.CACHE_TIMEOUT)
     
     def set_cache_key(self, key):

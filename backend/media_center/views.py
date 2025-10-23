@@ -1,5 +1,5 @@
 from datetime import timedelta
-
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.contrib.postgres.search import SearchQuery, SearchVector, SearchRank
 from django.db.models import Count, ExpressionWrapper, FloatField, F, QuerySet, Sum, When, Case
 from django.utils import timezone
@@ -82,17 +82,17 @@ class FilteredPosts(APIView, ResponseBuilderMixin, GetDataMixin, CachedResponseM
     
     def get_selected_items(self, selector: str) -> QuerySet[Post]:
         if selector == 'all':
-            return self.get_cached(Post) or Post.objects.filter(is_visible=True)
+            return Post.objects.filter(is_visible=True)
         
         elif selector.startswith('ids:'):
             ids = selector.split(':', 1)[1].split(',')
             if not all(self.is_id(i) for i in ids):
                 raise ValidationError({selector: 'Invalid id in selector. ID must be a positive number.'})
-            return self.get_cached(Post) or Post.objects.filter(is_visible=True, id__in=ids)
+            return Post.objects.filter(is_visible=True, id__in=ids)
         
         elif selector.startswith('section:'):
             section = selector.split(':', 1)[1]
-            return self.get_cached(Post) or self.get_section_queryset(section)
+            return self.get_section_queryset(section)
         
         raise ValidationError({selector: 'Invalid selector'})
     
@@ -163,26 +163,46 @@ class FilteredPosts(APIView, ResponseBuilderMixin, GetDataMixin, CachedResponseM
         try:
             selector = result['selector']
             filters = result['filters']
-            limit = int(result.get('limit') or 0)
+            limit = int(result.get('limit')) or 6
+            page_num = int(request.query_params.get('page', 1))
             
-            self.set_cache_key(f'posts:{selector}-{filters}-{limit}')
+            self.set_cache_key(f'posts:{selector}-{filters}-{limit}-{page_num}')
             
-            posts = self.get_selected_items(selector)
-            
-            if result['filters'] and not self.FILTER_REGEX.match(result['filters']):
-                return self.build_response(
-                    status.HTTP_400_BAD_REQUEST,
-                    message='Invalid filters'
-                )
-            
-            posts = self.apply_filters(posts, filters)
-            
-            if limit > 0:
-                posts = posts[:limit]
+            posts, pagination = self.get_cached(Post, pagination=True)
             
             if not self._restored_from_cache:
-                self.store_cached(posts)
-            
+                posts = self.get_selected_items(selector)
+                if result['filters'] and not self.FILTER_REGEX.match(result['filters']):
+                    return self.build_response(
+                        status.HTTP_400_BAD_REQUEST,
+                        message='Invalid filters'
+                    )
+                posts = self.apply_filters(posts, filters)
+                
+                paginator = Paginator(posts, limit)
+                try:
+                    page = paginator.page(page_num)
+                except PageNotAnInteger:
+                    page = paginator.page(1)
+                except EmptyPage:
+                    page = paginator.page(paginator.num_pages)
+                
+                posts = page.object_list
+                
+                if not pagination:
+                    pagination = {
+                        'page': page.number,
+                        'page_size': paginator.per_page,
+                        'total_pages': paginator.num_pages,
+                        'total_items': paginator.count,
+                        'has_prev_page': page.has_previous(),
+                        'has_next_page': page.has_next(),
+                        'prev_page': page.previous_page_number() if page.has_previous() else None,
+                        'next_page': page.next_page_number() if page.has_next() else None
+                    }
+                
+                self.store_cached(posts, pagination)
+                
             if not posts:
                 return self.build_response(
                     status.HTTP_404_NOT_FOUND,
@@ -193,7 +213,8 @@ class FilteredPosts(APIView, ResponseBuilderMixin, GetDataMixin, CachedResponseM
             return self.build_response(
                 message='Successful retrieval',
                 posts=serialized.data,
-                is_cached=self._restored_from_cache
+                is_cached=self._restored_from_cache,
+                pagination=pagination
             )
         
         except ValidationError as e:
