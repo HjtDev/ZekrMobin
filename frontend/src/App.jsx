@@ -15,6 +15,7 @@ import History from './Pages/History.jsx';
 import { ToastContainer, Bounce } from 'react-toastify';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import LikedPosts from "./Pages/LikedPosts.jsx";
+import PostList from "./Pages/PostList.jsx";
 
 
 function App() {
@@ -44,6 +45,7 @@ function App() {
                         <Route path='/profile' element={<Profile />} />
                         <Route path='/profile/history/' element={<History />} />
                         <Route path='/profile/liked/' element={<LikedPosts />} />
+                        <Route path='/posts/' element={<PostList />} />
                         <Route path='*' element={<NotFound />} />
                     </Routes>
                 </div>
