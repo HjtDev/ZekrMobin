@@ -14,4 +14,5 @@ urlpatterns = [
     path('top_artists/', views.TopArtists.as_view(), name='top_artists'),
     path('top_categories/', views.TopCategory.as_view(), name='top_categories'),
     path('user_posts/', views.UserPosts.as_view(), name='user_posts'),
+    path('filters/', views.PostListFilters.as_view(), name='filters')
 ]

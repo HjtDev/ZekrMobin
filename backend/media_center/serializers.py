@@ -15,6 +15,17 @@ class QuickCategorySerializer(ModelSerializer):
         model = Category
         fields = ('id', 'name')
         read_only_fields = ('id',)
+        
+        
+class QuickTreeCategorySerializer(ModelSerializer):
+    children = SerializerMethodField()
+    class Meta:
+        model = Category
+        fields = ('id', 'name', 'children')
+        
+    def get_children(self, obj: Category):
+        children = obj.get_children()
+        return QuickTreeCategorySerializer(children, many=True).data if children.exists() else []
 
 
 class CategorySerializer(ModelSerializer):

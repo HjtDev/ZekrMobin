@@ -117,6 +117,14 @@ def validate_category_sections(value):
     if value not in (MainPage.SectionChoices.TOP_ALBUM, MainPage.SectionChoices.TOP_USER_ALBUM):
         raise ValidationError('بخش پنجم و ششم باید دسته بندی های برتر یا دسته بندی های پر مخاطب باشد.')
     
+def validate_artists_section(value):
+    if value == MainPage.SectionChoices.TOP_ARTISTS:
+        raise ValidationError('به علت محدودیت قالب فقط بخش سوم می تواند مختص به خوانندگان برتر باشد.')
+    
+def validate_section_three(value):
+    if value != MainPage.SectionChoices.TOP_ARTISTS:
+        raise ValidationError('به علت محدودیت قالب بخش سوم می تواند فقط مختص به خوانندگان برتر باشد.')
+    
 class MainPage(models.Model):
     class Meta:
         verbose_name = 'تنظیمات صفحه اصلی'
@@ -133,16 +141,16 @@ class MainPage(models.Model):
         
         
     section1_title = models.CharField(max_length=30, verbose_name='تیتر')
-    section1_content = models.CharField(max_length=30, choices=SectionChoices.choices, verbose_name='محتوا')
+    section1_content = models.CharField(max_length=30, choices=SectionChoices.choices, validators=[validate_artists_section], verbose_name='محتوا')
     
     section2_title = models.CharField(max_length=30, verbose_name='تیتر')
-    section2_content = models.CharField(max_length=30, choices=SectionChoices.choices, verbose_name='محتوا')
+    section2_content = models.CharField(max_length=30, choices=SectionChoices.choices, validators=[validate_artists_section], verbose_name='محتوا')
     
     section3_title = models.CharField(max_length=30, verbose_name='تیتر')
-    section3_content = models.CharField(max_length=30, choices=SectionChoices.choices, verbose_name='محتوا')
+    section3_content = models.CharField(max_length=30, choices=SectionChoices.choices, validators=[validate_section_three], verbose_name='محتوا')
     
     section4_title = models.CharField(max_length=30, verbose_name='تیتر')
-    section4_content = models.CharField(max_length=30, choices=SectionChoices.choices, verbose_name='محتوا')
+    section4_content = models.CharField(max_length=30, choices=SectionChoices.choices, validators=[validate_artists_section], verbose_name='محتوا')
     
     section5_title = models.CharField(max_length=30, verbose_name='تیتر')
     section5_content = models.CharField(max_length=30, choices=SectionChoices.choices, validators=[validate_category_sections], verbose_name='محتوا')
@@ -151,7 +159,7 @@ class MainPage(models.Model):
     section6_content = models.CharField(max_length=30, choices=SectionChoices.choices, validators=[validate_category_sections], verbose_name='محتوا')
     
     section7_title = models.CharField(max_length=30, verbose_name='تیتر')
-    section7_content = models.CharField(max_length=30, choices=SectionChoices.choices, verbose_name='محتوا')
+    section7_content = models.CharField(max_length=30, choices=SectionChoices.choices, validators=[validate_artists_section], verbose_name='محتوا')
     
     def __str__(self):
         return 'تنظیمات صفحه اصلی'

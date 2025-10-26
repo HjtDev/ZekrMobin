@@ -2,14 +2,16 @@ from datetime import timedelta
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.contrib.postgres.search import SearchQuery, SearchVector, SearchRank
 from django.db.models import Count, ExpressionWrapper, FloatField, F, QuerySet, Sum, When, Case
+from django.db.models.fields import PositiveIntegerRelDbTypeMixin
 from django.utils import timezone
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from backend.mixins import ResponseBuilderMixin, GetDataMixin, CachedResponseMixin
-from .models import Post, Artist, Category, Comment
+from .models import Post, Artist, Category, Comment, Tag
 from rest_framework import status
-from .serializers import QuickPostSerializer, PostSerializer, ArtistSerializer, CategorySerializer, CommentSerializer
+from .serializers import QuickPostSerializer, PostSerializer, ArtistSerializer, CategorySerializer, CommentSerializer, \
+    QuickCategorySerializer, TagSerializer, QuickTreeCategorySerializer
 from .permissions import SafeAuthentication
 
 
@@ -134,9 +136,9 @@ class FilteredPosts(APIView, ResponseBuilderMixin, GetDataMixin, CachedResponseM
                                 )
                             ).order_by('-popularity')
                 case 'newest':
-                    posts = posts.order_by('-updated_at')
+                    posts = posts.order_by('-created_at')
                 case 'oldest':
-                    posts = posts.order_by('updated_at')
+                    posts = posts.order_by('created_at')
                 case 'suggested':
                     posts = posts.filter(recommended_by_site=True).order_by('-updated_at')
                 case 'search':
@@ -145,7 +147,6 @@ class FilteredPosts(APIView, ResponseBuilderMixin, GetDataMixin, CachedResponseM
                         pass
                     query = SearchQuery(query)
                     search_vector = SearchVector('title', 'categories__name', 'tags__name')
-                    
                     posts = (posts.annotate(rank=SearchRank(search_vector, query)).order_by('-rank'))
                 
         return posts.distinct()
@@ -464,8 +465,9 @@ class PostSuggestion(APIView, ResponseBuilderMixin, GetDataMixin, CachedResponse
                 raise Post.DoesNotExist
             
             self.set_cache_key(f'suggestion-{post.id}')
-            suggestion = self.get_cached(Post) or Post.objects.exclude(id=post.id).filter(is_visible=True, categories__id__in=list(post.categories.values_list('id', flat=True))).order_by('-updated_at')
+            suggestion, _ = self.get_cached(Post)
             if not self._restored_from_cache:
+                suggestion = Post.objects.exclude(id=post.id).filter(is_visible=True, categories__id__in=list(post.categories.values_list('id', flat=True))).order_by('-updated_at')
                 self.store_cached(suggestion)
             
             return self.build_response(
@@ -515,4 +517,18 @@ class UserPosts(APIView, ResponseBuilderMixin, GetDataMixin):
         return self.build_response(
             message='Successful retrieval',
             posts=QuickPostSerializer(posts, context={'request': request}, many=True).data
+        )
+    
+    
+class PostListFilters(APIView, ResponseBuilderMixin, GetDataMixin):
+    throttle_scope = 'post-list-filters'
+    
+    def get(self, request):
+        categories = Category.objects.filter(parent__isnull=True)
+        tags = Tag.objects.all()
+        
+        return self.build_response(
+            status.HTTP_200_OK,
+            categories=QuickTreeCategorySerializer(categories, many=True).data,
+            tags=TagSerializer(tags, many=True).data,
         )
