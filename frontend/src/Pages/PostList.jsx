@@ -321,6 +321,7 @@ const PostList = () => {
                                             setFilters(newFilters);
                                             fetchPosts("all", newFilters, 12, pagination.page);
                                         }}
+                                        isSearchable={false}
                                         isRtl
                                         placeholder="بر اساس"
                                         options={mostOptions}
@@ -349,6 +350,7 @@ const PostList = () => {
                                             setFilters(newFilters);
                                             fetchPosts("all", newFilters, 12, pagination.page);
                                         }}
+                                        isSearchable={false}
                                         isRtl
                                         placeholder="تاریخ"
                                         options={dateOptions}
