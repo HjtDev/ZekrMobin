@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react'
 import { getMainPageData, getSectionData } from '../api/section-data.js';
 import truncateText from "../assets/js/utility.js";
-import { useNavigate } from 'react-router-dom';
+import {Link, useNavigate} from 'react-router-dom';
 
 const TopArtists = () => {
     const [pageData, setPageData] = useState(null);
@@ -66,9 +66,11 @@ const TopArtists = () => {
         <div className="ms_featured_slider">
             <div className="ms_heading">
                 <h1>{pageData?.title || "هنرمند های برتر"}</h1>
-          {/*      <span className="veiw_all">*/}
-          {/*  <a href="#">مشاهده بیشتر</a>*/}
-          {/*</span>*/}
+                <span className="veiw_all">
+                    <Link to="/artists/">
+                        مشاهده بیشتر
+                    </Link>
+                </span>
             </div>
             <div className="ms_feature_slider swiper-container">
                 <div className="swiper-wrapper">
