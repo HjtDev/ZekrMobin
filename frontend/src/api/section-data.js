@@ -36,7 +36,6 @@ const contentMap = {
     'top-artists': 'media/top_artists/',
     'top-album': 'media/top_categories/',
     'top-user-album': 'media/top_categories/',
-
 }
 const getMainPageData = async (content_section, filters = '', limit = 0) => {
     if(!content_section) {

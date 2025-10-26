@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { getMainPageData, getSectionData } from '../api/section-data.js';
 import MediaPortal from './MediaPlayer/MediaPortal.jsx';
 import truncateText from "../assets/js/utility.js";
+import { Link } from 'react-router-dom';
 
 const NewReleases = () => {
     const [pageData, setPageData] = useState(null);
@@ -71,7 +72,9 @@ const NewReleases = () => {
             <div className="ms_heading">
                 <h1>{pageData?.title || "جدیدترین ها"}</h1>
                 <span className="veiw_all">
-                    <a href="#">مشاهده بیشتر</a>
+                    <Link to={`/posts/?section=${pageData?.content}`}>
+                        مشاهده بیشتر
+                    </Link>
                 </span>
             </div>
 
@@ -101,7 +104,7 @@ const NewReleases = () => {
                                             <h3>
                                                 <a href="#">{truncateText(post?.title, 15, 20)}</a>
                                             </h3>
-                                            <p>{post.artist?.name || "ناشناس"}</p>
+                                            <p>{truncateText(post?.artist?.name, 15, 20) || "ناشناس"}</p>
                                         </div>
                                     </div>
 

@@ -1,5 +1,6 @@
 import React, {useState} from 'react'
 import { useAuth } from "../../contexts/AuthContext.jsx";
+import { useNavigate } from 'react-router-dom';
 import {Link} from "react-router-dom";
 import truncateText from "../../assets/js/utility.js";
 
@@ -7,12 +8,21 @@ const Header = () => {
     const {user, isLoggedIn, logout} = useAuth();
     const [userDropDown, setUserDropDown] = useState('');
 
+    const [searchQuery, setSearchQuery] = useState('');
+
+    const navigate = useNavigate();
+
     const toggleUserDropDown = () => {
         if(userDropDown === '') {
             setUserDropDown('open_dropdown');
         } else {
             setUserDropDown('');
         }
+    }
+
+    const searchAction = () => {
+        navigate(`/posts/?search=${searchQuery}`, { replace: true });
+        if(window.location.pathname.startsWith("/posts")) window.location.reload();
     }
 
     const LoggedInButtons = (
@@ -76,9 +86,19 @@ const Header = () => {
                     <input
                         type="text"
                         className="form-control"
-                        placeholder="جستجوی آهنگ، خواننده و ..."
+                        placeholder="جست و جو بر اساس پست, هنرمند ..."
+                        autoComplete="none"
+                        aria-autocomplete="none"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        onKeyDown={(e) => {
+                            if(e.key === 'Enter') {
+                                e.preventDefault();
+                                searchAction();
+                            }
+                        }}
                     />
-                    <span className="search_icon">
+                    <span className="search_icon" onClick={() => searchAction()}>
                         <img src="/images/svg/search.svg" alt="Search Icon"/>
                     </span>
                 </div>

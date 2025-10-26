@@ -11,7 +11,6 @@ const ShareLink = ({ url, title, text, children, className, style }) => {
                 toast.success('لینک کپی شد.');
             } catch (err) {
                 console.error("Copy to clipboard failed:", err);
-                toast.error("مرورگر شما قدیمی است و از اشتراک گذاری پشتیبانی نمی کند.");
             }
         };
 

@@ -70,7 +70,7 @@ const quickAction = async (postID, action, isLoggedIn) => {
         }
         const url = `${window.location.origin}/?play=${post.id}`;
         const title = post.title;
-        const text = "Check this out...";
+        const text = post.title;
 
         const copyLink = async () => {
             try {
@@ -78,7 +78,6 @@ const quickAction = async (postID, action, isLoggedIn) => {
                 toast.success('لینک کپی شد.');
             } catch (err) {
                 console.error("Copy to clipboard failed:", err);
-                toast.error("مرورگر شما قدیمی است و از اشتراک گذاری پشتیبانی نمی کند.");
             }
         };
 

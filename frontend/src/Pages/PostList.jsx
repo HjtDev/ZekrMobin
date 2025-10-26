@@ -19,6 +19,8 @@ const PostList = () => {
     const [tags, setTags] = useState([]);
     const [selectedTag, setSelectedTag] = useState(null);
 
+    const [selectedSection, setSelectedSection] = useState('all');
+
     const [selectedOption, setSelectedOption] = useState(null);
     const mostOptions = [
         {
@@ -68,7 +70,7 @@ const PostList = () => {
         const url = new URL(window.location);
         url.searchParams.delete('search');
         window.history.replaceState(null, '', url.toString());
-        await fetchPosts("all", filters, 12, pagination.page);
+        await fetchPosts(selectedSection, filters, 12, pagination.page);
     }
 
     const [isOpen, setIsOpen] = useState({});
@@ -79,7 +81,19 @@ const PostList = () => {
 
     const fetchPosts = async (section, filters, perPage = 6, page = 1) => {
         setIsLoading(true);
-        const searchQuery = new URLSearchParams(location.search).get('search');
+        const params = new URLSearchParams(location.search);
+        const updatedSection = params.get('section');
+        const artists = params.get('artists');
+        const searchQuery = params.get('search');
+        if(updatedSection) {
+            section = updatedSection;
+            setSelectedSection(updatedSection);
+        }
+        if(artists && /^\d+(,\d+)*$/.test(artists)) {
+            filters.artists = artists.split(',');
+        } else {
+            filters.artists = null;
+        }
         if(searchQuery) {
             filters.search = searchQuery;
             setActiveSearchQuery(searchQuery);
@@ -106,7 +120,7 @@ const PostList = () => {
             minHeight: "42px",
             borderRadius: "10px",
             transition: "all 0.2s ease-in-out",
-            width: "200px"
+            width: "200px",
         }),
         menu: (base) => ({
             ...base,
@@ -190,7 +204,7 @@ const PostList = () => {
             msg.forEach((message) => messenger(message));
         };
         fetchFilters();
-        fetchPosts("all", filters, 12, pagination.page);
+        fetchPosts(selectedSection, filters, 12, pagination.page);
     }, []);
 
     const handleCategoryChange = (selectedOption) => {
@@ -211,7 +225,7 @@ const PostList = () => {
 
         const newFilters = { ...filters, categories: [selectedOption.value] };
         setFilters(newFilters);
-        fetchPosts("all", newFilters, 12, pagination.page);
+        fetchPosts(selectedSection, newFilters, 12, pagination.page);
 
         if (currentCat?.children?.length > 0) {
             setCategoryStack((prev) => [...prev, categoryOptions]);
@@ -233,7 +247,7 @@ const PostList = () => {
 
             const newFilters = { ...filters, categories: [] };
             setFilters(newFilters);
-            fetchPosts("all", newFilters, 12, pagination.page);
+            fetchPosts(selectedSection, newFilters, 12, pagination.page);
         }
     };
 
@@ -243,7 +257,7 @@ const PostList = () => {
                 <div className="row">
                     <div className="col-lg-12">
                         <div className="ms_heading">
-                            <div className="row align-items-center flex-wrap text-right" style={{ gap: "5rem" }}>
+                            <div className="row align-items-center flex-wrap text-right flex-lg-wrap" style={{ columnGap: "60rem", rowGap: "15rem" }}>
                                 <div className="col-12  order-1 order-lg-1" style={{ marginBottom: "10rem" }}>
                                     {
                                         activeSearchQuery ?
@@ -265,7 +279,7 @@ const PostList = () => {
                                             const ids = selectedOptions ? selectedOptions.map((item) => item.value) : [];
                                             const newFilters = { ...filters, tags: ids };
                                             setFilters(newFilters);
-                                            fetchPosts("all", newFilters, 12, pagination.page);
+                                            fetchPosts(selectedSection, newFilters, 12, pagination.page);
                                         }}
                                         isMulti
                                         isSearchable
@@ -319,7 +333,7 @@ const PostList = () => {
                                             setSelectedOption(selectedOptions);
                                             const newFilters = { ...filters, most: selectedOptions.value };
                                             setFilters(newFilters);
-                                            fetchPosts("all", newFilters, 12, pagination.page);
+                                            fetchPosts(selectedSection, newFilters, 12, pagination.page);
                                         }}
                                         isSearchable={false}
                                         isRtl
@@ -348,7 +362,7 @@ const PostList = () => {
                                             }
                                             const newFilters = { ...filters, ...newDates };
                                             setFilters(newFilters);
-                                            fetchPosts("all", newFilters, 12, pagination.page);
+                                            fetchPosts(selectedSection, newFilters, 12, pagination.page);
                                         }}
                                         isSearchable={false}
                                         isRtl
@@ -421,7 +435,7 @@ const PostList = () => {
                                 onChange={(selectedOption) => {
                                     const newPage = selectedOption.value;
                                     setPagination((prev) => ({ ...prev, page: newPage }));
-                                    fetchPosts("all", filters, 12, newPage);
+                                    fetchPosts(selectedSection, filters, 12, newPage);
                                 }}
                                 options={Array.from({ length: pagination.total_pages }, (_, i) => ({
                                     label: `صفحه ${i + 1}`,

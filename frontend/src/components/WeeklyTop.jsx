@@ -85,7 +85,7 @@ const WeeklyTop = () => {
                                                 <h3>
                                                     <a href="#">{truncateText(post?.title, -1, 25)}</a>
                                                 </h3>
-                                                <p>{post.artist?.name || "ناشناس"}</p>
+                                                <p>{truncateText(post?.artist?.name, 30, 30) || "ناشناس"}</p>
                                             </div>
                                         </div>
                                     </div>
