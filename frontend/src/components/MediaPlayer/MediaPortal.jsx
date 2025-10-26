@@ -16,6 +16,7 @@ import downloadPost from '../../api/download.js';
 import ShareLink from '../NativeShare/ShareLink.jsx';
 import getSuggestedPosts from '../../api/suggestion.js';
 import toJalaliDate from "../../assets/js/jalaali-conventor.js";
+import {Navigate, useLocation, useNavigate} from 'react-router-dom';
 
 const modalRoot = document.getElementById("modal-root");
 
@@ -265,6 +266,8 @@ const MediaPortal = ({ isOpen, onClose, postID }) => {
     const [activeQuality, setActiveQuality] = useState(null);
     const [loading, setLoading] = useState(false);
     const { isLoggedIn } = useAuth();
+    const navigate = useNavigate();
+    const { pathname } = useLocation();
 
     const getDownloadLink = async () => {
         if(!post) {
@@ -317,7 +320,9 @@ const MediaPortal = ({ isOpen, onClose, postID }) => {
         const { success, posts } = await getSuggestedPosts(post.id);
         if(success) {
             toast.success('در حال بارگزاری پست ها');
-            console.log('Posts:', posts);
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+            navigate(`/posts/?section=${posts.join(",")}`, { replace: true });
+            if(pathname.startsWith("/posts")) window.location.reload();
         } else {
             toast.error('پستی برای پیشنهاد وجود ندارد.');
         }
@@ -516,7 +521,7 @@ const MediaPortal = ({ isOpen, onClose, postID }) => {
                                 <a href="#" onClick={() => updateLike()} className="text-muted"><span className={`fa fa-thumbs-up d-block ${post?.is_liked ? 'text-info' : ''}`} style={{ cursor: "pointer" }}></span>لایک</a>
                             </div>
                             <div className="col-3 hover-info">
-                                <ShareLink url={`${window.location.origin}/?play=${post?.id}`} title={post?.title} text="check this out..." className="text-muted">
+                                <ShareLink url={`${window.location.origin}/?play=${post?.id}`} title={post?.title} text={post?.title} className="text-muted">
                                     <span className="fa fa-share d-block" style={{ cursor: "pointer" }}></span>اشتراک
                                 </ShareLink>
                             </div>

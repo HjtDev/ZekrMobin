@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { getSectionData, getMainPageData } from '../api/section-data.js';
 import MediaPortal from './MediaPlayer/MediaPortal.jsx';
 import truncateText from "../assets/js/utility.js";
-import {DownloadButton, LikeButton, ShareButton} from "../assets/js/quickActions.jsx";
+import { DownloadButton, LikeButton, ShareButton } from "../assets/js/quickActions.jsx";
+import {Link} from "react-router-dom";
 
 const LiveSuggestion = () => {
     const [pageData, setPageData] = useState(null);
@@ -74,7 +75,9 @@ const LiveSuggestion = () => {
             <div className="ms_heading">
                 <h1>{pageData?.title}</h1>
                 <span className="veiw_all">
-                    <a href="#">مشاهده بیشتر</a>
+                    <Link to={`/posts/?section=${pageData?.content}`}>
+                        مشاهده بیشتر
+                    </Link>
                 </span>
             </div>
 

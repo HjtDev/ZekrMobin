@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react'
 import { getMainPageData, getSectionData } from '../api/section-data.js';
 import truncateText from "../assets/js/utility.js";
+import { Link } from 'react-router-dom';
 
 const TopPosts = () => {
     const [pageData, setPageData] = useState(null);
@@ -65,8 +66,10 @@ const TopPosts = () => {
             <div className="ms_heading">
                 <h1>{pageData?.title || "دسته بندی های منتخب"}</h1>
                 <span className="veiw_all">
-            <a href="#">مشاهده بیشتر</a>
-          </span>
+                    <Link to="/posts/">
+                        مشاهده بیشتر
+                    </Link>
+                </span>
             </div>
             <div className="ms_album_slider swiper-container">
                 <div className="swiper-wrapper">

@@ -3,6 +3,7 @@ import { getSectionData, getMainPageData } from '../api/section-data.js';
 import MediaPortal from './MediaPlayer/MediaPortal.jsx';
 import truncateText from '../assets/js/utility.js';
 import { LikeButton, DownloadButton, ShareButton } from '../assets/js/quickActions.jsx';
+import { Link } from 'react-router-dom';
 
 const RecentPosts = () => {
     const initializeSwiper = () => {
@@ -62,7 +63,7 @@ const RecentPosts = () => {
             <div className="ms_heading">
                 <h1>{sectionData?.title}</h1>
                 <span className="veiw_all">
-                    <a href="#">مشاهده بیشتر</a>
+                    <Link to={`/posts/?section=${sectionData?.content}`}>مشاهده بیشتر</Link>
                 </span>
             </div>
             <div className="swiper-container">
@@ -91,7 +92,7 @@ const RecentPosts = () => {
                                 </div>
                                 <div className="ms_rcnt_box_text">
                                     <h3><a href="#">{truncateText(item?.title, 50, 45)}</a></h3>
-                                    <p>{item?.artist.name}</p>
+                                    <p>{item?.artist?.name}</p>
                                 </div>
 
                                 {isOpen[item.id] && (

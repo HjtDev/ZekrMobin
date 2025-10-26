@@ -15,11 +15,14 @@ import History from './Pages/History.jsx';
 import { ToastContainer, Bounce } from 'react-toastify';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import LikedPosts from "./Pages/LikedPosts.jsx";
+import PostList from "./Pages/PostList.jsx";
+import ScrollToTopOnRouteChange from './assets/js/scrollToTopOnRouteChange.jsx';
 
 
 function App() {
     return (
         <Router>
+            <ScrollToTopOnRouteChange />
            <Loading />
             <ToastContainer
                 position="top-center"
@@ -44,6 +47,7 @@ function App() {
                         <Route path='/profile' element={<Profile />} />
                         <Route path='/profile/history/' element={<History />} />
                         <Route path='/profile/liked/' element={<LikedPosts />} />
+                        <Route path='/posts/' element={<PostList />} />
                         <Route path='*' element={<NotFound />} />
                     </Routes>
                 </div>

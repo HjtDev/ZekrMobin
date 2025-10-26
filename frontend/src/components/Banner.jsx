@@ -1,6 +1,8 @@
 import React, {useEffect, useState} from 'react'
 import CustomSkeleton from './CustomSkeleton.jsx'
 import fetchSettings from '../api/settings.js';
+import Like from '../api/like.js';
+import {Link} from "react-router-dom";
 
 
 const Banner = () => {
@@ -54,12 +56,9 @@ const Banner = () => {
                                 }
                             </p>
                             <div className="ms_banner_btn">
-                                <a href="#" className="ms_btn">
-                                    حالا گوش دهید
-                                </a>
-                                <a href="#" className="ms_btn">
-                                    اضافه کردن به لیست
-                                </a>
+                                <Link to="/posts/" className="ms_btn prevent-default">
+                                    مشاهده پست ها
+                                </Link>
                             </div>
                         </div>
                     </div>

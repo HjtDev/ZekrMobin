@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { getMainPageData, getSectionData } from '../api/section-data.js'
 import truncateText from "../assets/js/utility.js";
+import { Link } from 'react-router-dom';
 
 const TopCategories = () => {
     const [pageData, setPageData] = useState(null)
@@ -66,8 +67,10 @@ const TopCategories = () => {
             <div className="ms_heading">
                 <h1>{pageData?.title || 'دسته بندی های برتر'}</h1>
                 <span className="veiw_all">
-          <a href="#">مشاهده بیشتر</a>
-        </span>
+                    <Link to="/posts/">
+                        مشاهده بیشتر
+                    </Link>
+                </span>
             </div>
 
             <div className="ms_category_slider swiper-container">
