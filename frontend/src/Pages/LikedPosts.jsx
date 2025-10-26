@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react'
 import "../assets/css/LikedPosts.css"
 import { useAuth } from '../contexts/AuthContext.jsx';
 import { useNavigate } from 'react-router-dom';
-import getUserPosts from '../api/user-posts.js';
+import { getUserPosts } from '../api/user-posts.js';
 import { toast } from 'react-toastify';
 import CustomSkeleton from "../components/CustomSkeleton.jsx";
 import MediaPortal from '../components/MediaPlayer/MediaPortal.jsx';
