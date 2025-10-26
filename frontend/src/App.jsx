@@ -17,6 +17,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import LikedPosts from "./Pages/LikedPosts.jsx";
 import PostList from "./Pages/PostList.jsx";
 import ScrollToTopOnRouteChange from './assets/js/scrollToTopOnRouteChange.jsx';
+import Artists from "./Pages/Artists.jsx";
 
 
 function App() {
@@ -48,6 +49,7 @@ function App() {
                         <Route path='/profile/history/' element={<History />} />
                         <Route path='/profile/liked/' element={<LikedPosts />} />
                         <Route path='/posts/' element={<PostList />} />
+                        <Route path='/artists/' element={<Artists />} />
                         <Route path='*' element={<NotFound />} />
                     </Routes>
                 </div>

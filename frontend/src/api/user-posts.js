@@ -49,4 +49,22 @@ const getUserPosts = async (listOf) => {
     }
 }
 
-export default getUserPosts;
+const clearHistory = async () => {
+    try {
+        const res = await api.post('media/clear_history/');
+        if(res.status === 204) {
+            return {
+                success: true,
+                msg: ['تاریخچه پاک شد.']
+            }
+        }
+    } catch (err) {
+        console.error("Failed to clear history: ", err?.response?.data || err.message);
+        return {
+            success: false,
+            msg: ['مشکلی پیش آمد لطفا بعدا تلاش کنید.']
+        }
+    }
+}
+
+export { getUserPosts, clearHistory };

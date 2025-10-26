@@ -57,12 +57,12 @@ const Sidebar = () => {
                             </Link>
                         </li>
                         <li>
-                            <a href="artist.html" title="خوانندگان">
+                            <Link to="/artists/" title="هنرمندان">
                                 <span className="nav_icon">
                                   <span className="icon icon_artists" />
                                 </span>
-                                <span className="nav_text">خوانندگان</span>
-                            </a>
+                                <span className="nav_text">هنرمندان</span>
+                            </Link>
                         </li>
                     </ul>
                     <ul className="nav_downloads">

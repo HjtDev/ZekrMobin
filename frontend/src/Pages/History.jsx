@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react'
 import { useAuth } from '../contexts/AuthContext.jsx';
 import { Navigate, useNavigate } from 'react-router-dom';
-import getUserPosts from '../api/user-posts.js';
+import { getUserPosts, clearHistory } from '../api/user-posts.js';
 import { toast } from 'react-toastify';
 import CustomSkeleton from "../components/CustomSkeleton.jsx";
 import MediaPortal from '../components/MediaPlayer/MediaPortal.jsx';
@@ -18,6 +18,13 @@ const History = () => {
     const handleMediaClick = (postId) => {
         setIsOpen((prev) => ({ ...prev, [postId]: true }));
     };
+
+    const handleClearHistory = async () => {
+        const { success, msg } = await clearHistory();
+        const messanger = success ? toast.success : toast.error;
+        msg.forEach(message => messanger(message));
+        setPageContent(null);
+    }
 
     useEffect(() => {
         setIsLoading(true);
@@ -47,8 +54,8 @@ const History = () => {
                         <div className="ms_heading">
                             <h1>تاریخچه</h1>
                             <span className="hstry_clear ms_btn">
-          <a href="#">پاک کن</a>
-        </span>
+                                <a href="#" className="prevent-default" onClick={() => handleClearHistory()}>پاک کردن</a>
+                              </span>
                         </div>
                     </div>
                     {
