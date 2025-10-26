@@ -549,3 +549,19 @@ class ArtistsList(APIView, ResponseBuilderMixin):
             message='Successful retrieval',
             artists=ArtistSerializer(artists, context={'request': request}, many=True).data
         )
+    
+
+class RemoveHistory(APIView, ResponseBuilderMixin):
+    throttle_scope = 'remove-history'
+    permission_classes = (IsAuthenticated,)
+    
+    def post(self, request):
+        user = self.request.user
+        
+        if user.history:
+            user.history = ''
+            user.save()
+            
+        return self.build_response(
+            status.HTTP_204_NO_CONTENT
+        )
