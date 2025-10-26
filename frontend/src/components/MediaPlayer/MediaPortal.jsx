@@ -481,6 +481,22 @@ const MediaPortal = ({ isOpen, onClose, postID }) => {
                                             ? "9/1"
                                             : (isMobile ? "9/16" : "16/9")
                                     }
+                                    autoPlay={false}
+                                    config={{
+                                        plyr: {
+                                            fullscreen: { enabled: false, fallback: false }
+                                        }
+                                    }}
+                                    onPointerDown={(e) => {
+                                        const startY = e.clientY;
+                                        const handleMove = (moveEvent) => {
+                                            if (Math.abs(MouseEvent.clientY - startY) > 5) {
+                                                e.preventDefault();
+                                            }
+                                            document.removeEventListener('pointermove', handleMove);
+                                        }
+                                        document.addEventListener('pointermove', handleMove);
+                                    }}
                                     src={activeMedia?.files?.map((file) => {
                                         let mimeType = 'video/mp4';
                                         if (file.media_type === 'audio') {
