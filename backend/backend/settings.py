@@ -255,7 +255,8 @@ REST_FRAMEWORK = {
         'download': '100/hour',
         'suggestion': '30/minute',
         'user-posts': '100/minute',
-        'post-list-filters': '300/minute'
+        'post-list-filters': '300/minute',
+        'artists-list': '100/minute',
     },
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema'
 }

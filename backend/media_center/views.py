@@ -532,3 +532,20 @@ class PostListFilters(APIView, ResponseBuilderMixin, GetDataMixin):
             categories=QuickTreeCategorySerializer(categories, many=True).data,
             tags=TagSerializer(tags, many=True).data,
         )
+    
+
+class ArtistsList(APIView, ResponseBuilderMixin):
+    throttle_scope = 'artists-list'
+    
+    def get(self, request):
+        artists = Artist.objects.all()
+        if not artists.exists():
+            return self.build_response(
+                status.HTTP_404_NOT_FOUND,
+                message='Artist not found'
+            )
+        return self.build_response(
+            status.HTTP_200_OK,
+            message='Successful retrieval',
+            artists=ArtistSerializer(artists, context={'request': request}, many=True).data
+        )
