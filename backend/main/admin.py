@@ -51,7 +51,7 @@ class SettingAdmin(admin.ModelAdmin):
         (
             'فضای مجازی',
             {
-                'fields': ('telegram_link', 'whatsapp_link', 'facebook_link', 'linkedin_link', 'twitter_link'),
+                'fields': ('telegram_link', 'instagram_link', 'youtube_link', 'eitaa_link', 'aparat_link'),
                 'classes': ('collapse',),
             }
         ),

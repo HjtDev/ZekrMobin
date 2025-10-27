@@ -36,10 +36,10 @@ class Setting(models.Model):
     contact_us_address = models.CharField(max_length=60, verbose_name='آدرس')
     
     telegram_link = models.CharField(max_length=255, verbose_name='تلگرام')
-    whatsapp_link = models.CharField(max_length=255, verbose_name='واتساپ')
-    facebook_link = models.CharField(max_length=255, verbose_name='فیسبوک')
-    linkedin_link = models.CharField(max_length=255, verbose_name='لینکدین')
-    twitter_link = models.CharField(max_length=255, verbose_name='ایکس')
+    instagram_link = models.CharField(max_length=255, verbose_name='اینستاگرام')
+    youtube_link = models.CharField(max_length=255, verbose_name='یوتیوب')
+    eitaa_link = models.CharField(max_length=255, verbose_name='ایتا')
+    aparat_link = models.CharField(max_length=255, verbose_name='آپارات')
     
     rights_text = models.TextField(max_length=255, verbose_name='متن حقوق سایت')
     

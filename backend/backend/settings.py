@@ -244,7 +244,7 @@ REST_FRAMEWORK = {
         'login': '5/minute',
         'signup': '5/minute',
         'logout': '5/minute',
-        'setting': '30/minute',
+        'setting': '300/minute',
         'club': '5/minute',
         'single-post': '300/minute',
         'filtered-posts': '300/minute',
