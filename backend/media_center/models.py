@@ -25,7 +25,7 @@ class Category(MPTTModel):
         verbose_name = 'دسته بندی'
         verbose_name_plural = 'دسته بندی ها'
     
-    name = models.CharField(max_length=50, verbose_name='اسم دسته بندی')
+    name = models.CharField(max_length=100, verbose_name='اسم دسته بندی')
     thumbnail = ResizedImageField(upload_to='category/thumbnails/', size=[240, 240], blank=True, null=True, verbose_name='عکس کاور')
     recommended_by_site = models.BooleanField(default=False, verbose_name='دسته بندی منتخب')
     
