@@ -1,8 +1,9 @@
 import React, {useState} from 'react'
-import { useAuth } from "../../contexts/AuthContext.jsx";
+import { useAuth } from '../../contexts/AuthContext.jsx';
 import { useNavigate } from 'react-router-dom';
-import {Link} from "react-router-dom";
-import truncateText from "../../assets/js/utility.js";
+import {Link} from 'react-router-dom';
+import truncateText from '../../assets/js/utility.js';
+import toggleSidebar from '../../assets/js/toggleSidebar.js';
 
 const Header = () => {
     const {user, isLoggedIn, logout} = useAuth();
@@ -61,7 +62,7 @@ const Header = () => {
         <div className="ms_top_btn">
             <a
                 href="javascript:"
-                className="ms_btn reg_btn"
+                className="ms_btn d-none reg_btn"
                 data-toggle="modal"
                 data-target="#myModal"
             >
@@ -70,6 +71,7 @@ const Header = () => {
             <a
                 href="javascript:"
                 className="ms_btn login_btn"
+                onClick={() => toggleSidebar(true)}
                 data-toggle="modal"
                 data-target="#myModal1"
             >

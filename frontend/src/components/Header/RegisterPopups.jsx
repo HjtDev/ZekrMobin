@@ -1,5 +1,7 @@
 import React, {useState} from 'react'
 import {useAuth} from "../../contexts/AuthContext.jsx";
+import toggleSidebar from "../../assets/js/toggleSidebar.js";
+import { toast, Slide } from 'react-toastify';
 
 const RegisterPopups = () => {
     const {createNewAccount, connectAccount} = useAuth();
@@ -34,11 +36,20 @@ const RegisterPopups = () => {
         const {success, field, msg} = await createNewAccount(username, name, password, password2);
         if(success) {
             document.querySelector('i.register_modal_close').click();
+            toggleSidebar(false);
         } else {
-            setUsernameErrors(field === 'username' ? msg : []);
-            setNameErrors(field === 'name' ? msg : []);
-            setPasswordErrors(field === 'password' ? msg : []);
-            setFormErrors(field === '' ? msg : []);
+            for(const message of msg) {
+                toast.error(message, {
+                    transition: Slide,
+                    autoClose: 5000,
+                    newestOnTop: false
+                });
+                await new Promise((resolve) => setTimeout(resolve, 500));
+            }
+            // setUsernameErrors(field === 'username' ? msg : []);
+            // setNameErrors(field === 'name' ? msg : []);
+            // setPasswordErrors(field === 'password' ? msg : []);
+            // setFormErrors(field === '' ? msg : []);
         }
         setIsLoading(false);
     }
@@ -51,6 +62,7 @@ const RegisterPopups = () => {
 
         if(success) {
             document.querySelector('i.login_modal_close').click();
+            toggleSidebar(false);
         } else {
             setLoginFormErrors(msg);
         }
@@ -68,14 +80,14 @@ const RegisterPopups = () => {
                         </button>
                         <div className="modal-body">
                             <div className="ms_register_img">
-                                <img src="images/register_img.png" alt="" className="img-fluid"/>
+                                <img src="/images/register_img.png" alt="" className="img-fluid"/>
                             </div>
                             <div className="ms_register_form">
                                 <h2>ثبت نام / ورود</h2>
                                 <div className="form-group">
                                     <input
                                         type="text"
-                                        placeholder="نام کاربری"
+                                        placeholder="نام کاربری: (Ali)"
                                         className="form-control"
                                         onChange={(e) => {setUsername(e.target.value)}}
                                     />
@@ -91,7 +103,7 @@ const RegisterPopups = () => {
                                 <div className="form-group">
                                     <input
                                         type="text"
-                                        placeholder="اسم"
+                                        placeholder="اسم: (علی محمدی)"
                                         className="form-control"
                                         onChange={(e) => {setName(e.target.value)}}
                                     />
@@ -113,11 +125,22 @@ const RegisterPopups = () => {
                                         className="form-control"
                                         onChange={(e) => {setPassword(e.target.value)}}
                                     />
-                                    <ul className="small text-right" style={{color: "#e74c3c"}}>
+                                    <ul className="small text-right" style={{ color: "#e74c3c" }}>
                                         {
-                                            passwordErrors.map((err, index) => (
-                                                <li key={index}>{err}</li>
-                                            ))
+                                            passwordErrors && passwordErrors.length > 0
+                                                ? passwordErrors.map((err, index) => (
+                                                    <li key={index}>{err}</li>
+                                                ))
+                                                : [
+                                                    'رمز عبور نباید شبیه نام کاربری باشد.',
+                                                    'رمز عبور باید حداقل ۸ کاراکتر باشد.',
+                                                    'رمز عبور نباید ساده و قابل حدس باشد.',
+                                                    'رمز عبور نباید تماما عددی باشد.'
+                                                ].map((err, index) => (
+                                                    <div>
+                                                        <strong className="text-right d-inline-block text-black-50" style={{ marginRight: -30 }} key={index}>{err}</strong><br />
+                                                    </div>
+                                                ))
                                         }
                                     </ul>
                                     <span className="form_icon">
@@ -174,7 +197,7 @@ const RegisterPopups = () => {
                         </button>
                         <div className="modal-body">
                             <div className="ms_register_img">
-                                <img src="images/register_img.png" alt="" className="img-fluid"/>
+                                <img src="/images/register_img.png" alt="" className="img-fluid"/>
                             </div>
                             <div className="ms_register_form">
                                 <h2>ثبت نام / ورود</h2>

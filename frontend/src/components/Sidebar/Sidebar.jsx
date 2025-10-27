@@ -66,6 +66,44 @@ const Sidebar = () => {
                         </li>
                     </ul>
                     <ul className="nav_downloads">
+                        {
+                            isLoggedIn && (
+                                <li>
+                                    <Link to="/profile/" title="پروفایل">
+                                <span className="nav_icon">
+                                  <span className="icon icon_genres"/>
+                                </span>
+                                        <span className="nav_text">پروفایل</span>
+                                    </Link>
+                                </li>
+                            )
+                        }
+                        {
+                            !isLoggedIn && (
+                                <div>
+                                    <li>
+                                        <Link to="#" title="ورود" className="prevent-default"
+                                              onClick={() => document.getElementsByClassName('login_btn')?.[0].click()}>
+                                        <span className="nav_icon">
+                                          <span className="fa fa-sign-in"/>
+                                        </span>
+                                            <span className="nav_text">ورود</span>
+                                        </Link>
+                                    </li>
+                                    <li>
+                                        <Link to="#" title="ثبت نام" className="prevent-default"
+                                              onClick={() => document.getElementsByClassName('reg_btn')?.[0].click()}>
+                                        <span className="nav_icon">
+                                          <span className="fa fa-sign-out"/>
+                                        </span>
+                                            <span className="nav_text">ثبت نام</span>
+                                        </Link>
+                                    </li>
+                                </div>
+                            )
+                        }
+                    </ul>
+                    <ul className="nav_downloads">
                         <li>
                             <Link to="/posts/?section=recent-posts" onClick={() => ReloadInPostList()} title="برترین ها">
                                 <span className="nav_icon">
@@ -99,6 +137,7 @@ const Sidebar = () => {
                             </Link>
                         </li>
                     </ul>
+
                     <ul className="nav_playlist">
                         {
                             isLoggedIn && (
