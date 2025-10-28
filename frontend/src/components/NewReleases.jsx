@@ -71,6 +71,7 @@ const NewReleases = () => {
         <div className="ms_releases_wrapper">
             <div className="ms_heading w-100 text-center">
                 <h1>{pageData?.title || "جدیدترین ها"}</h1>
+                <span className="ms_heading_underline" aria-hidden="true"></span>
                 <span className="veiw_all w-100">
                     <Link to={`/posts/?section=${pageData?.content}`}>
                         مشاهده بیشتر

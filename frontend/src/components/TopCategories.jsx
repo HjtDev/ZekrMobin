@@ -66,6 +66,7 @@ const TopCategories = () => {
         <div className="ms_fea_album_slider">
             <div className="ms_heading w-100 text-center">
                 <h1>{pageData?.title || 'دسته بندی های برتر'}</h1>
+                <span className="ms_heading_underline" aria-hidden="true"></span>
                 <span className="veiw_all w-100">
                     <Link to="/posts/">
                         مشاهده بیشتر

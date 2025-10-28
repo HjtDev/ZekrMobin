@@ -11,6 +11,7 @@ import WeeklyTop from '../components/WeeklyTop.jsx'
 import LazySection from '../components/LazyLoader/LazySection.jsx';
 import MediaPortal from '../components/MediaPlayer/MediaPortal.jsx';
 import { useEffect } from 'react';
+import "../assets/css/HeadingFix.css"
 
 
 const MainPage = () => {
