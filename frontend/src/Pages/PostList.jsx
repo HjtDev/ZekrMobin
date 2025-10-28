@@ -67,10 +67,13 @@ const PostList = () => {
     ];
 
     const [activeSearchQuery, setActiveSearchQuery] = useState(null);
+    const [activeSearchParams, setActiveSearchParams] = useState(null);
     const resetSearch = async () => {
         const url = new URL(window.location);
-        url.searchParams.delete('search');
+        url.search = '';
         window.history.replaceState(null, '', url.toString());
+        setActiveSearchQuery(null);
+        setActiveSearchParams(null);
         await fetchPosts(selectedSection, filters, 12, pagination.page);
     }
 
@@ -83,8 +86,12 @@ const PostList = () => {
     const fetchPosts = async (section, filters, perPage = 6, page = 1) => {
         setIsLoading(true);
         const params = new URLSearchParams(location.search);
+        if(params.size > 0) {
+            setActiveSearchParams(params);
+        }
         const updatedSection = params.get('section');
         const artists = params.get('artists');
+        const categories = params.get('categories');
         const searchQuery = params.get('search');
         if(updatedSection) {
             section = updatedSection;
@@ -94,6 +101,11 @@ const PostList = () => {
             filters.artists = artists.split(',');
         } else {
             filters.artists = null;
+        }
+        if(categories && /^\d+(,\d+)*$/.test(categories)) {
+            filters.categories = categories.split(',');
+        } else {
+            filters.categories = null;
         }
         if(searchQuery) {
             filters.search = searchQuery;
@@ -274,20 +286,29 @@ const PostList = () => {
                     <div className="col-lg-12">
                         <div className="ms_heading">
                             <div className="row align-items-center flex-wrap text-right flex-lg-wrap">
-                                <div className="col-12  order-0 order-lg-1" style={{ marginBottom: "10rem" }}>
+                                <div className="col-12  order-0 order-lg-1" style={{marginBottom: "10rem"}}>
                                     {
-                                        activeSearchQuery ?
-                                            (
-                                                <div className="d-flex justify-content-start align-items-start" style={{ gap: "5rem" }}>
-                                                    <h1 className="m-0">{`نمایش نتایج جست و جو: ${activeSearchQuery}`}</h1>
-                                                    <a href="#" onClick={() => resetSearch()} className="fa fa-close ms_color prevent-default"></a>
-                                                </div>
-                                            ) : (
+                                        activeSearchParams ?
+                                            activeSearchQuery ?
+                                                (
+                                                    <div className="d-flex justify-content-start align-items-start"
+                                                         style={{gap: "5rem"}}>
+                                                        <h1 className="m-0">{`نمایش نتایج جست و جو: ${activeSearchQuery}`}</h1>
+                                                        <a href="#" onClick={() => resetSearch()}
+                                                           className="fa fa-close ms_color prevent-default"></a>
+                                                    </div>
+                                                ) : (
+                                                    <div className="d-flex justify-content-start align-items-start"
+                                                         style={{gap: "5rem"}}>
+                                                        <h1 className="m-0">حذف فیلتر ها</h1>
+                                                        <a href="#" onClick={() => resetSearch()}
+                                                           className="fa fa-close ms_color prevent-default"></a>
+                                                    </div>
+                                                ) : (
                                                 <h1 className="m-0">پست ها</h1>
                                             )
                                     }
                                 </div>
-
                                 <a
                                     className="ms_btn d-inline-flex align-items-center justify-content-center text-dark order-1"
                                     onClick={handleFiltersRow}
