@@ -3,6 +3,8 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django_resized import ResizedImageField
 from account.models import User
+from django.core.mail import send_mail
+from django.conf import settings
 from logging import getLogger
 
 
@@ -64,6 +66,7 @@ class ClubMessage(models.Model):
         MEMBERS_WHO_RECEIVED = ('ارسال برای کسانی که قبلا این پیام را گرفته اند', 'ارسال برای کسانی که قبلا این پیام را گرفته اند')
         NEW_MEMBERS = ('ارسال برای اعضای جدید', 'ارسال برای اعضای جدید')
         
+    subject = models.CharField(max_length=120, default='پیام از ذکرمبین', verbose_name='موضوع')
     message = models.TextField(max_length=1000, verbose_name='متن پیام')
     is_ready = models.BooleanField(default=False, verbose_name='آماده ارسال')
     send_to = models.CharField(max_length=50, choices=SendOptions.choices, verbose_name='ارسال برای')
@@ -89,7 +92,13 @@ class ClubMessage(models.Model):
             list_of_members = self.sent_to.all()
             
         for member in list_of_members:
-            logger.info(f'Sent a club message to {member.name}')
+            send_mail(
+                subject=self.subject,
+                message=self.message,
+                from_email='info@zekremobin.ir',
+                recipient_list=[member.email],
+                fail_silently=False
+            )
             self.sent_to.add(member)
             messages.success(request, 'پیام(ها) با موفقیت ارسال شدند.')
             
