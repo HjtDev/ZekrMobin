@@ -328,6 +328,23 @@ const MediaPortal = ({ isOpen, onClose, postID }) => {
         }
     }
 
+    useEffect(() => {
+        if(!isOpen) return;
+
+        window.history.pushState({ modalOpen: true }, "");
+
+        const handlePopState = () => {
+            if(isOpen) onClose();
+        };
+
+        window.addEventListener("popstate", handlePopState);
+
+        return () => {
+            window.removeEventListener("popstate", handlePopState);
+            if(window.history.state?.modalOpen) window.history.back();
+        };
+    }, [isOpen, onClose]);
+
     // fetch post when postID changes
     useEffect(() => {
         if (!postID) {
@@ -482,6 +499,8 @@ const MediaPortal = ({ isOpen, onClose, postID }) => {
                                             : (isMobile ? "9/16" : "16/9")
                                     }
                                     autoPlay={false}
+                                    fullscreenOrientation={false}
+                                    playsInline={true}
                                     config={{
                                         plyr: {
                                             fullscreen: { enabled: false, fallback: false }
@@ -520,6 +539,8 @@ const MediaPortal = ({ isOpen, onClose, postID }) => {
                                     <PlyrLayout
                                         icons={plyrLayoutIcons}
                                         thumbnails={post?.thumbnail}
+                                        clickToFullscreen={true}
+                                        clickToPlay={false}
                                     />
                                 </MediaPlayer>
                             </div>
