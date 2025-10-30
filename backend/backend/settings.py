@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'media_center.apps.MediaCenterConfig',
     'blog.apps.BlogConfig',
     'rest_framework',
+    'tinymce',
     'drf_spectacular',
 ]
 
@@ -314,3 +315,31 @@ EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 EMAIL_PORT = env.int('EMAIL_PORT')
 EMAIL_USE_SSL = True
 EMAIL_USE_TLS = False
+
+# Tinymce Settings
+
+TINYMCE_DEFAULT_CONFIG = {
+    'height': 500,
+    'width': '100%',
+    'menubar': True,
+    'plugins': (
+        'advlist anchor autolink autosave charmap code codesample directionality emoticons fullscreen help '
+        'image insertdatetime link lists media nonbreaking pagebreak paste preview print quickbars save searchreplace '
+        'table template visualblocks visualchars wordcount'
+    ),
+    'toolbar': (
+        'undo redo | bold italic underline strikethrough | fontselect fontsizeselect formatselect | '
+        'alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist | forecolor backcolor '
+        'removeformat | pagebreak | charmap emoticons | fullscreen preview save print | '
+        'insertfile image media template link anchor codesample | ltr rtl | code'
+    ),
+    'contextmenu': 'link image imagetools table',
+    'images_upload_url': '/api/blog/editor/upload/',
+    'automatic_uploads': True,
+    'image_advtab': True,
+    'image_caption': True,
+    'file_picker_types': 'file image media',
+    'quickbars_selection_toolbar': 'bold italic | quicklink h2 h3 blockquote quickimage quicktable',
+    'nonbreaking_force_tab': True,
+    'toolbar_mode': 'sliding',
+}
