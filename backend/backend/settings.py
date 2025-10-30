@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'main.apps.MainConfig',
     'account.apps.AccountConfig',
     'media_center.apps.MediaCenterConfig',
+    'blog.apps.BlogConfig',
     'rest_framework',
     'drf_spectacular',
 ]
