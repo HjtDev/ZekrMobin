@@ -8,6 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 from django.http.response import JsonResponse
 from django.core.files.storage import FileSystemStorage
+from rest_framework.exceptions import ValidationError
 from rest_framework.views import APIView
 from backend.mixins import GetDataMixin, ResponseBuilderMixin, CachedResponseMixin
 from .models import BlogPost, Category, Tag, Comment
@@ -284,3 +285,59 @@ class TagList(APIView, ResponseBuilderMixin, GetDataMixin):
             message='Successful retrieval',
             tags=TagSerializer(tags, many=True).data
         )
+    
+    
+class BlogPostSuggestion(APIView, ResponseBuilderMixin, GetDataMixin, CachedResponseMixin):
+    throttle_scope = 'blog-post-suggestion'
+    
+    def validate_limit(self, limit: int | str) -> bool:
+        return self.is_id(limit) and int(limit) < 20
+    
+    def validate_based_on(self, based_on: str) -> bool:
+        return based_on in ('category', 'tag')
+    
+    def get(self, request):
+        success, result = self.get_data(request, ('id', self.is_id), ('based_on', self.validate_based_on), ('limit', self.validate_limit))
+        
+        if not success:
+            return self.build_response(
+                status.HTTP_400_BAD_REQUEST,
+                message='Invalid or missing parameter',
+                errors=result
+            )
+        
+        limit = int(result['limit'])
+        post_id = int(result['id'])
+        based_on = result['based_on']
+        try:
+            post = BlogPost.objects.select_related('category').prefetch_related('tags').get(id=post_id)
+            suggestion_list = None
+            if based_on == 'category':
+                suggestion_list = BlogPost.objects.filter(category__id=post.category.id).order_by('-views_count').distinct()[:limit]
+            elif based_on == 'tag':
+                suggestion_list = BlogPost.objects.filter(tags__id__in=[post.tags.values_list('id', flat=True)]).order_by('-views_count').distinct()[:limit]
+            else:
+                raise ValidationError('Invalid based_on validation: {based_on} / it should be "category" or "tag"')
+            
+            if not suggestion_list:
+                return self.build_response(
+                    status.HTTP_404_NOT_FOUND,
+                    message='There is no post to suggest.'
+                )
+            
+            return self.build_response(
+                status.HTTP_200_OK,
+                message='Successful retrieval',
+                posts=QuickBlogPostSerializer(suggestion_list, context={'request': request}, many=True).data
+            )
+        except BlogPost.DoesNotExist:
+            return self.build_response(
+                status.HTTP_404_NOT_FOUND,
+                message='Post not found'
+            )
+        except ValidationError as e:
+            logger.error(e)
+            return self.build_response(
+                status.HTTP_500_INTERNAL_SERVER_ERROR,
+                message='Failed to validate data. Try again later.'
+            )

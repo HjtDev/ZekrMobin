@@ -263,7 +263,8 @@ REST_FRAMEWORK = {
         'single-blog-post': '200/minute',
         'filtered-blog-post': '200/minute',
         'blog-category-list': '200/minute',
-        'blog-tag-list': '200/minute'
+        'blog-tag-list': '200/minute',
+        'blog-post-suggestion': '200/minute',
     },
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema'
 }
