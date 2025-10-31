@@ -2,7 +2,6 @@ from datetime import timedelta
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.contrib.postgres.search import SearchQuery, SearchVector, SearchRank
 from django.db.models import Count, ExpressionWrapper, FloatField, F, QuerySet, Sum, When, Case
-from django.db.models.fields import PositiveIntegerRelDbTypeMixin
 from django.utils import timezone
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
