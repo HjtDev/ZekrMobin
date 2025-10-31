@@ -260,7 +260,8 @@ REST_FRAMEWORK = {
         'post-list-filters': '300/minute',
         'artists-list': '100/minute',
         'remove-history': '30/minute',
-        'single-blog-post': '200/minute'
+        'single-blog-post': '200/minute',
+        'filtered-blog-post': '200/minute'
     },
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema'
 }

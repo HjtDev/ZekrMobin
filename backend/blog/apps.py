@@ -6,3 +6,6 @@ class BlogConfig(AppConfig):
     name = 'blog'
     verbose_name = 'مجله'
     verbose_name_plural = 'مجله'
+    
+    def ready(self):
+        import blog.signals
