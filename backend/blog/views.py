@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.postgres.search import SearchQuery, SearchVector, SearchRank
 from django.core.paginator import PageNotAnInteger, EmptyPage, Paginator
-from django.db.models import QuerySet, ExpressionWrapper, F, FloatField
+from django.db.models import QuerySet
 from django.utils import timezone
 from datetime import timedelta
 from django.views.decorators.csrf import csrf_exempt
@@ -11,7 +11,7 @@ from django.core.files.storage import FileSystemStorage
 from rest_framework.views import APIView
 from backend.mixins import GetDataMixin, ResponseBuilderMixin, CachedResponseMixin
 from .models import BlogPost, Category, Tag, Comment
-from .serializers import BlogPostSerializer, QuickBlogPostSerializer
+from .serializers import BlogPostSerializer, QuickBlogPostSerializer, CategorySerializer, TagSerializer
 from rest_framework import status
 import os, logging
 
@@ -204,3 +204,83 @@ class FilteredBlogPost(APIView, GetDataMixin, ResponseBuilderMixin, CachedRespon
                 status.HTTP_500_INTERNAL_SERVER_ERROR,
                 message='Validation of data was not successful'
             )
+        
+    
+class CategoryList(APIView, ResponseBuilderMixin, GetDataMixin):
+    throttle_scope = 'blog-category-list'
+    
+    def validate_limit(self, limit: int | str) -> bool:
+        if isinstance(limit, str) and limit.isdigit() and int(limit) >= 0:
+            return True
+        if isinstance(limit, int) and limit >= 0:
+            return True
+        
+        return False
+    
+    def get(self, request):
+        success, result = self.get_data(request, ('limit', self.validate_limit))
+        
+        if not success:
+            return self.build_response(
+                status.HTTP_400_BAD_REQUEST,
+                message='Invalid or missing parameter',
+                errors=result
+            )
+        
+        limit = int(result['limit'])
+        
+        categories = Category.objects.all()
+        if limit != 0:
+            categories = categories[:limit]
+            
+        if not categories:
+            return self.build_response(
+                status.HTTP_404_NOT_FOUND,
+                message='Category not found'
+            )
+        
+        return self.build_response(
+            status.HTTP_200_OK,
+            message='Successful retrieval',
+            categories=CategorySerializer(categories, many=True).data
+        )
+
+
+class TagList(APIView, ResponseBuilderMixin, GetDataMixin):
+    throttle_scope = 'blog-tag-list'
+    
+    def validate_limit(self, limit: int | str) -> bool:
+        if isinstance(limit, str) and limit.isdigit() and int(limit) >= 0:
+            return True
+        if isinstance(limit, int) and limit >= 0:
+            return True
+        
+        return False
+    
+    def get(self, request):
+        success, result = self.get_data(request, ('limit', self.validate_limit))
+        
+        if not success:
+            return self.build_response(
+                status.HTTP_400_BAD_REQUEST,
+                message='Invalid or missing parameter',
+                errors=result
+            )
+        
+        limit = int(result['limit'])
+        
+        tags = Tag.objects.all()
+        if limit != 0:
+            tags = tags[:limit]
+        
+        if not tags:
+            return self.build_response(
+                status.HTTP_404_NOT_FOUND,
+                message='Tag not found'
+            )
+        
+        return self.build_response(
+            status.HTTP_200_OK,
+            message='Successful retrieval',
+            tags=TagSerializer(tags, many=True).data
+        )
