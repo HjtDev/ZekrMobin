@@ -11,8 +11,9 @@ from django.core.files.storage import FileSystemStorage
 from rest_framework.exceptions import ValidationError
 from rest_framework.views import APIView
 from backend.mixins import GetDataMixin, ResponseBuilderMixin, CachedResponseMixin
+from media_center.permissions import SafeAuthentication
 from .models import BlogPost, Category, Tag, Comment
-from .serializers import BlogPostSerializer, QuickBlogPostSerializer, CategorySerializer, TagSerializer
+from .serializers import BlogPostSerializer, QuickBlogPostSerializer, CategorySerializer, TagSerializer, CommentSerializer
 from rest_framework import status
 import os, logging
 
@@ -340,4 +341,90 @@ class BlogPostSuggestion(APIView, ResponseBuilderMixin, GetDataMixin, CachedResp
             return self.build_response(
                 status.HTTP_500_INTERNAL_SERVER_ERROR,
                 message='Failed to validate data. Try again later.'
+            )
+        
+        
+class BlogComment(APIView, ResponseBuilderMixin, GetDataMixin, CachedResponseMixin):
+    throttle_scope = 'blog-comment'
+    permission_classes = (SafeAuthentication,)
+    
+    def validate_content(self, content: str) -> bool:
+        if not isinstance(content, str):
+            return False
+        content = content.strip()
+        
+        if not content:
+            return False
+        
+        if not 3 <= len(content) <= 320:
+            return False
+        
+        return True
+    
+    def get(self, request):
+        success, result = self.get_data(request, ('id', self.is_id))
+        
+        if not success:
+            return self.build_response(
+                status.HTTP_400_BAD_REQUEST,
+                message='Invalid or missing parameter',
+                errors=result
+            )
+        
+        try:
+            post = BlogPost.objects.get(id=int(result['id']), is_visible=True)
+            comments = post.comments.filter(is_verified=True)
+            
+            if not comments.exists():
+                return self.build_response(status.HTTP_204_NO_CONTENT)
+            
+            return self.build_response(
+                status.HTTP_200_OK,
+                message='Successful retrieval',
+                comments=CommentSerializer(comments, many=True).data
+            )
+            
+        except BlogPost.DoesNotExist:
+            return self.build_response(
+                status.HTTP_404_NOT_FOUND,
+                message='Post not found'
+            )
+        
+    def post(self, request):
+        success, result = self.get_data(request, ('id', self.is_id), ('content', self.validate_content))
+        
+        if not success:
+            return self.build_response(
+                status.HTTP_400_BAD_REQUEST,
+                message='Invalid or missing parameter',
+                errors=result
+            )
+        
+        try:
+            post = BlogPost.objects.get(id=int(result['id']), is_visible=True)
+            
+            existing_comment = post.comments.filter(user__id=request.user.id)
+            
+            if existing_comment.exists():
+                return self.build_response(
+                    status.HTTP_409_CONFLICT,
+                    message='You have a comment on this post' if existing_comment.first().is_verified else 'You have a comment on this post and it will be shown after its verified',
+                    is_verified=existing_comment.first().is_verified
+                )
+                
+            Comment.objects.create(
+                post=post,
+                user=request.user,
+                content=result['content']
+            )
+            
+            return self.build_response(
+                status.HTTP_201_CREATED,
+                message='Comment added successfully',
+            )
+            
+        except BlogPost.DoesNotExist:
+            return self.build_response(
+                status.HTTP_404_NOT_FOUND,
+                message='Post not found'
             )

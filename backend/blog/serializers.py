@@ -86,3 +86,31 @@ class QuickBlogPostSerializer(BlogPostSerializer):
         else:
             days = int(seconds // 86400)
             return f"{days} روز پیش"
+
+
+class CommentSerializer(ModelSerializer):
+    user = SerializerMethodField()
+    time_since = SerializerMethodField()
+    class Meta:
+        model = Comment
+        fields = ('id', 'content', 'user', 'time_since')
+        read_only_fields = ('id',)
+    
+    def get_user(self, obj: Comment):
+        return obj.user.username if obj.user else 'بی نام'
+    
+    
+    def get_time_since(self, obj: BlogPost):
+        seconds = (now() - obj.created_at).total_seconds()
+        
+        if seconds < 60:
+            return f"{int(seconds)} ثانیه پیش"
+        elif seconds < 3600:
+            minutes = int(seconds // 60)
+            return f"{minutes} دقیقه پیش"
+        elif seconds < 86400:
+            hours = int(seconds // 3600)
+            return f"{hours} ساعت پیش"
+        else:
+            days = int(seconds // 86400)
+            return f"{days} روز پیش"

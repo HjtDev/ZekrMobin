@@ -11,4 +11,5 @@ urlpatterns = [
     path('posts/categories/', views.CategoryList.as_view(), name='category-list'),
     path('posts/tags/', views.TagList.as_view(), name='tag-list'),
     path('posts/post/suggest/', views.BlogPostSuggestion.as_view(), name='post-suggestion'),
+    path('posts/post/comments/', views.BlogComment.as_view(), name='comments')
 ]
