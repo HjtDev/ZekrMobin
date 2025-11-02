@@ -18,6 +18,7 @@ import LikedPosts from "./Pages/LikedPosts.jsx";
 import PostList from "./Pages/PostList.jsx";
 import ScrollToTopOnRouteChange from './assets/js/scrollToTopOnRouteChange.jsx';
 import Artists from "./Pages/Artists.jsx";
+import BlogList from "./Pages/BlogList.jsx";
 
 
 function App() {
@@ -50,6 +51,7 @@ function App() {
                         <Route path='/profile/liked/' element={<LikedPosts />} />
                         <Route path='/posts/' element={<PostList />} />
                         <Route path='/artists/' element={<Artists />} />
+                        <Route path='/blog/' element={<BlogList />} />
                         <Route path='*' element={<NotFound />} />
                     </Routes>
                 </div>

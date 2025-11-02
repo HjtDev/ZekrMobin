@@ -57,6 +57,14 @@ const Sidebar = () => {
                             </Link>
                         </li>
                         <li>
+                            <Link to="/blog/" title="مجله">
+                                <span className="nav_icon">
+                                  <span className="icon icon_queue" />
+                                </span>
+                                <span className="nav_text">مجله</span>
+                            </Link>
+                        </li>
+                        <li>
                             <Link to="/artists/" title="هنرمندان">
                                 <span className="nav_icon">
                                   <span className="icon icon_artists" />
