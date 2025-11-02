@@ -1,28 +1,56 @@
 import React, { useEffect, useState } from 'react'
-import {getCategoryList, getFilteredBlogPosts, getTagsList} from '../api/blog.js';
+import { getCategoryList, getFilteredBlogPosts, getTagsList } from '../api/blog.js';
 import { toast } from "react-toastify";
 import CustomSkeleton from '../components/CustomSkeleton.jsx';
+import {Link, useNavigate, useParams, useSearchParams} from 'react-router-dom';
 import Select from 'react-select';
 
 const BlogList = () => {
+    const navigate = useNavigate();
+    const [initialized, setInitialized] = useState(false);
+    const [params] = useSearchParams();
+
     const [isLoading, setIsLoading] = useState(true);
     const [posts, setPosts] = useState(null);
     const [categories, setCategories] = useState(null);
     const [tags, setTags] = useState()
 
-    const defaultOptions = {
-        selector: "all",
-        filters: {
-            date: 'trends'
-        },
-        limit: 6
-    }
-    const [options, setOptions] = useState(defaultOptions);
-
     const [pagination, setPagination] = useState({ page: 1 });
     const [paginationOptions, setPaginationOptions] = useState({});
     const [searchQuery, setSearchQuery] = useState('');
     const [activeFilter, setActiveFilter] = useState(false);
+
+    const getDefaultOptions = (params) => {
+        const category = params.get("category");
+        const tag = params.get("tag");
+        const query = params.get("search");
+
+        let defaultOptions = {
+            selector: "all",
+            filters: { date: "trends" },
+            limit: 6,
+        };
+
+        if (category && Number.isInteger(Number(category))) {
+            defaultOptions.filters.category = [category];
+        }
+
+        if (tag && Number.isInteger(Number(tag))) {
+            defaultOptions.filters.tags = [tag];
+        }
+
+        if (query) {
+            defaultOptions.selector = `search:${query}`;
+        }
+
+        return defaultOptions;
+    };
+
+    const [options, setOptions] = useState({
+        selector: "all",
+        filters: { date: "trends" },
+        limit: 6,
+    });
 
     const SelectStyle = {
         control: (base, state) => ({
@@ -129,9 +157,17 @@ const BlogList = () => {
     }
 
     const resetOptions = () => {
-        setOptions(defaultOptions);
+        navigate(window.location.pathname, { replace: true });
+
         setActiveFilter(false);
         setSearchQuery('');
+        setPagination({ page: 1 });
+
+        setOptions({
+            selector: "all",
+            filters: {date: "trends"},
+            limit: 6,
+        });
     }
 
     const addSearchQuery = () => {
@@ -176,8 +212,22 @@ const BlogList = () => {
     }, []);
 
     useEffect(() => {
+        const hasParams = params.get("category") || params.get("tag") || params.get("search");
+        if (hasParams) {
+            const newOptions = getDefaultOptions(params);
+            setOptions(newOptions);
+            setActiveFilter(true);
+            if (params.get("search")) {
+                setSearchQuery(params.get("search"));
+            }
+        }
+        setInitialized(true);
+    }, [params]);
+
+    useEffect(() => {
+        if(!initialized) return;
         fetchPosts();
-    }, [options]);
+    }, [options, initialized]);
 
     useEffect(() => {
         if(pagination?.total_pages) {
@@ -213,19 +263,23 @@ const BlogList = () => {
                                 </div>
                             ) : posts.map((post, index) => (
                                 <div className="ms_blog_single" key={index}>
-                                    <div className="blog_single_img">
-                                        <img src={post.thumbnail} alt={post.title} className="img-fluid"/>
-                                    </div>
-                                    <div className="blog_single_content">
-                                        <h3 className="ms_blog_title">{post.title}</h3>
-                                        <div className="ms_post_meta">
-                                            <ul>
-                                                <li>{post.time_since}</li>
-                                                <li>&nbsp;/&nbsp;</li>
-                                                <li> {post.comments_count} دیدگاه </li>
-                                            </ul>
+                                    <Link to={`/blog/post/${post.id}/${post.title}`}>
+                                        <div className="blog_single_img">
+                                            <img src={post.thumbnail} alt={post.title} className="img-fluid"/>
                                         </div>
-                                    </div>
+                                    </Link>
+                                        <div className="blog_single_content">
+                                            <Link to={`/blog/post/${post.id}/${post.title}`}>
+                                                <h3 className="ms_blog_title">{post.title}</h3>
+                                            </Link>
+                                            <div className="ms_post_meta">
+                                                <ul>
+                                                    <li>{post.time_since}</li>
+                                                    <li>&nbsp;/&nbsp;</li>
+                                                    <li> {post.comments_count} دیدگاه</li>
+                                                </ul>
+                                            </div>
+                                        </div>
                                 </div>
                             ))
                     }
