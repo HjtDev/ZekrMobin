@@ -173,7 +173,8 @@ const BlogList = () => {
     const addSearchQuery = () => {
         setOptions(prev => ({
             ...prev,
-            selector: `search:${searchQuery}`
+            selector: `search:${searchQuery}`,
+            filters: {}
         }));
         setActiveFilter(true);
     }
@@ -215,7 +216,11 @@ const BlogList = () => {
         const hasParams = params.get("category") || params.get("tag") || params.get("search");
         if (hasParams) {
             const newOptions = getDefaultOptions(params);
-            setOptions(newOptions);
+            if(params.get("search")) {
+                setOptions(() => ({ ...newOptions, filters: null }))
+            } else {
+                setOptions(newOptions);
+            }
             setActiveFilter(true);
             if (params.get("search")) {
                 setSearchQuery(params.get("search"));

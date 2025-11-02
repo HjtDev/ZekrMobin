@@ -314,9 +314,9 @@ class BlogPostSuggestion(APIView, ResponseBuilderMixin, GetDataMixin, CachedResp
             post = BlogPost.objects.select_related('category').prefetch_related('tags').get(id=post_id)
             suggestion_list = None
             if based_on == 'category':
-                suggestion_list = BlogPost.objects.filter(category__id=post.category.id).order_by('-views_count').distinct()[:limit]
+                suggestion_list = BlogPost.objects.filter(category__id=post.category.id).order_by('-views_count').exclude(id=post.id).distinct()[:limit]
             elif based_on == 'tag':
-                suggestion_list = BlogPost.objects.filter(tags__id__in=[post.tags.values_list('id', flat=True)]).order_by('-views_count').distinct()[:limit]
+                suggestion_list = BlogPost.objects.filter(tags__id__in=[post.tags.values_list('id', flat=True)]).exclude(id=post.id).order_by('-views_count').distinct()[:limit]
             else:
                 raise ValidationError('Invalid based_on validation: {based_on} / it should be "category" or "tag"')
             

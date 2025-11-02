@@ -2,6 +2,8 @@ from rest_framework.fields import SerializerMethodField
 from rest_framework.serializers import ModelSerializer
 from django.utils.timezone import now
 from .models import BlogPost, Category, Tag, Comment
+from django.conf import settings
+import re
 
 
 class CategorySerializer(ModelSerializer):
@@ -21,6 +23,11 @@ class BlogPostSerializer(ModelSerializer):
     tags = TagSerializer(many=True, read_only=True)
     time_since = SerializerMethodField()
     comments_count = SerializerMethodField()
+    
+    content = SerializerMethodField()
+    author_comment = SerializerMethodField()
+    conclusion = SerializerMethodField()
+    
     class Meta:
         model = BlogPost
         fields = (
@@ -30,6 +37,51 @@ class BlogPostSerializer(ModelSerializer):
             'comments_count', 'views_count',
              'time_since', 'created_at', 'updated_at'
         )
+        
+    def get_content(self, obj: BlogPost):
+        content = obj.content or ''
+        request = self.context.get('request')
+        
+        base_media_url = request.build_absolute_uri(settings.MEDIA_URL) if request else settings.MEDIA_URL
+
+        content = re.sub(
+            r'(\.\./)+media/',
+            base_media_url,
+            content
+        )
+        content = content.replace('./media/', base_media_url)
+        
+        return content
+    
+    def get_author_comment(self, obj: BlogPost):
+        content = obj.author_comment or ''
+        request = self.context.get('request')
+        
+        base_media_url = request.build_absolute_uri(settings.MEDIA_URL) if request else settings.MEDIA_URL
+        
+        content = re.sub(
+            r'(\.\./)+media/',
+            base_media_url,
+            content
+        )
+        content = content.replace('./media/', base_media_url)
+        
+        return content
+    
+    def get_conclusion(self, obj: BlogPost):
+        content = obj.conclusion or ''
+        request = self.context.get('request')
+        
+        base_media_url = request.build_absolute_uri(settings.MEDIA_URL) if request else settings.MEDIA_URL
+        
+        content = re.sub(
+            r'(\.\./)+media/',
+            base_media_url,
+            content
+        )
+        content = content.replace('./media/', base_media_url)
+        
+        return content
         
     def get_thumbnail(self, obj: BlogPost):
         request = self.context.get('request', None)
