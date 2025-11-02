@@ -1,5 +1,6 @@
 from pyexpat.errors import messages
 
+from drf_spectacular.hooks import postprocess_schema_enum_id_removal
 from rest_framework.views import APIView
 from backend.mixins import ResponseBuilderMixin, GetDataMixin
 from rest_framework import status
@@ -125,12 +126,12 @@ class MainPageSections(APIView, ResponseBuilderMixin, GetDataMixin):
         
         section_id = result['section_id']
         
-        if not 1 <= int(section_id) <= 7:
+        if not 1 <= int(section_id) <= 8:
             return self.build_response(
                 status.HTTP_400_BAD_REQUEST,
                 message='Invalid section id',
                 errors=[
-                    'section_id should be between 1 and 7'
+                    'section_id should be between 1 and 8'
                 ]
             )
         
@@ -143,11 +144,20 @@ class MainPageSections(APIView, ResponseBuilderMixin, GetDataMixin):
             )
         
         if hasattr(main_page_data, f'section{section_id}_title') and hasattr(main_page_data, f'section{section_id}_content'):
+
+            title = getattr(main_page_data, f'section{section_id}_title')
+            content = getattr(main_page_data, f'section{section_id}_content')
+            
+            print(f'title: {title} - content: {content} - section_id: {section_id} - section8_show: {main_page_data.section8_show}')
+            
+            if int(section_id) == 8 and main_page_data.section8_show and content:
+                content = request.build_absolute_uri(content.url)
+            
             return self.build_response(
                 status.HTTP_200_OK,
                 message='Successful retrieval',
-                title=getattr(main_page_data, f'section{section_id}_title'),
-                content=getattr(main_page_data, f'section{section_id}_content')
+                title=title,
+                content=content
             )
         
         return self.build_response(

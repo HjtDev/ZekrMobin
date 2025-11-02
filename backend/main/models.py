@@ -2,11 +2,11 @@ from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.db import models
 from django_resized import ResizedImageField
-from account.models import User
 from django.core.mail import send_mail
-from django.conf import settings
 from logging import getLogger
+import mimetypes
 
+from account.models import User
 
 logger = getLogger(__name__)
 
@@ -134,6 +134,15 @@ def validate_section_three(value):
     if value != MainPage.SectionChoices.TOP_ARTISTS:
         raise ValidationError('به علت محدودیت قالب بخش سوم می تواند فقط مختص به خوانندگان برتر باشد.')
     
+def validate_is_video(value):
+    mime_type, _ = mimetypes.guess_type(value.name)
+    
+    if not mime_type:
+        raise ValidationError('فرمت فایل قابل شناسایی نیست.')
+    
+    if not mime_type.startswith('video'):
+        raise ValidationError('شما فقط میتوانید ویدیو در این بخش آپلود کنید.')
+    
 class MainPage(models.Model):
     class Meta:
         verbose_name = 'تنظیمات صفحه اصلی'
@@ -169,6 +178,10 @@ class MainPage(models.Model):
     
     section7_title = models.CharField(max_length=30, verbose_name='تیتر')
     section7_content = models.CharField(max_length=30, choices=SectionChoices.choices, validators=[validate_artists_section], verbose_name='محتوا')
+    
+    section8_show = models.BooleanField(default=True, verbose_name='نمایش ویدیو صفحه اصلی')
+    section8_title = models.CharField(max_length=30, verbose_name='تیتر')
+    section8_content = models.FileField(upload_to='MainPage/opening/', blank=True, null=True, validators=[validate_is_video], verbose_name='ویدیو')
     
     def __str__(self):
         return 'تنظیمات صفحه اصلی'

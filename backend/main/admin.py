@@ -166,6 +166,13 @@ class MainPageAdmin(admin.ModelAdmin):
                 'classes': ('collapse',),
             }
         ),
+        (
+            'ویدیو',
+            {
+                'fields': ('section8_title', 'section8_content', 'section8_show'),
+                'classes': ('collapse',),
+            }
+        ),
     )
     
     def has_add_permission(self, request):
