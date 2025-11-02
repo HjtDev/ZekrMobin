@@ -206,7 +206,6 @@ const Blog = () => {
 
     const fetchPost = async (postID) => {
         setIsLoading(true);
-        await new Promise(resolve => setTimeout(resolve, 1000));
         const { success, msg, post } = await getBlogPost(postID, false);
         setPost(post);
         setIsLoading(false);

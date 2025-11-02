@@ -12,6 +12,7 @@ import LazySection from '../components/LazyLoader/LazySection.jsx';
 import MediaPortal from '../components/MediaPlayer/MediaPortal.jsx';
 import { useEffect } from 'react';
 import "../assets/css/HeadingFix.css"
+import TopBlogPosts from "../components/TopBlogPosts.jsx";
 
 
 const MainPage = () => {
@@ -65,6 +66,9 @@ const MainPage = () => {
             </LazySection>
             <LazySection>
                 <LiveSuggestions/>
+            </LazySection>
+            <LazySection>
+                <TopBlogPosts />
             </LazySection>
         </>
     )
