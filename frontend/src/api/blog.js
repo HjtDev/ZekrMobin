@@ -1,7 +1,7 @@
 import api from './api.js';
 
 
-const getBlogPost = async (postID, quick_load = false) => {
+const getBlogPost = async (postID, quickLoad = false) => {
     if(!postID) {
         console.error("postID must exist with a valid value");
         return {
@@ -26,7 +26,7 @@ const getBlogPost = async (postID, quick_load = false) => {
             {
                 params: {
                     'id': postID,
-                    'quick': quick_load
+                    'quick': quickLoad
                 }
             }
         );
@@ -283,4 +283,184 @@ const getTagsList = async (limit) => {
     }
 }
 
-export { getBlogPost, getFilteredBlogPosts, getCategoryList, getTagsList };
+
+const getBlogPostComments = async (postID) => {
+    postID = Number(postID);
+    if(!postID || !Number.isInteger(postID) || postID <= 0) {
+        console.error("(in getBlogPostComment) postID should a positive integer bigger than zero", postID);
+        return {
+            success: false,
+            msg: [],
+            comments: null
+        }
+    }
+
+    try {
+        const res = await api.get(
+            'blog/posts/post/comments/',
+            {
+                params: {
+                    id: postID
+                }
+            }
+        );
+        if(res.status === 200) {
+            return {
+                success: true,
+                msg: [],
+                comments: res.data.comments
+            }
+        } else {
+            console.error("Failed to fetch blog post comment: ", res.data);
+            return {
+                success: false,
+                msg: res.status === 204 ? [] : ['مشکلی پیش آمده است لطفا بعدا تلاش کنید.'],
+                comments: null
+            }
+        }
+    } catch (err) {
+        console.error("Failed to fetch blog post comment: ", err?.response.data || err.message);
+        return {
+            success: false,
+            msg: err?.response.status === 404 ? ['پستی با این مشخصات یافت نشد.'] : ['مشکلی در دریافت نظرات پیش آمده است لطفا مجددا تلاش کنید.'],
+            comments: null
+        }
+    }
+}
+
+const createBlogPostComment = async (postID, content) => {
+    postID = Number(postID);
+    if(!postID || !Number.isInteger(postID) || postID <= 0) {
+        console.error("(in createBlogPostComment) postID should a positive integer bigger than zero", postID);
+        return {
+            success: false,
+            msg: [],
+        }
+    }
+
+    if(typeof content !== "string") {
+        console.error("(in createBlogPostComment) content should be a valid string less than 320 character");
+        return {
+            success: false,
+            msg: [],
+        }
+    }
+
+    if(!content.trim()) {
+        return {
+            success: false,
+            msg: ['شما نمی توانید یک متن خالی ارسال کنید.']
+        }
+    }
+
+    if(content.length > 320) {
+        return {
+            success: false,
+            msg: ['متن نظر شما نباید بیشتر از ۳۲۰ کاراکتر باشد.']
+        }
+    }
+
+    try {
+        const res = await api.post(
+            'blog/posts/post/comments/',
+            {
+                id: postID,
+                content: content.trim()
+            }
+        );
+        if(res.status === 201) {
+            return {
+                success: true,
+                msg: ['نظر شما ثبت شد و پس از تایید به نمایش در خواهد آمد.']
+            }
+        } else {
+            console.error("Failed to create comment for blog post: ", res.data);
+            return {
+                success: false,
+                msg: ['مشکلی پیش آمد لطفا مجددا تلاش کنید.']
+            }
+        }
+    } catch (err) {
+        console.error("Failed to create comment for blog post: ", err?.response.data || err.message);
+        if(err?.response.status === 409) {
+            return {
+                success: false,
+                msg: err?.response?.data?.is_verified ? ['شما قبلا یک نظر ثبت کرده اید.'] : ['شما یک نظر در انتظار تایید دارید.']
+            }
+        } else {
+            return {
+                success: false,
+                msg: err?.response.status === 404 ? ['این پست امکان ارسال نظر ندارد.'] : ['مشکلی پیش آمده است لطفا دوباره تلاش کنید.']
+            }
+        }
+    }
+}
+
+const getBlogPostSuggestion = async (postID, basedOn, limit) => {
+    postID = Number(postID);
+    if(!postID || !Number.isInteger(postID) || postID <= 0) {
+        console.error("(in getBlogPostSuggestion) postID should a positive integer bigger than zero", postID);
+        return {
+            success: false,
+            msg: [],
+            posts: null
+        }
+    }
+
+    if(!["category", "tag"].includes(basedOn)) {
+        console.error("(in getBlogPostSuggestion) basedOn should be category or tag: ", basedOn);
+        return {
+            success: false,
+            msg: [],
+            posts: null
+        }
+    }
+
+    limit = Number(limit);
+    if(!Number.isInteger(limit) || limit <= 0) {
+        console.error("(in getBlogPostSuggestion) limit should be a number greater than zero: ", limit);
+        return {
+            success: false,
+            msg: [],
+            posts: null
+        }
+    }
+
+    try {
+        const res = await api.get(
+            'blog/posts/post/suggest/',
+            {
+                params: {
+                    id: postID,
+                    based_on: basedOn,
+                    limit: limit
+                }
+            }
+        );
+
+        if(res.status === 200) {
+            return {
+                success: true,
+                msg: [],
+                posts: res.data.posts
+            }
+        } else {
+            console.error("Failed to get suggested posts: ", res.data);
+            return {
+                success: false,
+                msg: ['مشکلی پیش آمد لطفا بعدا تلاش کنید.'],
+                posts: null
+            }
+        }
+
+    } catch (err) {
+        console.error("Failed to get post suggestion: ", err?.response.data || err.message);
+        return {
+            success: false,
+            msg: err?.response.status === 500 ? ['مشکلی پیش آمد', 'محتوای پیشنهادی از دسترس خارج شد.'] : [],
+            posts: null
+        }
+    }
+}
+
+export { getBlogPost, getFilteredBlogPosts, getCategoryList, getTagsList, getBlogPostComments, createBlogPostComment, getBlogPostSuggestion };

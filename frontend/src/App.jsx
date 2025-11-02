@@ -19,6 +19,7 @@ import PostList from "./Pages/PostList.jsx";
 import ScrollToTopOnRouteChange from './assets/js/scrollToTopOnRouteChange.jsx';
 import Artists from "./Pages/Artists.jsx";
 import BlogList from "./Pages/BlogList.jsx";
+import Blog from "./Pages/Blog.jsx";
 
 
 function App() {
@@ -52,6 +53,7 @@ function App() {
                         <Route path='/posts/' element={<PostList />} />
                         <Route path='/artists/' element={<Artists />} />
                         <Route path='/blog/' element={<BlogList />} />
+                        <Route path='/blog/post/:id/*' element={<Blog />} />
                         <Route path='*' element={<NotFound />} />
                     </Routes>
                 </div>
