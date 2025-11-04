@@ -134,14 +134,14 @@ def validate_section_three(value):
     if value != MainPage.SectionChoices.TOP_ARTISTS:
         raise ValidationError('به علت محدودیت قالب بخش سوم می تواند فقط مختص به خوانندگان برتر باشد.')
     
-def validate_is_video(value):
-    mime_type, _ = mimetypes.guess_type(value.name)
+def validate_is_mp4(value):
+    mime_type, _= mimetypes.guess_type(value.name)
     
     if not mime_type:
         raise ValidationError('فرمت فایل قابل شناسایی نیست.')
     
-    if not mime_type.startswith('video'):
-        raise ValidationError('شما فقط میتوانید ویدیو در این بخش آپلود کنید.')
+    if mime_type != 'video/mp4':
+        raise ValidationError('شما در این بخش فقط میتوانید ویدیو با فرمت mp4 ذخیره کنید.')
     
 class MainPage(models.Model):
     class Meta:
@@ -181,7 +181,7 @@ class MainPage(models.Model):
     
     section8_show = models.BooleanField(default=True, verbose_name='نمایش ویدیو صفحه اصلی')
     section8_title = models.CharField(max_length=30, verbose_name='تیتر')
-    section8_content = models.FileField(upload_to='MainPage/opening/', blank=True, null=True, validators=[validate_is_video], verbose_name='ویدیو')
+    section8_content = models.FileField(upload_to='MainPage/opening/', blank=True, null=True, validators=[validate_is_mp4], verbose_name='ویدیو')
     
     def __str__(self):
         return 'تنظیمات صفحه اصلی'

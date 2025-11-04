@@ -148,8 +148,6 @@ class MainPageSections(APIView, ResponseBuilderMixin, GetDataMixin):
             title = getattr(main_page_data, f'section{section_id}_title')
             content = getattr(main_page_data, f'section{section_id}_content')
             
-            print(f'title: {title} - content: {content} - section_id: {section_id} - section8_show: {main_page_data.section8_show}')
-            
             if int(section_id) == 8 and main_page_data.section8_show and content:
                 content = request.build_absolute_uri(content.url)
             

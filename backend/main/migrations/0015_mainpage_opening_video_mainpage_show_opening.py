@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='mainpage',
             name='opening_video',
-            field=models.FileField(blank=True, null=True, upload_to='MainPage/opening/', validators=[main.models.validate_is_video], verbose_name='ویدیو'),
+            field=models.FileField(blank=True, null=True, upload_to='MainPage/opening/', validators=[main.models.validate_is_mp4], verbose_name='ویدیو'),
         ),
         migrations.AddField(
             model_name='mainpage',
