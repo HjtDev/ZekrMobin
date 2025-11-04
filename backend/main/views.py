@@ -126,12 +126,12 @@ class MainPageSections(APIView, ResponseBuilderMixin, GetDataMixin):
         
         section_id = result['section_id']
         
-        if not 1 <= int(section_id) <= 8:
+        if not 1 <= int(section_id) <= 9:
             return self.build_response(
                 status.HTTP_400_BAD_REQUEST,
                 message='Invalid section id',
                 errors=[
-                    'section_id should be between 1 and 8'
+                    'section_id should be between 1 and 9'
                 ]
             )
         
@@ -150,7 +150,7 @@ class MainPageSections(APIView, ResponseBuilderMixin, GetDataMixin):
             
             if int(section_id) == 8 and main_page_data.section8_show and content:
                 content = request.build_absolute_uri(content.url)
-            
+                
             return self.build_response(
                 status.HTTP_200_OK,
                 message='Successful retrieval',

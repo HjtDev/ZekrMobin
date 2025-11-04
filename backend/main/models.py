@@ -183,5 +183,8 @@ class MainPage(models.Model):
     section8_title = models.CharField(max_length=30, verbose_name='تیتر')
     section8_content = models.FileField(upload_to='MainPage/opening/', blank=True, null=True, validators=[validate_is_mp4], verbose_name='ویدیو')
     
+    section9_title = models.CharField(max_length=30, verbose_name='تیتر')
+    section9_content = 'stories'
+    
     def __str__(self):
         return 'تنظیمات صفحه اصلی'

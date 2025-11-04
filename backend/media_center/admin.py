@@ -114,9 +114,9 @@ class MediaAdmin(admin.ModelAdmin):
 
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
-    list_display = ('id', 'title', 'publisher', 'is_visible', 'recommended_by_site', 'views_count', 'updated_at', 'created_at')
-    list_filter = ('publisher', 'is_visible', 'categories', 'tags', 'created_at', 'updated_at')
-    list_editable = ('is_visible', 'recommended_by_site')
+    list_display = ('id', 'title', 'publisher', 'is_story', 'is_visible', 'recommended_by_site', 'views_count', 'created_at')
+    list_filter = ('publisher', 'is_visible', 'is_story', 'categories', 'tags', 'created_at', 'updated_at')
+    list_editable = ('is_story', 'is_visible', 'recommended_by_site')
     list_per_page = 15
     autocomplete_fields = ('publisher', 'liked_by', 'categories', 'tags')
     search_fields = ('id', 'title', 'publisher__name')
@@ -127,7 +127,7 @@ class PostAdmin(admin.ModelAdmin):
     
     fieldsets = (
         ('اطلاعات اصلی پست', {
-            'fields': ('title', 'thumbnail', 'publisher', 'recommended_by_site', 'is_visible')
+            'fields': ('title', 'thumbnail', 'publisher', 'recommended_by_site', 'is_story', 'is_visible')
         }),
         ('دسته‌بندی و تگ‌ها', {
             'fields': ('categories', 'tags'),

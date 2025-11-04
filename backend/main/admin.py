@@ -173,6 +173,13 @@ class MainPageAdmin(admin.ModelAdmin):
                 'classes': ('collapse',),
             }
         ),
+        (
+            'استوری ها',
+            {
+                'fields': ('section9_title',),
+                'classes': ('collapse',),
+            }
+        ),
     )
     
     def has_add_permission(self, request):

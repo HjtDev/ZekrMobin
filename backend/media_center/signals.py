@@ -28,12 +28,14 @@ def invalidate_post_cache_on_update(sender, instance: Post, **kwargs):
     
     cache.delete_pattern('posts:*-*-*-*')
     cache.delete_pattern(f'suggestion-{instance.id}')
+    cache.delete_pattern(f'stories:*')
 
 
 @receiver(pre_delete, sender=Post)
 def invalidate_post_cache_on_save_or_delete(sender, instance: Post, **kwargs):
     cache.delete_pattern('posts:*-*-*-*')
     cache.delete_pattern(f'suggestion-{instance.id}')
+    cache.delete_pattern(f'stories:*')
     
     
 @receiver([post_save, post_delete], sender=Artist)
