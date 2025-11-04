@@ -30,7 +30,7 @@ class Category(models.Model):
 def blog_post_thumbnail_path(instance, filename):
     return os.path.join(
         'Blog',
-        f'{instance.title}',
+        f'{instance.id}',
         'thumbnail',
         filename
     )

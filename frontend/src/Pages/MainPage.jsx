@@ -14,6 +14,7 @@ import { useEffect } from 'react';
 import "../assets/css/HeadingFix.css"
 import TopBlogPosts from "../components/TopBlogPosts.jsx";
 import Video from "../components/Video.jsx";
+import StoryList from "../components/StoryList.jsx";
 
 
 const MainPage = () => {
@@ -41,6 +42,9 @@ const MainPage = () => {
                 postID={sharedPost['id']}
             />
             <Banner/>
+            <LazySection>
+                <StoryList />
+            </LazySection>
             <LazySection>
                 <Video />
             </LazySection>

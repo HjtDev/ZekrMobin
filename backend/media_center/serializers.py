@@ -89,13 +89,13 @@ class QuickPostSerializer(ModelSerializer):
     def get_duration(self, obj: Post):
         duration = obj.get_media_duration()
         return f'{duration//60}:{duration%60:02d}'
-    
+
     def get_artist(self, obj: Post):
-        media = obj.medias.first()
+        artist = obj.medias.first().artist
         return {
-            'id': media.artist.id,
-            'name': media.artist.name
-        } if media else {
+            'id': artist.id,
+            'name': artist.name
+        } if artist else {
             'id': 0,
             'name': 'ناشناس'
         }

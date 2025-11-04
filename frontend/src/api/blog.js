@@ -236,7 +236,7 @@ const getCategoryList = async (limit) => {
             console.error("Failed to fetch blog categories: ", res.data);
         }
     } catch (err) {
-        console.error("Failed to fetch blog categories: ", err?.response.data || err.message);
+        console.error("Failed to fetch blog categories: ", err?.response?.data || err.message);
         return {
             success: false,
             msg: err?.response.status === 404 ? ['هیچ دسته بندی در سایت وجود ندارد.'] : ['مشکلی پیش آمد لطفا بعدا تلاش کنید.'],
@@ -274,7 +274,7 @@ const getTagsList = async (limit) => {
             console.error("Failed to fetch blog tags: ", res.data);
         }
     } catch (err) {
-        console.error("Failed to fetch blog tags: ", err?.response.data || err.message);
+        console.error("Failed to fetch blog tags: ", err?.response?.data || err.message);
         return {
             success: false,
             msg: err?.response.status === 404 ? ['هیچ تگی در سایت وجود ندارد.'] : ['مشکلی پیش آمد لطفا بعدا تلاش کنید.'],

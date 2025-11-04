@@ -33,6 +33,7 @@ const contentMap = {
     'weekly-posts': 'media/posts/filtered/',
     'new-posts': 'media/posts/filtered/',
     'live-suggestions': 'media/posts/filtered/',
+    'stories': 'media/posts/filtered/',
     'top-artists': 'media/top_artists/',
     'top-album': 'media/top_categories/',
     'top-user-album': 'media/top_categories/',
