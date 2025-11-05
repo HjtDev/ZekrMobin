@@ -11,12 +11,12 @@ const TopArtists = () => {
 
     const initializeSwiper = () => {
         if (window.Swiper) {
-            if (window.featuredSwiper) {
-                window.featuredSwiper.destroy(true, true);
+            if (window.blogSwiper) {
+                window.blogSwiper.destroy(true, true);
             }
 
             // Re-init
-            window.featuredSwiper = new window.Swiper('.ms_feature_slider.swiper-container', {
+            window.blogSwiper = new window.Swiper('.ms_blog_slider.swiper-container', {
                 slidesPerView: 6,
                 spaceBetween: 30,
                 loop: true,
@@ -70,7 +70,7 @@ const TopArtists = () => {
                     </Link>
                 </span>
             </div>
-            <div className="ms_feature_slider swiper-container">
+            <div className="ms_feature_slider ms_blog_slider swiper-container">
                 <div className="swiper-wrapper">
                     {
                         pageContent ?
