@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'storages',
     'corsheaders',
     'mptt',
     'main.apps.MainConfig',
@@ -158,10 +159,28 @@ STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
 
-# Media files
+# Storage & Media System
 
-MEDIA_URL = 'media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+STORAGES = {
+    "default": {
+        "BACKEND": "storages.backends.ftp.FTPStorage",
+        "OPTIONS": {
+            "location": env('FTP_LOCATION'),
+            "allow_overwrite": True,
+            "encoding": "utf-8",
+            "base_url": "https://media.zekremobin.ir/media/",
+        },
+    },
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+    },
+}
+
+# Media URL configuration
+MEDIA_URL = 'https://media.zekremobin.ir/media/'
+
+# Make sure MEDIA_ROOT is commented out
+# MEDIA_ROOT = BASE_DIR / 'media'
 
 # Jazzmin
 
