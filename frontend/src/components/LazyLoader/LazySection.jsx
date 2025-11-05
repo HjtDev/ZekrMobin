@@ -5,7 +5,7 @@ const LazySection = ({
                          children,
                          rootMargin = '0px 0px',
                          minHeight = '100px',
-                         delay = 1000
+                         delay = 300
                      }) => {
     const { ref, inView } = useInView({
         triggerOnce: true,

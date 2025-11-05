@@ -150,7 +150,6 @@ const getFilteredPostList = async (section, filters, perPage, page) => {
     }
 
     try {
-        console.log("items before request:", selected_section, selected_filters, perPage, page);
         const res = await api.get(
             'media/posts/filtered/',
             {

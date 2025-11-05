@@ -2,7 +2,6 @@ from datetime import timedelta
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.contrib.postgres.search import SearchQuery, SearchVector, SearchRank
 from django.db.models import Count, ExpressionWrapper, FloatField, F, QuerySet, Sum, When, Case
-from django.db.models.fields import PositiveIntegerRelDbTypeMixin
 from django.utils import timezone
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
@@ -50,7 +49,7 @@ class SinglePost(APIView, ResponseBuilderMixin, GetDataMixin):
             
         except Post.DoesNotExist:
             return self.build_response(
-                status.HTTP_404_NOT_FOUND,
+                status.HTTP_405_NOT_FOUND,
                 message='Post not found'
             )
 
@@ -66,7 +65,7 @@ class FilteredPosts(APIView, ResponseBuilderMixin, GetDataMixin, CachedResponseM
             case 'recent-posts':
                 qs = qs.order_by('-views_count')
             case 'weekly-posts':
-                qs = qs.filter(updated_at__gte=now - timedelta(days=7)).annotate(
+                qs = qs.filter(updated_at__gte=now - timedelta(days=7)).exclude(is_story=True).annotate(
                     likes=Count('liked_by'),
                     order=ExpressionWrapper(
                         F('likes') * 0.4 + F('download_count') * 0.4 + F('views_count') * 0.2,
@@ -74,9 +73,11 @@ class FilteredPosts(APIView, ResponseBuilderMixin, GetDataMixin, CachedResponseM
                     )
                 ).order_by('-order')
             case 'new-posts':
-                qs = qs.filter(created_at__gt=now - timedelta(hours=348)).order_by('-updated_at')
+                qs = qs.filter(created_at__gt=now - timedelta(hours=348)).exclude(is_story=True).order_by('-updated_at')
             case 'live-suggestions':
-                qs = qs.filter(recommended_by_site=True).order_by('-updated_at')
+                qs = qs.filter(recommended_by_site=True).exclude(is_story=True).order_by('-updated_at')
+            case 'stories':
+                qs = qs.filter(is_story=True).order_by('-created_at')
             case _:
                 raise ValidationError({section: 'Invalid section'})
         
@@ -565,3 +566,4 @@ class RemoveHistory(APIView, ResponseBuilderMixin):
         return self.build_response(
             status.HTTP_204_NO_CONTENT
         )
+    

@@ -49,7 +49,9 @@ INSTALLED_APPS = [
     'main.apps.MainConfig',
     'account.apps.AccountConfig',
     'media_center.apps.MediaCenterConfig',
+    'blog.apps.BlogConfig',
     'rest_framework',
+    'tinymce',
     'drf_spectacular',
 ]
 
@@ -244,7 +246,7 @@ REST_FRAMEWORK = {
         'login': '5/minute',
         'signup': '5/minute',
         'logout': '5/minute',
-        'setting': '30/minute',
+        'setting': '300/minute',
         'club': '5/minute',
         'single-post': '300/minute',
         'filtered-posts': '300/minute',
@@ -257,7 +259,13 @@ REST_FRAMEWORK = {
         'user-posts': '100/minute',
         'post-list-filters': '300/minute',
         'artists-list': '100/minute',
-        'remove-history': '30/minute'
+        'remove-history': '30/minute',
+        'single-blog-post': '200/minute',
+        'filtered-blog-post': '200/minute',
+        'blog-category-list': '200/minute',
+        'blog-tag-list': '200/minute',
+        'blog-post-suggestion': '200/minute',
+        'blog-comment': '100/minute',
     },
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema'
 }
@@ -303,3 +311,41 @@ SESSION_COOKIE_SAMESITE = 'None' if not DEBUG else 'Lax'
 CSRF_COOKIE_SAMESITE = 'None'if not DEBUG else 'Lax'
 SESSION_COOKIE_DOMAIN = env('SESSION_COOKIE_DOMAIN')
 CSRF_COOKIE_DOMAIN = env('CSRF_COOKIE_DOMAIN')
+
+# Email Settings
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = env('EMAIL_HOST')
+EMAIL_HOST_USER = env('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
+EMAIL_PORT = env.int('EMAIL_PORT')
+EMAIL_USE_SSL = True
+EMAIL_USE_TLS = False
+
+# Tinymce Settings
+
+TINYMCE_DEFAULT_CONFIG = {
+    'height': 500,
+    'width': '100%',
+    'menubar': True,
+    'plugins': (
+        'advlist anchor autolink autosave charmap code codesample directionality emoticons fullscreen help '
+        'image insertdatetime link lists media nonbreaking pagebreak paste preview print quickbars save searchreplace '
+        'table template visualblocks visualchars wordcount'
+    ),
+    'toolbar': (
+        'undo redo | bold italic underline strikethrough | fontselect fontsizeselect formatselect | '
+        'alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist | forecolor backcolor '
+        'removeformat | pagebreak | charmap emoticons | fullscreen preview save print | '
+        'insertfile image media template link anchor codesample | ltr rtl | code'
+    ),
+    'contextmenu': 'link image imagetools table',
+    'images_upload_url': '/api/blog/editor/upload/',
+    'automatic_uploads': True,
+    'image_advtab': True,
+    'image_caption': True,
+    'file_picker_types': 'file image media',
+    'quickbars_selection_toolbar': 'bold italic | quicklink h2 h3 blockquote quickimage quicktable',
+    'nonbreaking_force_tab': True,
+    'toolbar_mode': 'sliding',
+}

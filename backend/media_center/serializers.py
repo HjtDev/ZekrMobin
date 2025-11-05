@@ -89,13 +89,16 @@ class QuickPostSerializer(ModelSerializer):
     def get_duration(self, obj: Post):
         duration = obj.get_media_duration()
         return f'{duration//60}:{duration%60:02d}'
-    
+
     def get_artist(self, obj: Post):
         artist = obj.medias.first().artist
         return {
             'id': artist.id,
             'name': artist.name
-        } if artist else None
+        } if artist else {
+            'id': 0,
+            'name': 'ناشناس'
+        }
     
     def get_is_liked(self, obj: Post):
         request = self.context.get('request', None)
@@ -130,6 +133,9 @@ class PostSerializer(ModelSerializer):
         return {
             'id': artist.id,
             'name': artist.name
+        } if artist else {
+            'id': 0,
+            'name': 'ناشناس'
         }
     
     def get_is_liked(self, obj: Post):

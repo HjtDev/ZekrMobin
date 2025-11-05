@@ -38,7 +38,7 @@ const fetchSettings = async (sections) => {
             }
         }
     } catch (err) {
-        if(err?.response.status === 503) {
+        if(err?.response?.status === 503) {
             return {
                 success: false,
                 msg: 'Site settings are not configured',

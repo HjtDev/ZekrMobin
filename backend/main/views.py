@@ -1,5 +1,6 @@
 from pyexpat.errors import messages
 
+from drf_spectacular.hooks import postprocess_schema_enum_id_removal
 from rest_framework.views import APIView
 from backend.mixins import ResponseBuilderMixin, GetDataMixin
 from rest_framework import status
@@ -27,7 +28,7 @@ class SettingView(APIView, ResponseBuilderMixin, GetDataMixin):
             'footer_content': ['footer_title1', 'footer_text1', 'footer_title2', 'footer_text2', 'footer_img1', 'footer_img2', 'footer_img3'],
             'club': ['club_enabled', 'club_welcome_email_enabled', 'club_title', 'club_text'],
             'contact': ['contact_us_title', 'contact_us_phone', 'contact_us_email', 'contact_us_address'],
-            'social': ['telegram_link', 'whatsapp_link', 'facebook_link', 'linkedin_link', 'twitter_link'],
+            'social': ['telegram_link', 'instagram_link', 'youtube_link', 'eitaa_link', 'aparat_link'],
             'rights': ['rights_text'],
             'ad': ['ad1_image', 'ad2_image']
         }
@@ -125,12 +126,12 @@ class MainPageSections(APIView, ResponseBuilderMixin, GetDataMixin):
         
         section_id = result['section_id']
         
-        if not 1 <= int(section_id) <= 7:
+        if not 1 <= int(section_id) <= 9:
             return self.build_response(
                 status.HTTP_400_BAD_REQUEST,
                 message='Invalid section id',
                 errors=[
-                    'section_id should be between 1 and 7'
+                    'section_id should be between 1 and 9'
                 ]
             )
         
@@ -143,11 +144,18 @@ class MainPageSections(APIView, ResponseBuilderMixin, GetDataMixin):
             )
         
         if hasattr(main_page_data, f'section{section_id}_title') and hasattr(main_page_data, f'section{section_id}_content'):
+
+            title = getattr(main_page_data, f'section{section_id}_title')
+            content = getattr(main_page_data, f'section{section_id}_content')
+            
+            if int(section_id) == 8 and main_page_data.section8_show and content:
+                content = request.build_absolute_uri(content.url)
+                
             return self.build_response(
                 status.HTTP_200_OK,
                 message='Successful retrieval',
-                title=getattr(main_page_data, f'section{section_id}_title'),
-                content=getattr(main_page_data, f'section{section_id}_content')
+                title=title,
+                content=content
             )
         
         return self.build_response(

@@ -45,8 +45,9 @@ const WeeklyTop = () => {
             <div className="ms_weekly_inner">
                 <div className="row">
                     <div className="col-lg-12">
-                        <div className="ms_heading">
+                        <div className="ms_heading w-100 text-center">
                             <h1>{pageData?.title || "برترین های این هفته"}</h1>
+                            <span className="ms_heading_underline" aria-hidden="true"></span>
                         </div>
                     </div>
 

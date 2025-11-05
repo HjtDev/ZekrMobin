@@ -14,9 +14,8 @@ const ShareLink = ({ url, title, text, children, className, style }) => {
             }
         };
 
-        const isMobile = /Mobi|Android/i.test(navigator.userAgent);
 
-        if (isMobile && navigator.share) {
+        if (navigator.share) {
             try {
                 await navigator.share({ title, text, url });
             } catch {

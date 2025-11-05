@@ -173,28 +173,68 @@ const Footer = () => {
                                 <div className="share_title"/>
                                 <ul>
                                     <li>
-                                        <a href={settings?.telegram_link}>
+                                        <a
+                                            href={
+                                                settings?.telegram_link?.startsWith('http')
+                                                    ? settings.telegram_link
+                                                    : `https://${settings?.telegram_link}`
+                                            }
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                        >
                                             <i className="fa fa-telegram" aria-hidden="true"/>
                                         </a>
                                     </li>
                                     <li>
-                                        <a href={settings?.whatsapp_link}>
-                                            <i className="fa fa-whatsapp" aria-hidden="true"/>
+                                        <a
+                                            href={
+                                                settings?.instagram_link?.startsWith('http')
+                                                    ? settings.instagram_link
+                                                    : `https://${settings?.instagram_link}`
+                                            }
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                        >
+                                            <i className="fa fa-instagram" aria-hidden="true"/>
                                         </a>
                                     </li>
                                     <li>
-                                        <a href={settings?.facebook_link}>
-                                            <i className="fa fa-facebook" aria-hidden="true"/>
+                                        <a
+                                            href={
+                                                settings?.youtube_link?.startsWith('http')
+                                                    ? settings.youtube_link
+                                                    : `https://${settings?.youtube_link}`
+                                            }
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                        >
+                                            <i className="fa fa-youtube-play" aria-hidden="true"/>
                                         </a>
                                     </li>
                                     <li>
-                                        <a href={settings?.linkedin_link}>
-                                            <i className="fa fa-linkedin" aria-hidden="true"/>
+                                        <a
+                                            href={
+                                                settings?.eitaa_link?.startsWith('http')
+                                                    ? settings.eitaa_link
+                                                    : `https://${settings?.eitaa_link}`
+                                            }
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                        >
+                                            <img src="/images/svg/eitaa-icon-white.svg" alt="Eitaa SVG" className="text-black-50k w-50"/>
                                         </a>
                                     </li>
                                     <li>
-                                        <a href={settings?.twitter_link}>
-                                            <i className="fa fa-twitter" aria-hidden="true"/>
+                                        <a
+                                            href={
+                                                settings?.aparat_link?.startsWith('http')
+                                                    ? settings.aparat_link
+                                                    : `https://${settings?.aparat_link}`
+                                            }
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                        >
+                                            <img src="/images/svg/aparat-icon.png" alt="Eitaa SVG" className="text-white w-50"/>
                                         </a>
                                     </li>
                                 </ul>

@@ -60,9 +60,10 @@ const RecentPosts = () => {
 
     return (
         <div className="ms_rcnt_slider">
-            <div className="ms_heading">
-                <h1>{sectionData?.title}</h1>
-                <span className="veiw_all">
+            <div className="ms_heading w-100 text-center">
+                <h1 className="">{sectionData?.title}</h1>
+                <span className="ms_heading_underline" aria-hidden="true"></span>
+                <span className="veiw_all w-100">
                     <Link to={`/posts/?section=${sectionData?.content}`}>مشاهده بیشتر</Link>
                 </span>
             </div>

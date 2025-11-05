@@ -2,9 +2,11 @@ from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.db import models
 from django_resized import ResizedImageField
-from account.models import User
+from django.core.mail import send_mail
 from logging import getLogger
+import mimetypes
 
+from account.models import User
 
 logger = getLogger(__name__)
 
@@ -16,11 +18,11 @@ class Setting(models.Model):
     logo = ResizedImageField(upload_to='settings/logo/', blank=False, null=False, size=[78, 78], crop=['middle', 'center'], quality=100, force_format='PNG', verbose_name='لوگو', help_text='78 * 78')
     open_logo = ResizedImageField(upload_to='settings/logo/', blank=False, null=False, size=[126, 97], crop=['middle', 'center'], quality=100, force_format='PNG', verbose_name='لوگو فوتر', help_text='126 * 97')
 
-    footer_title1 = models.CharField(max_length=20, verbose_name='تیتر')
-    footer_text1 = models.TextField(max_length=255, verbose_name='محتوا')
+    footer_title1 = models.CharField(max_length=60, verbose_name='تیتر')
+    footer_text1 = models.TextField(max_length=600, verbose_name='محتوا')
     
-    footer_title2 = models.CharField(max_length=20, verbose_name='تیتر')
-    footer_text2 = models.TextField(max_length=100, verbose_name='محتوا')
+    footer_title2 = models.CharField(max_length=60, verbose_name='تیتر')
+    footer_text2 = models.TextField(max_length=600, verbose_name='محتوا')
     footer_img1 = ResizedImageField(upload_to='settings/section2_images/', blank=True, null=True, size=[140, 40], crop=['middle', 'center'], quality=100, verbose_name='عکس اول فوتر', help_text='140 * 40')
     footer_img2 = ResizedImageField(upload_to='settings/section2_images/', blank=True, null=True, size=[140, 40], crop=['middle', 'center'], quality=100, verbose_name='عکس دوم فوتر', help_text='140 * 40')
     footer_img3 = ResizedImageField(upload_to='settings/section2_images/', blank=True, null=True, size=[140, 40], crop=['middle', 'center'], quality=100, verbose_name='عکس سوم فوتر', help_text='140 * 40')
@@ -36,10 +38,10 @@ class Setting(models.Model):
     contact_us_address = models.CharField(max_length=60, verbose_name='آدرس')
     
     telegram_link = models.CharField(max_length=255, verbose_name='تلگرام')
-    whatsapp_link = models.CharField(max_length=255, verbose_name='واتساپ')
-    facebook_link = models.CharField(max_length=255, verbose_name='فیسبوک')
-    linkedin_link = models.CharField(max_length=255, verbose_name='لینکدین')
-    twitter_link = models.CharField(max_length=255, verbose_name='ایکس')
+    instagram_link = models.CharField(max_length=255, verbose_name='اینستاگرام')
+    youtube_link = models.CharField(max_length=255, verbose_name='یوتیوب')
+    eitaa_link = models.CharField(max_length=255, verbose_name='ایتا')
+    aparat_link = models.CharField(max_length=255, verbose_name='آپارات')
     
     rights_text = models.TextField(max_length=255, verbose_name='متن حقوق سایت')
     
@@ -64,6 +66,7 @@ class ClubMessage(models.Model):
         MEMBERS_WHO_RECEIVED = ('ارسال برای کسانی که قبلا این پیام را گرفته اند', 'ارسال برای کسانی که قبلا این پیام را گرفته اند')
         NEW_MEMBERS = ('ارسال برای اعضای جدید', 'ارسال برای اعضای جدید')
         
+    subject = models.CharField(max_length=120, default='پیام از ذکرمبین', verbose_name='موضوع')
     message = models.TextField(max_length=1000, verbose_name='متن پیام')
     is_ready = models.BooleanField(default=False, verbose_name='آماده ارسال')
     send_to = models.CharField(max_length=50, choices=SendOptions.choices, verbose_name='ارسال برای')
@@ -89,7 +92,13 @@ class ClubMessage(models.Model):
             list_of_members = self.sent_to.all()
             
         for member in list_of_members:
-            logger.info(f'Sent a club message to {member.name}')
+            send_mail(
+                subject=self.subject,
+                message=self.message,
+                from_email='info@zekremobin.ir',
+                recipient_list=[member.email],
+                fail_silently=False
+            )
             self.sent_to.add(member)
             messages.success(request, 'پیام(ها) با موفقیت ارسال شدند.')
             
@@ -124,6 +133,15 @@ def validate_artists_section(value):
 def validate_section_three(value):
     if value != MainPage.SectionChoices.TOP_ARTISTS:
         raise ValidationError('به علت محدودیت قالب بخش سوم می تواند فقط مختص به خوانندگان برتر باشد.')
+    
+def validate_is_mp4(value):
+    mime_type, _= mimetypes.guess_type(value.name)
+    
+    if not mime_type:
+        raise ValidationError('فرمت فایل قابل شناسایی نیست.')
+    
+    if mime_type != 'video/mp4':
+        raise ValidationError('شما در این بخش فقط میتوانید ویدیو با فرمت mp4 ذخیره کنید.')
     
 class MainPage(models.Model):
     class Meta:
@@ -160,6 +178,13 @@ class MainPage(models.Model):
     
     section7_title = models.CharField(max_length=30, verbose_name='تیتر')
     section7_content = models.CharField(max_length=30, choices=SectionChoices.choices, validators=[validate_artists_section], verbose_name='محتوا')
+    
+    section8_show = models.BooleanField(default=True, verbose_name='نمایش ویدیو صفحه اصلی')
+    section8_title = models.CharField(max_length=30, verbose_name='تیتر')
+    section8_content = models.FileField(upload_to='MainPage/opening/', blank=True, null=True, validators=[validate_is_mp4], verbose_name='ویدیو')
+    
+    section9_title = models.CharField(max_length=30, verbose_name='تیتر')
+    section9_content = 'stories'
     
     def __str__(self):
         return 'تنظیمات صفحه اصلی'

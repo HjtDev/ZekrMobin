@@ -18,6 +18,9 @@ import LikedPosts from "./Pages/LikedPosts.jsx";
 import PostList from "./Pages/PostList.jsx";
 import ScrollToTopOnRouteChange from './assets/js/scrollToTopOnRouteChange.jsx';
 import Artists from "./Pages/Artists.jsx";
+import BlogList from "./Pages/BlogList.jsx";
+import Blog from "./Pages/Blog.jsx";
+import LazySection from "./components/LazyLoader/LazySection.jsx";
 
 
 function App() {
@@ -50,10 +53,14 @@ function App() {
                         <Route path='/profile/liked/' element={<LikedPosts />} />
                         <Route path='/posts/' element={<PostList />} />
                         <Route path='/artists/' element={<Artists />} />
+                        <Route path='/blog/' element={<BlogList />} />
+                        <Route path='/blog/post/:id/*' element={<Blog />} />
                         <Route path='*' element={<NotFound />} />
                     </Routes>
                 </div>
-                <Footer />
+                <LazySection>
+                    <Footer />
+                </LazySection>
                 {/*<Player />*/}
             </div>
             {/*<PlayerModals />*/}

@@ -11,6 +11,10 @@ import WeeklyTop from '../components/WeeklyTop.jsx'
 import LazySection from '../components/LazyLoader/LazySection.jsx';
 import MediaPortal from '../components/MediaPlayer/MediaPortal.jsx';
 import { useEffect } from 'react';
+import "../assets/css/HeadingFix.css"
+import TopBlogPosts from "../components/TopBlogPosts.jsx";
+import Video from "../components/Video.jsx";
+import StoryList from "../components/StoryList.jsx";
 
 
 const MainPage = () => {
@@ -39,6 +43,12 @@ const MainPage = () => {
             />
             <Banner/>
             <LazySection>
+                <StoryList />
+            </LazySection>
+            <LazySection>
+                <Video />
+            </LazySection>
+            <LazySection>
                 <RecentPosts/>
             </LazySection>
             <LazySection>
@@ -64,6 +74,9 @@ const MainPage = () => {
             </LazySection>
             <LazySection>
                 <LiveSuggestions/>
+            </LazySection>
+            <LazySection>
+                <TopBlogPosts />
             </LazySection>
         </>
     )

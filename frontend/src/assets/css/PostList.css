@@ -1,0 +1,8 @@
+.filters-wrapper {
+    transition: max-height 500ms ease, opacity 500ms ease;
+    /*overflow: hidden;*/
+
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10rem;
+}

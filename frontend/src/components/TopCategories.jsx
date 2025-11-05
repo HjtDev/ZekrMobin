@@ -2,10 +2,12 @@ import React, { useEffect, useState } from 'react'
 import { getMainPageData, getSectionData } from '../api/section-data.js'
 import truncateText from "../assets/js/utility.js";
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const TopCategories = () => {
     const [pageData, setPageData] = useState(null)
     const [pageContent, setPageContent] = useState(null)
+    const navigate = useNavigate();
 
     const initializeSwiper = () => {
         if (window.Swiper) {
@@ -64,9 +66,10 @@ const TopCategories = () => {
 
     return (
         <div className="ms_fea_album_slider">
-            <div className="ms_heading">
+            <div className="ms_heading w-100 text-center">
                 <h1>{pageData?.title || 'دسته بندی های برتر'}</h1>
-                <span className="veiw_all">
+                <span className="ms_heading_underline" aria-hidden="true"></span>
+                <span className="veiw_all w-100">
                     <Link to="/posts/">
                         مشاهده بیشتر
                     </Link>
@@ -82,7 +85,10 @@ const TopCategories = () => {
                                     <img src={category.thumbnail} alt={category.name} className="img-fluid" />
                                     <div className="ms_main_overlay">
                                         <div className="ms_box_overlay" />
-                                        <div className="ms_play_icon">
+                                        <div
+                                            className="ms_play_icon"
+                                            onClick={() => navigate(`/posts/?categories=${category.id}`)}
+                                        >
                                             <img src="images/svg/play.svg" alt="" />
                                         </div>
                                         <div className="ovrly_text_div">

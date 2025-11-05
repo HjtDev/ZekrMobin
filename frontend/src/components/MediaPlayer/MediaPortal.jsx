@@ -328,6 +328,23 @@ const MediaPortal = ({ isOpen, onClose, postID }) => {
         }
     }
 
+    useEffect(() => {
+        if(!isOpen) return;
+
+        window.history.pushState({ modalOpen: true }, "");
+
+        const handlePopState = () => {
+            if(isOpen) onClose();
+        };
+
+        window.addEventListener("popstate", handlePopState);
+
+        return () => {
+            window.removeEventListener("popstate", handlePopState);
+            if(window.history.state?.modalOpen) window.history.back();
+        };
+    }, [isOpen, onClose]);
+
     // fetch post when postID changes
     useEffect(() => {
         if (!postID) {
@@ -481,6 +498,24 @@ const MediaPortal = ({ isOpen, onClose, postID }) => {
                                             ? "9/1"
                                             : (isMobile ? "9/16" : "16/9")
                                     }
+                                    autoPlay={false}
+                                    fullscreenOrientation={false}
+                                    playsInline={true}
+                                    config={{
+                                        plyr: {
+                                            fullscreen: { enabled: false, fallback: false }
+                                        }
+                                    }}
+                                    onPointerDown={(e) => {
+                                        const startY = e.clientY;
+                                        const handleMove = (moveEvent) => {
+                                            if (Math.abs(MouseEvent.clientY - startY) > 5) {
+                                                e.preventDefault();
+                                            }
+                                            document.removeEventListener('pointermove', handleMove);
+                                        }
+                                        document.addEventListener('pointermove', handleMove);
+                                    }}
                                     src={activeMedia?.files?.map((file) => {
                                         let mimeType = 'video/mp4';
                                         if (file.media_type === 'audio') {
@@ -504,6 +539,8 @@ const MediaPortal = ({ isOpen, onClose, postID }) => {
                                     <PlyrLayout
                                         icons={plyrLayoutIcons}
                                         thumbnails={post?.thumbnail}
+                                        clickToFullscreen={true}
+                                        clickToPlay={false}
                                     />
                                 </MediaPlayer>
                             </div>

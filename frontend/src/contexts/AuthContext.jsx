@@ -69,7 +69,6 @@ export const AuthProvider = ({children}) => {
             }
 
             try {
-                console.log('sending: ', username, name, password, password2);
                 const res = await api.post(
                     'user/signup/',
                     {
@@ -96,9 +95,8 @@ export const AuthProvider = ({children}) => {
                         field: '',
                         msg: [
                             'رمز عبور نباید شبیه نام کاربری باشد.',
-                            'رمز عبور باید حداقل ۸ کاراکتر باشد.',
+                            'رمز عبور نباید تمام عددی باشد و باید حداقل ۸ کاراکتر باشد.',
                             'رمز عبور نباید ساده و قابل حدس باشد.',
-                            'رمز عبور نباید تماما عددی باشد.'
                         ]
                     }
                 } else if (err.response.status === 409) {

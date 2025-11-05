@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import Select from 'react-select';
 import { toast } from 'react-toastify';
 import { getFilteredPostList, getFilters } from "../api/post-list.js";
 import CustomSkeleton from '../components/CustomSkeleton.jsx';
 import MediaPortal from '../components/MediaPlayer/MediaPortal.jsx';
+import "../assets/css/PostList.css"
 
 const PostList = () => {
     const [isLoading, setIsLoading] = useState(false);
@@ -66,10 +67,13 @@ const PostList = () => {
     ];
 
     const [activeSearchQuery, setActiveSearchQuery] = useState(null);
+    const [activeSearchParams, setActiveSearchParams] = useState(null);
     const resetSearch = async () => {
         const url = new URL(window.location);
-        url.searchParams.delete('search');
+        url.search = '';
         window.history.replaceState(null, '', url.toString());
+        setActiveSearchQuery(null);
+        setActiveSearchParams(null);
         await fetchPosts(selectedSection, filters, 12, pagination.page);
     }
 
@@ -82,8 +86,12 @@ const PostList = () => {
     const fetchPosts = async (section, filters, perPage = 6, page = 1) => {
         setIsLoading(true);
         const params = new URLSearchParams(location.search);
+        if(params.size > 0) {
+            setActiveSearchParams(params);
+        }
         const updatedSection = params.get('section');
         const artists = params.get('artists');
+        const categories = params.get('categories');
         const searchQuery = params.get('search');
         if(updatedSection) {
             section = updatedSection;
@@ -93,6 +101,11 @@ const PostList = () => {
             filters.artists = artists.split(',');
         } else {
             filters.artists = null;
+        }
+        if(categories && /^\d+(,\d+)*$/.test(categories)) {
+            filters.categories = categories.split(',');
+        } else {
+            filters.categories = null;
         }
         if(searchQuery) {
             filters.search = searchQuery;
@@ -194,6 +207,21 @@ const PostList = () => {
         }),
     };
 
+    const [isFilterOpen, setIsFilterOpen] = useState(false);
+
+    const handleFiltersRow = useCallback((e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setIsFilterOpen(prev => !prev);
+    }, []);
+
+    const filtersRowStyle = {
+        maxHeight: isFilterOpen ? '500rem' : '0',
+        opacity: isFilterOpen ? 1 : 0,
+        columnGap: "60rem",
+        rowGap: "15rem",
+    };
+
     useEffect(() => {
         const fetchFilters = async () => {
             const { success, msg, categories, tags } = await getFilters();
@@ -257,123 +285,144 @@ const PostList = () => {
                 <div className="row">
                     <div className="col-lg-12">
                         <div className="ms_heading">
-                            <div className="row align-items-center flex-wrap text-right flex-lg-wrap" style={{ columnGap: "60rem", rowGap: "15rem" }}>
-                                <div className="col-12  order-1 order-lg-1" style={{ marginBottom: "10rem" }}>
+                            <div className="row align-items-center flex-wrap text-right flex-lg-wrap">
+                                <div className="col-12  order-0 order-lg-1" style={{marginBottom: "10rem"}}>
                                     {
-                                        activeSearchQuery ?
-                                            (
-                                                <div className="d-flex justify-content-start align-items-start" style={{ gap: "5rem" }}>
-                                                    <h1 className="m-0">{`نمایش نتایج جست و جو: ${activeSearchQuery}`}</h1>
-                                                    <a href="#" onClick={() => resetSearch()} className="fa fa-close ms_color prevent-default"></a>
-                                                </div>
-                                            ) : (
+                                        activeSearchParams ?
+                                            activeSearchQuery ?
+                                                (
+                                                    <div className="d-flex justify-content-start align-items-start"
+                                                         style={{gap: "5rem"}}>
+                                                        <h1 className="m-0">{`نمایش نتایج جست و جو: ${activeSearchQuery}`}</h1>
+                                                        <a href="#" onClick={() => resetSearch()}
+                                                           className="fa fa-close ms_color prevent-default"></a>
+                                                    </div>
+                                                ) : (
+                                                    <div className="d-flex justify-content-start align-items-start"
+                                                         style={{gap: "5rem"}}>
+                                                        <h1 className="m-0">حذف فیلتر ها</h1>
+                                                        <a href="#" onClick={() => resetSearch()}
+                                                           className="fa fa-close ms_color prevent-default"></a>
+                                                    </div>
+                                                ) : (
                                                 <h1 className="m-0">پست ها</h1>
                                             )
                                     }
                                 </div>
-                                <div className="col-12 col-sm-6 col-lg-2 order-2 order-lg-2">
-                                    <Select
-                                        value={selectedTag}
-                                        onChange={(selectedOptions) => {
-                                            setSelectedTag(selectedOptions);
-                                            const ids = selectedOptions ? selectedOptions.map((item) => item.value) : [];
-                                            const newFilters = { ...filters, tags: ids };
-                                            setFilters(newFilters);
-                                            fetchPosts(selectedSection, newFilters, 12, pagination.page);
-                                        }}
-                                        isMulti
-                                        isSearchable
-                                        isRtl
-                                        placeholder="تگ ها"
-                                        options={tags}
-                                        noOptionsMessage={() => "یافت نشد"}
-                                        autoComplete="off"
-                                        styles={SelectStyle}
-                                    />
-                                </div>
+                                <a
+                                    className="ms_btn d-inline-flex align-items-center justify-content-center text-dark order-1"
+                                    onClick={handleFiltersRow}
+                                    style={{ gap: "15rem", padding: "10rem", marginBottom: "10rem", marginRight: "15rem", width: "fit-content" }}
+                                >
+                                    <i className="fa fa-filter"></i>
+                                    فیلتر ها
+                                </a>
 
-                                <div className="col-12 col-sm-6 col-lg-2 order-3 order-lg-3">
-                                    <div className="d-flex align-items-center gap-2">
-                                        {categoryStack.length > 0 && (
-                                            <button
-                                                onClick={handleBack}
-                                                className="btn btn-sm btn-outline-info flex-shrink-0"
-                                                style={{
-                                                    fontSize: "15rem",
-                                                    borderRadius: "4rem",
-                                                    height: "100%",
-                                                    padding: "8rem",
-                                                    marginLeft: "10rem"
-                                                }}
-                                            >
-                                                بازگشت
-                                            </button>
-                                        )}
-                                        <div className="flex-grow-1">
-                                            <Select
-                                                value={selectedCategory}
-                                                onChange={handleCategoryChange}
-                                                isSearchable
-                                                isRtl
-                                                placeholder="دسته بندی"
-                                                options={categoryOptions}
-                                                noOptionsMessage={() => "یافت نشد"}
-                                                autoComplete="none"
-                                                aria-autocomplete="none"
-                                                styles={SelectStyle}
-                                            />
+                                <div className="row col-12 order-1 filters-wrapper" style={filtersRowStyle}>
+                                    <div className="col-12 col-sm-6 col-lg-2 order-2 order-lg-2">
+                                        <Select
+                                            value={selectedTag}
+                                            onChange={(selectedOptions) => {
+                                                setSelectedTag(selectedOptions);
+                                                const ids = selectedOptions ? selectedOptions.map((item) => item.value) : [];
+                                                const newFilters = {...filters, tags: ids};
+                                                setFilters(newFilters);
+                                                fetchPosts(selectedSection, newFilters, 12, pagination.page);
+                                            }}
+                                            isMulti
+                                            isSearchable
+                                            isRtl
+                                            placeholder="تگ ها"
+                                            options={tags}
+                                            noOptionsMessage={() => "یافت نشد"}
+                                            autoComplete="off"
+                                            styles={SelectStyle}
+                                        />
+                                    </div>
+
+                                    <div className="col-12 col-sm-6 col-lg-2 order-3 order-lg-3">
+                                        <div className="d-flex align-items-center gap-2">
+                                            {categoryStack.length > 0 && (
+                                                <button
+                                                    onClick={handleBack}
+                                                    className="btn btn-sm btn-outline-info flex-shrink-0"
+                                                    style={{
+                                                        fontSize: "15rem",
+                                                        borderRadius: "4rem",
+                                                        height: "100%",
+                                                        padding: "8rem",
+                                                        marginLeft: "10rem"
+                                                    }}
+                                                >
+                                                    بازگشت
+                                                </button>
+                                            )}
+                                            <div className="flex-grow-1">
+                                                <Select
+                                                    value={selectedCategory}
+                                                    onChange={handleCategoryChange}
+                                                    isSearchable
+                                                    isRtl
+                                                    placeholder="دسته بندی"
+                                                    options={categoryOptions}
+                                                    noOptionsMessage={() => "یافت نشد"}
+                                                    autoComplete="none"
+                                                    aria-autocomplete="none"
+                                                    styles={SelectStyle}
+                                                />
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                <div className="col-12 col-sm-6 col-lg-2 order-2 order-lg-4">
-                                    <Select
-                                        value={selectedOption}
-                                        onChange={(selectedOptions) => {
-                                            setSelectedOption(selectedOptions);
-                                            const newFilters = { ...filters, most: selectedOptions.value };
-                                            setFilters(newFilters);
-                                            fetchPosts(selectedSection, newFilters, 12, pagination.page);
-                                        }}
-                                        isSearchable={false}
-                                        isRtl
-                                        placeholder="بر اساس"
-                                        options={mostOptions}
-                                        noOptionsMessage={() => "یافت نشد"}
-                                        autoComplete="off"
-                                        backspaceRemovesValue
-                                        aria-autocomplete="none"
-                                        styles={SelectStyle}
-                                    />
-                                </div>
+                                    <div className="col-12 col-sm-6 col-lg-2 order-2 order-lg-4">
+                                        <Select
+                                            value={selectedOption}
+                                            onChange={(selectedOptions) => {
+                                                setSelectedOption(selectedOptions);
+                                                const newFilters = {...filters, most: selectedOptions.value};
+                                                setFilters(newFilters);
+                                                fetchPosts(selectedSection, newFilters, 12, pagination.page);
+                                            }}
+                                            isSearchable={false}
+                                            isRtl
+                                            placeholder="بر اساس"
+                                            options={mostOptions}
+                                            noOptionsMessage={() => "یافت نشد"}
+                                            autoComplete="off"
+                                            backspaceRemovesValue
+                                            aria-autocomplete="none"
+                                            styles={SelectStyle}
+                                        />
+                                    </div>
 
-                                <div className="col-12 col-sm-6 col-lg-2 order-2 order-lg-5">
-                                    <Select
-                                        value={selectedDate}
-                                        onChange={(selectedOptions) => {
-                                            setSelectedDate(selectedOptions);
-                                            const newDates = {
-                                                "newest": false,
-                                                "oldest": false,
-                                                "suggested": false
-                                            };
-                                            if(selectedOptions.value !== "none") {
-                                                newDates[selectedOptions.value] = true;
-                                            }
-                                            const newFilters = { ...filters, ...newDates };
-                                            setFilters(newFilters);
-                                            fetchPosts(selectedSection, newFilters, 12, pagination.page);
-                                        }}
-                                        isSearchable={false}
-                                        isRtl
-                                        placeholder="تاریخ"
-                                        options={dateOptions}
-                                        noOptionsMessage={() => "یافت نشد"}
-                                        autoComplete="off"
-                                        backspaceRemovesValue
-                                        aria-autocomplete="none"
-                                        styles={SelectStyle}
-                                    />
+                                    <div className="col-12 col-sm-6 col-lg-2 order-2 order-lg-5">
+                                        <Select
+                                            value={selectedDate}
+                                            onChange={(selectedOptions) => {
+                                                setSelectedDate(selectedOptions);
+                                                const newDates = {
+                                                    "newest": false,
+                                                    "oldest": false,
+                                                    "suggested": false
+                                                };
+                                                if (selectedOptions.value !== "none") {
+                                                    newDates[selectedOptions.value] = true;
+                                                }
+                                                const newFilters = {...filters, ...newDates};
+                                                setFilters(newFilters);
+                                                fetchPosts(selectedSection, newFilters, 12, pagination.page);
+                                            }}
+                                            isSearchable={false}
+                                            isRtl
+                                            placeholder="تاریخ"
+                                            options={dateOptions}
+                                            noOptionsMessage={() => "یافت نشد"}
+                                            autoComplete="off"
+                                            backspaceRemovesValue
+                                            aria-autocomplete="none"
+                                            styles={SelectStyle}
+                                        />
+                                    </div>
                                 </div>
 
                             </div>

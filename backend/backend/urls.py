@@ -21,9 +21,11 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path("tinymce/", include('tinymce.urls')),
     path('api/user/', include('account.urls', namespace='account')),
     path('api/main/', include('main.urls', namespace='main')),
     path('api/media/', include('media_center.urls', namespace='media_center')),
+    path('api/blog/', include('blog.urls', namespace='blog')),
 ]
 
 if settings.DEBUG:

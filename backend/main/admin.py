@@ -51,7 +51,7 @@ class SettingAdmin(admin.ModelAdmin):
         (
             'فضای مجازی',
             {
-                'fields': ('telegram_link', 'whatsapp_link', 'facebook_link', 'linkedin_link', 'twitter_link'),
+                'fields': ('telegram_link', 'instagram_link', 'youtube_link', 'eitaa_link', 'aparat_link'),
                 'classes': ('collapse',),
             }
         ),
@@ -163,6 +163,20 @@ class MainPageAdmin(admin.ModelAdmin):
             'بخش هفتم',
             {
                 'fields': ('section7_title', 'section7_content'),
+                'classes': ('collapse',),
+            }
+        ),
+        (
+            'ویدیو',
+            {
+                'fields': ('section8_title', 'section8_content', 'section8_show'),
+                'classes': ('collapse',),
+            }
+        ),
+        (
+            'استوری ها',
+            {
+                'fields': ('section9_title',),
                 'classes': ('collapse',),
             }
         ),
