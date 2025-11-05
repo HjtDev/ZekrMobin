@@ -1,0 +1,31 @@
+.ms_heading h1:after {
+    display: none !important;
+}
+
+.ms_heading { text-align: center; position: relative; }
+
+.ms_heading_title {
+    display: inline-block;
+    position: relative;
+    margin: 0;
+    padding-bottom: 14px;
+    font-weight: 700;
+}
+
+.ms_heading_underline {
+    display: block;
+    width: 100px;
+    height: 5px;
+    margin: 1rem auto 10rem;
+    border-radius: 3px;
+    background: radial-gradient(ellipse at center, #3bc8e7 0%, rgba(255,42,112,0) 60%);
+    transition: width .2s ease;
+}
+
+@media (max-width: 576px) {
+    .ms_heading_underline {
+        width: 60px;
+        height: 4px;
+        margin-top: 4px;
+    }
+}

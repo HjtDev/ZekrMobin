@@ -44,13 +44,19 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
+    'mptt',
     'main.apps.MainConfig',
     'account.apps.AccountConfig',
+    'media_center.apps.MediaCenterConfig',
+    'blog.apps.BlogConfig',
     'rest_framework',
-    'drf_spectacular'
+    'tinymce',
+    'drf_spectacular',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -65,8 +71,7 @@ ROOT_URLCONF = 'backend.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates']
-        ,
+        # 'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -100,10 +105,14 @@ CACHES = {
         'BACKEND': 'django_redis.cache.RedisCache',
         'LOCATION': env('REDIS_LOCATION'),
         'OPTIONS': {
-            'CLIENT_CLASS': 'django_redis.client.DefaultClient'
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+            'COMPRESSOR': 'django_redis.compressors.zlib.ZlibCompressor'
         }
     }
 }
+CACHE_TIMEOUT = 180
+SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+SESSION_CACHE_ALIAS = 'default'
 
 # User
 
@@ -131,7 +140,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = 'fa-ir'
+LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'Asia/Tehran'
 
@@ -149,10 +158,15 @@ STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
 
+# Media files
+
+MEDIA_URL = 'media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
 # Jazzmin
 
-jazzmin_settings = {
-    'custom_css': 'css/jazzmin_rtl.css',
+JAZZMIN_SETTINGS = {
+    'custom_css': 'css/jazzmin-rtl.css',
     'site_brand': 'داشبورد',
 }
 admin.sites.AdminSite.site_header = 'پنل مدیریت'
@@ -217,7 +231,6 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.BasicAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny',
@@ -227,6 +240,32 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_THROTTLE_RATES': {
         'admin': '10/second',
+        'csrf': '50/minute',
+        'profile': '50/minute',
+        'edit_profile': '3/minute',
+        'login': '5/minute',
+        'signup': '5/minute',
+        'logout': '5/minute',
+        'setting': '300/minute',
+        'club': '5/minute',
+        'single-post': '300/minute',
+        'filtered-posts': '300/minute',
+        'top-artists': '30/minute',
+        'main-page': '40/minute',
+        'comments': '10/minute',
+        'like': '30/minute',
+        'download': '100/hour',
+        'suggestion': '30/minute',
+        'user-posts': '100/minute',
+        'post-list-filters': '300/minute',
+        'artists-list': '100/minute',
+        'remove-history': '30/minute',
+        'single-blog-post': '200/minute',
+        'filtered-blog-post': '200/minute',
+        'blog-category-list': '200/minute',
+        'blog-tag-list': '200/minute',
+        'blog-post-suggestion': '200/minute',
+        'blog-comment': '100/minute',
     },
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema'
 }
@@ -249,4 +288,64 @@ SPECTACULAR_SETTINGS = {
         'expandSingleSchemaField': True,
         'hideDownloadButton': True,
     },
+}
+
+# Resized Images
+
+DJANGORESIZED_DEFAULT_SIZE = [155, 155]
+# DJANGORESIZED_DEFAULT_SCALE = 0.5
+DJANGORESIZED_DEFAULT_QUALITY = 100
+DJANGORESIZED_DEFAULT_KEEP_META = True
+# DJANGORESIZED_DEFAULT_FORCE_FORMAT = 'JPEG'
+DJANGORESIZED_DEFAULT_FORMAT_EXTENSIONS = {'JPEG': '.jpg', 'PNG': '.png', 'WEBP': '.webp'}
+# DJANGORESIZED_DEFAULT_NORMALIZE_ROTATION = False
+
+# Cross Origin Requests
+
+SESSION_COOKIE_SECURE = not DEBUG
+CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS', default=[])
+CORS_ALLOWED_ORIGINS = env.list('CORS_ALLOWED_ORIGINS')
+CORS_ALLOW_CREDENTIALS = env.bool('CORS_ALLOW_CREDENTIALS')
+CORS_ALLOW_ALL_ORIGINS = DEBUG
+SESSION_COOKIE_SAMESITE = 'None' if not DEBUG else 'Lax'
+CSRF_COOKIE_SAMESITE = 'None'if not DEBUG else 'Lax'
+SESSION_COOKIE_DOMAIN = env('SESSION_COOKIE_DOMAIN')
+CSRF_COOKIE_DOMAIN = env('CSRF_COOKIE_DOMAIN')
+
+# Email Settings
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = env('EMAIL_HOST')
+EMAIL_HOST_USER = env('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
+EMAIL_PORT = env.int('EMAIL_PORT')
+EMAIL_USE_SSL = True
+EMAIL_USE_TLS = False
+
+# Tinymce Settings
+
+TINYMCE_DEFAULT_CONFIG = {
+    'height': 500,
+    'width': '100%',
+    'menubar': True,
+    'plugins': (
+        'advlist anchor autolink autosave charmap code codesample directionality emoticons fullscreen help '
+        'image insertdatetime link lists media nonbreaking pagebreak paste preview print quickbars save searchreplace '
+        'table template visualblocks visualchars wordcount'
+    ),
+    'toolbar': (
+        'undo redo | bold italic underline strikethrough | fontselect fontsizeselect formatselect | '
+        'alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist | forecolor backcolor '
+        'removeformat | pagebreak | charmap emoticons | fullscreen preview save print | '
+        'insertfile image media template link anchor codesample | ltr rtl | code'
+    ),
+    'contextmenu': 'link image imagetools table',
+    'images_upload_url': '/api/blog/editor/upload/',
+    'automatic_uploads': True,
+    'image_advtab': True,
+    'image_caption': True,
+    'file_picker_types': 'file image media',
+    'quickbars_selection_toolbar': 'bold italic | quicklink h2 h3 blockquote quickimage quicktable',
+    'nonbreaking_force_tab': True,
+    'toolbar_mode': 'sliding',
 }
