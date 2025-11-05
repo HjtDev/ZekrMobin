@@ -11,12 +11,12 @@ const TopPosts = () => {
 
     const initializeSwiper = () => {
         if (window.Swiper) {
-            if (window.albumSlider) {
-                window.albumSlider.destroy(true, true);
+            if (window.topPostSlider) {
+                window.topPostSlider.destroy(true, true);
             }
 
             // Re-init
-            window.albumSlider = new window.Swiper('.ms_album_slider.swiper-container', {
+            window.topPostSlider = new window.Swiper('.ms_top_posts_slider.swiper-container', {
                 slidesPerView: 6,
                 spaceBetween: 30,
                 loop: true,
@@ -74,7 +74,7 @@ const TopPosts = () => {
                     </Link>
                 </span>
             </div>
-            <div className="ms_album_slider swiper-container">
+            <div className="ms_album_slider ms_top_posts_slider swiper-container">
                 <div className="swiper-wrapper">
                     {
                         pageContent ?
