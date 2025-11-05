@@ -123,7 +123,12 @@ const StoryList = () => {
                         {
                             pageContent ?
                                 pageContent.map((story, index) => (
-                                    <div data-category-id={story.id} key={index} className="swiper-slide">
+                                    <div
+                                        data-category-id={story.id}
+                                        key={index}
+                                        className="swiper-slide"
+                                        onClick={() => openStory(story.id)}
+                                    >
                                         <div className="ms_rcnt_box">
                                             <div className="ms_rcnt_box_img">
                                                 <img src={story.thumbnail} alt={story.title}
@@ -132,7 +137,6 @@ const StoryList = () => {
                                                     <div className="ms_box_overlay" style={{borderRadius: "50%"}}/>
                                                     <div
                                                         className="ms_play_icon"
-                                                        onClick={() => openStory(story.id)}
                                                     >
                                                         <img src="images/svg/play.svg" alt="Play Icon"/>
                                                     </div>

@@ -43,7 +43,7 @@ const Sidebar = () => {
                         <li>
                             <Link to="/">
                                 <span className="nav_icon">
-                                    <span className="icon icon_discover"/>
+                                    <span className="fa fa-home"/>
                                 </span>
                                 <span className="nav_text">خانه</span>
                             </Link>
@@ -51,7 +51,7 @@ const Sidebar = () => {
                         <li>
                             <Link to="/posts/" title="پست ها">
                                 <span className="nav_icon">
-                                  <span className="icon icon_albums" />
+                                  <span className="fa fa-list" />
                                 </span>
                                 <span className="nav_text">پست ها</span>
                             </Link>
@@ -59,7 +59,7 @@ const Sidebar = () => {
                         <li>
                             <Link to="/blog/" title="مجله">
                                 <span className="nav_icon">
-                                  <span className="icon icon_queue" />
+                                  <span className="fa fa-book" />
                                 </span>
                                 <span className="nav_text">مجله</span>
                             </Link>
@@ -67,7 +67,7 @@ const Sidebar = () => {
                         <li>
                             <Link to="/artists/" title="هنرمندان">
                                 <span className="nav_icon">
-                                  <span className="icon icon_artists" />
+                                  <span className="fa fa-user" />
                                 </span>
                                 <span className="nav_text">هنرمندان</span>
                             </Link>
@@ -79,7 +79,7 @@ const Sidebar = () => {
                                 <li>
                                     <Link to="/profile/" title="پروفایل">
                                 <span className="nav_icon">
-                                  <span className="icon icon_genres"/>
+                                  <span className="fa fa-user-circle"/>
                                 </span>
                                         <span className="nav_text">پروفایل</span>
                                     </Link>
@@ -111,11 +111,12 @@ const Sidebar = () => {
                             )
                         }
                     </ul>
+
                     <ul className="nav_downloads">
                         <li>
                             <Link to="/posts/?section=recent-posts" onClick={() => ReloadInPostList()} title="برترین ها">
                                 <span className="nav_icon">
-                                  <span className="icon icon_tracks" />
+                                  <span className="fa fa-star" />
                                 </span>
                                 <span className="nav_text">برترین ها</span>
                             </Link>
@@ -123,7 +124,7 @@ const Sidebar = () => {
                         <li>
                             <Link to="/posts/?section=weekly-posts" onClick={() => ReloadInPostList()} title="برترین های هفته">
                                 <span className="nav_icon">
-                                  <span className="icon icon_music" />
+                                  <span className="fa fa-play" />
                                 </span>
                                 <span className="nav_text">برترین های هفته</span>
                             </Link>
@@ -131,7 +132,7 @@ const Sidebar = () => {
                         <li>
                             <Link to="/posts/?section=new-posts" onClick={() => ReloadInPostList()} title="جدیدترین پست ها">
                                 <span className="nav_icon">
-                                  <span className="icon icon_station" />
+                                  <span className="fa fa-plus" />
                                 </span>
                                 <span className="nav_text">جدیدترین پست ها</span>
                             </Link>
@@ -139,7 +140,7 @@ const Sidebar = () => {
                         <li>
                             <Link to="/posts/?section=live-suggestions" onClick={() => ReloadInPostList()} title="پست های پیشنهادی">
                                 <span className="nav_icon">
-                                  <span className="icon icon_purchased" />
+                                  <span className="fa fa-share" />
                                 </span>
                                 <span className="nav_text">پیشنهادی</span>
                             </Link>
@@ -152,7 +153,7 @@ const Sidebar = () => {
                                 <li>
                                     <Link to="/profile/liked/" title="علاقه مندی ها">
                                         <span className="nav_icon">
-                                          <span className="icon icon_favourite" />
+                                          <span className="fa fa-heart" />
                                         </span>
                                         <span className="nav_text">علاقه مندی ها</span>
                                     </Link>
@@ -164,7 +165,7 @@ const Sidebar = () => {
                                 <li>
                                     <Link to="/profile/history/" title="تاریخچه">
                                         <span className="nav_icon">
-                                          <span className="icon icon_history" />
+                                          <span className="fa fa-history" />
                                         </span>
                                         <span className="nav_text">تاریخچه</span>
                                     </Link>

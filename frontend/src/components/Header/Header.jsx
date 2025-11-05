@@ -32,7 +32,7 @@ const Header = () => {
                 {truncateText(user?.name, 5)}
                 {
                     user?.profile_picture ?
-                    <img src={import.meta.env.VITE_BASE_URL + user.profile_picture} className="ms_pro_name" alt="User Profile Picture"/> :
+                    <img src={user.profile_picture} className="ms_pro_name" alt="User Profile Picture"/> :
                     <span className="ms_pro_name">{user?.name[0]}</span>
                 }
             </a>
