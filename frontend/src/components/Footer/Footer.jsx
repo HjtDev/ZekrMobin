@@ -169,9 +169,8 @@ const Footer = () => {
                                     </div>
                                 </li>
                             </ul>
-                            <div className="foo_sharing">
-                                <div className="share_title"/>
-                                <ul>
+                            <div className="foo_sharing d-flex justify-content-center align-items-center w-100">
+                                <ul className="d-flex justify-content-sm-center justify-content-md-center justify-content-center align-items-center w-100 pr-0">
                                     <li>
                                         <a
                                             href={
