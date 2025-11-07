@@ -499,13 +499,9 @@ const MediaPortal = ({ isOpen, onClose, postID }) => {
                                             : (isMobile ? "9/16" : "16/9")
                                     }
                                     autoPlay={false}
+                                    controls={false}
                                     fullscreenOrientation={false}
                                     playsInline={true}
-                                    config={{
-                                        plyr: {
-                                            fullscreen: { enabled: false, fallback: false }
-                                        }
-                                    }}
                                     onPointerDown={(e) => {
                                         const startY = e.clientY;
                                         const handleMove = (moveEvent) => {
@@ -540,7 +536,7 @@ const MediaPortal = ({ isOpen, onClose, postID }) => {
                                         icons={plyrLayoutIcons}
                                         thumbnails={post?.thumbnail}
                                         clickToFullscreen={true}
-                                        clickToPlay={false}
+                                        clickToPlay={true}
                                     />
                                 </MediaPlayer>
                             </div>
