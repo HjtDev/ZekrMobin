@@ -318,7 +318,7 @@ const MediaPortal = ({ isOpen, onClose, postID }) => {
             toast.warning('مشکلی پیش آمد لطفا بعدا تلاش کنید.');
         }
         const { success, posts } = await getSuggestedPosts(post.id);
-        if(success) {
+        if(success && posts.length > 0) {
             toast.success('در حال بارگزاری پست ها');
             await new Promise((resolve) => setTimeout(resolve, 1000));
             navigate(`/posts/?section=${posts.join(",")}`, { replace: true });
