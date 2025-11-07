@@ -9,6 +9,7 @@ import getPost from "../api/post.js";
 const StoryList = () => {
     const [pageData, setPageData] = useState(null);
     const [pageContent, setPageContent] = useState(null);
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
     const initializeSwiper = () => {
         if (window.Swiper) {
@@ -130,21 +131,34 @@ const StoryList = () => {
                                         onClick={() => openStory(story.id)}
                                     >
                                         <div className="ms_rcnt_box">
-                                            <div className="ms_rcnt_box_img">
+                                            <div
+                                                className="ms_rcnt_box_img"
+                                                style={{
+                                                    borderRadius: "50%",
+                                                    padding: "4rem",
+                                                    background: "linear-gradient(to top left, #14182A,#21B1CD,#0068E2,#21B1CD)",
+                                                }}
+                                            >
                                                 <img src={story.thumbnail} alt={story.title}
-                                                     style={{borderRadius: "50%"}}/>
-                                                <div className="ms_main_overlay" style={{borderRadius: "50%"}}>
-                                                    <div className="ms_box_overlay" style={{borderRadius: "50%"}}/>
-                                                    <div
-                                                        className="ms_play_icon"
-                                                    >
-                                                        <img src="images/svg/play.svg" alt="Play Icon"/>
-                                                    </div>
-                                                </div>
+                                                     style={{
+                                                         borderRadius: "50%",
+                                                }}/>
+                                                {
+                                                    !isMobile && (
+                                                        <div className="ms_main_overlay" style={{borderRadius: "50%"}}>
+                                                            <div className="ms_box_overlay" style={{borderRadius: "50%"}}/>
+                                                            <div
+                                                                className="ms_play_icon"
+                                                            >
+                                                                <img src="images/svg/play.svg" alt="Play Icon"/>
+                                                            </div>
+                                                        </div>
+                                                    )
+                                                }
                                                 <div className="ms_box_overlay_on">
                                                     <div className="ovrly_text_div">
                                                     <span className="ovrly_text1">
-                                                        <a href="#">
+                                                        <a href="#" className="prevent-default">
                                                             {story.title}
                                                         </a>
                                                     </span>
@@ -204,8 +218,7 @@ const StoryList = () => {
                                 width: 40,
                                 height: 40,
                                 cursor: 'pointer',
-                            }}
-                        >
+                            }}>
                             ✕
                         </button>
 
@@ -213,8 +226,8 @@ const StoryList = () => {
                             stories={activeStory}
                             currentIndex={currentIndex}
                             defaultInterval={1000}
-                            width={360}
-                            height={640}
+                            // width={360}
+                            // height={640}
                             loop={true}
                             isPaused={false}
                             preventDefault={false}
@@ -224,8 +237,8 @@ const StoryList = () => {
                             onStoryEnd={() => updateStoryIndex(1)}
                             keyboardNavigation={true}
                             onAllStoriesEnd={closeStory}
-                            storyContainerStyles={{
-                                position: "relative"
+                            storyStyles={{
+                                aspectRatio: '9/16'
                             }}
                         />
                     </div>

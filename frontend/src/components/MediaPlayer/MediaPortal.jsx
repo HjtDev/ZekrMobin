@@ -318,7 +318,7 @@ const MediaPortal = ({ isOpen, onClose, postID }) => {
             toast.warning('مشکلی پیش آمد لطفا بعدا تلاش کنید.');
         }
         const { success, posts } = await getSuggestedPosts(post.id);
-        if(success) {
+        if(success && posts.length > 0) {
             toast.success('در حال بارگزاری پست ها');
             await new Promise((resolve) => setTimeout(resolve, 1000));
             navigate(`/posts/?section=${posts.join(",")}`, { replace: true });
@@ -499,13 +499,9 @@ const MediaPortal = ({ isOpen, onClose, postID }) => {
                                             : (isMobile ? "9/16" : "16/9")
                                     }
                                     autoPlay={false}
+                                    controls={false}
                                     fullscreenOrientation={false}
                                     playsInline={true}
-                                    config={{
-                                        plyr: {
-                                            fullscreen: { enabled: false, fallback: false }
-                                        }
-                                    }}
                                     onPointerDown={(e) => {
                                         const startY = e.clientY;
                                         const handleMove = (moveEvent) => {
@@ -540,7 +536,7 @@ const MediaPortal = ({ isOpen, onClose, postID }) => {
                                         icons={plyrLayoutIcons}
                                         thumbnails={post?.thumbnail}
                                         clickToFullscreen={true}
-                                        clickToPlay={false}
+                                        clickToPlay={true}
                                     />
                                 </MediaPlayer>
                             </div>

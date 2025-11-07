@@ -26,15 +26,11 @@ const Video = () => {
             <MediaPlayer
                 title={pageData?.title}
                 autoPlay={false}
+                controls={false}
                 fullscreenOrientation={false}
                 playsInline={true}
                 style={{
                     width: isMobile ? '100%' : '50%',
-                }}
-                config={{
-                    plyr: {
-                        fullscreen: {enabled: false, fallback: false}
-                    }
                 }}
                 onPointerDown={(e) => {
                     const startY = e.clientY;
@@ -62,7 +58,7 @@ const Video = () => {
                     }}
                     // thumbnails={post?.thumbnail}
                     clickToFullscreen={true}
-                    clickToPlay={false}
+                    clickToPlay={true}
                 />
             </MediaPlayer>
         </div>
