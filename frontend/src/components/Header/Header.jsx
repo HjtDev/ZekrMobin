@@ -22,7 +22,7 @@ const Header = () => {
     }
 
     const searchAction = () => {
-        navigate(`/posts/?search=${searchQuery}`, { replace: true });
+        navigate(`/posts/?search=${searchQuery}`, { replace: false });
         if(window.location.pathname.startsWith("/posts")) window.location.reload();
     }
 
