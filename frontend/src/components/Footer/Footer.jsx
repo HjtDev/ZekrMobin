@@ -67,7 +67,7 @@ const Footer = () => {
                             <p>{settings?.footer_text2}</p>
                             {
                                 settings?.footer_img1 ?
-                                <a href="#" className="foo_app_btn">
+                                <a href={settings?.footer_img1_link} className="foo_app_btn">
                                     <img
                                         src={settings?.footer_img1}
                                         alt="Footer image"
@@ -77,7 +77,7 @@ const Footer = () => {
                             }
                             {
                                 settings?.footer_img2 ?
-                                    <a href="#" className="foo_app_btn">
+                                    <a href={settings?.footer_img2_link} className="foo_app_btn">
                                         <img
                                             src={settings?.footer_img2}
                                             alt="Footer image"
@@ -87,7 +87,7 @@ const Footer = () => {
                             }
                             {
                                 settings?.footer_img3 ?
-                                    <a href="#" className="foo_app_btn">
+                                    <a href={settings?.footer_img3_link} className="foo_app_btn">
                                         <img
                                             src={settings?.footer_img3}
                                             alt="Footer image"

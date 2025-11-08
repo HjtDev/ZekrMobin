@@ -25,7 +25,13 @@ class SettingView(APIView, ResponseBuilderMixin, GetDataMixin):
         section_map = {
             'logo': ['logo', 'open_logo'],
             'landing': ['landing_title', 'landing_subtitle', 'landing_text', 'landing_image'],
-            'footer_content': ['footer_title1', 'footer_text1', 'footer_title2', 'footer_text2', 'footer_img1', 'footer_img2', 'footer_img3'],
+            'footer_content': [
+                'footer_title1', 'footer_text1',
+                'footer_title2', 'footer_text2',
+                'footer_img1', 'footer_img1_link',
+                'footer_img2', 'footer_img2_link',
+                'footer_img3', 'footer_img3_link'
+            ],
             'club': ['club_enabled', 'club_welcome_email_enabled', 'club_title', 'club_text'],
             'contact': ['contact_us_title', 'contact_us_phone', 'contact_us_email', 'contact_us_address'],
             'social': ['telegram_link', 'instagram_link', 'youtube_link', 'eitaa_link', 'aparat_link'],
