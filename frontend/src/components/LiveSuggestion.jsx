@@ -115,9 +115,12 @@ const LiveSuggestion = () => {
                                         </div>
                                     </div>
 
-                                    <div className="ms_rcnt_box_text">
+                                    <div
+                                        className="ms_rcnt_box_text"
+                                        onClick={() => handleMediaClick(post.id)}
+                                    >
                                         <h3>
-                                            <a href="#">{truncateText(post?.title, 50, 45)}</a>
+                                            <a href={`${window.location.origin}/?play=${post.id}`} className="prevent-default">{truncateText(post?.title, 50, 45)}</a>
                                         </h3>
                                     </div>
 

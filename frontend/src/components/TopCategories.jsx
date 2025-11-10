@@ -92,16 +92,21 @@ const TopCategories = () => {
                                             <img src="images/svg/play.svg" alt="" />
                                         </div>
                                         <div className="ovrly_text_div">
-                      <span className="ovrly_text1">
-                        <a href="#">{category.post_count} پست</a>
-                      </span>
+                                            <span
+                                                className="ovrly_text1"
+                                            >
+                                                <Link to={`/posts/?categories=${category.id}`}>{category.post_count} پست</Link>
+                                            </span>
                                         </div>
                                     </div>
                                     <div className="ms_box_overlay_on">
                                         <div className="ovrly_text_div">
-                      <span className="ovrly_text1">
-                        <a href="#">{truncateText(category?.name, 50, 45)}</a>
-                      </span>
+                                            <span
+                                                className="ovrly_text1"
+                                                onClick={() => navigate(`/posts/?categories=${category.id}`)}
+                                            >
+                                              <a href="#">{truncateText(category?.name, 50, 45)}</a>
+                                            </span>
                                         </div>
                                     </div>
                                 </div>

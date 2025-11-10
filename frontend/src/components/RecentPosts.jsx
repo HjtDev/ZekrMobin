@@ -92,8 +92,8 @@ const RecentPosts = () => {
                                     </div>
                                 </div>
                                 <div className="ms_rcnt_box_text">
-                                    <h3><a href="#">{truncateText(item?.title, 50, 45)}</a></h3>
-                                    <p>{item?.artist?.name}</p>
+                                    <h3 onClick={() => setIsOpen(prev => ({...prev, [item.id]: true}))}><a href="#" className="prevent-default">{truncateText(item?.title, 50, 45)}</a></h3>
+                                    <a href={`${window.location.origin}/posts/?artists=${item?.artist?.id}`}><p>{truncateText(item?.artist.name, 50, 45)}</p></a>
                                 </div>
 
                                 {isOpen[item.id] && (

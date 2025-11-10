@@ -85,7 +85,7 @@ const TopArtists = () => {
                                 >
                                     <div className="ms_rcnt_box">
                                         <div className="ms_rcnt_box_img">
-                                            <img src={b_post.thumbnail} alt={b_post.title}/>
+                                            <img style={{ cursor: "pointer" }} src={b_post.thumbnail} alt={b_post.title}/>
                                         </div>
                                         <div className="ms_rcnt_box_text">
                                             <h3>

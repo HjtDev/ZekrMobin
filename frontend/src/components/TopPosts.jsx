@@ -94,7 +94,7 @@ const TopPosts = () => {
                                             </div>
                                         </div>
                                         <div className="ms_rcnt_box_text">
-                                            <h3>
+                                            <h3 onClick={() => navigate(`/posts/?categories=${category.id}`)}>
                                                 <a href="#">{truncateText(category?.name, 50, 45)}</a>
                                             </h3>
                                             <p>دسته بندی منتخب - {category.post_count} پست</p>
