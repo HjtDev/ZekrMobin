@@ -99,6 +99,9 @@ const Header = () => {
                                 searchAction();
                             }
                         }}
+                        style={{
+                            paddingLeft: "50rem"
+                        }}
                     />
                     <span className="search_icon" onClick={() => searchAction()}>
                         <img src="/images/svg/search.svg" alt="Search Icon"/>

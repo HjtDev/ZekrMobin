@@ -344,6 +344,9 @@ const BlogList = () => {
                                         addSearchQuery();
                                     }
                                 }}
+                                style={{
+                                    paddingLeft: "50rem"
+                                }}
                             />
                             <button className="search_btn search_icon" onClick={addSearchQuery}>
                                 <i className="fa fa-search" aria-hidden="true"/>
