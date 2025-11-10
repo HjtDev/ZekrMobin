@@ -539,7 +539,7 @@ class ArtistsList(APIView, ResponseBuilderMixin):
     throttle_scope = 'artists-list'
     
     def get(self, request):
-        artists = Artist.objects.all()
+        artists = Artist.objects.all().annotate(post_count=Count('medias')).order_by('-post_count')
         if not artists.exists():
             return self.build_response(
                 status.HTTP_404_NOT_FOUND,
