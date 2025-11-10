@@ -321,7 +321,7 @@ const MediaPortal = ({ isOpen, onClose, postID }) => {
         if(success && posts.length > 0) {
             toast.success('در حال بارگزاری پست ها');
             await new Promise((resolve) => setTimeout(resolve, 1000));
-            navigate(`/posts/?section=${posts.join(",")}`, { replace: true });
+            navigate(`/posts/?section=${posts.join(",")}`, { replace: false });
             if(pathname.startsWith("/posts")) window.location.reload();
         } else {
             toast.error('پستی برای پیشنهاد وجود ندارد.');

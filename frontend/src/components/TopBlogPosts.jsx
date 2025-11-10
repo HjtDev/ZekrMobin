@@ -80,7 +80,7 @@ const TopArtists = () => {
                                     key={index}
                                     className="swiper-slide"
                                     onClick={() => {
-                                        navigate(`/blog/post/${b_post.id}/${b_post.title}`, { replace: true });
+                                        navigate(`/blog/post/${b_post.id}/${b_post.title}`, { replace: false });
                                     }}
                                 >
                                     <div className="ms_rcnt_box">

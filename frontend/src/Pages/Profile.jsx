@@ -60,7 +60,7 @@ const Profile = () => {
             <h1>ویرایش پروفایل</h1>
             <div className="ms_profile_box">
                 <div className="ms_pro_img">
-                    <img src={import.meta.env.VITE_BASE_URL + user?.profile_picture} alt="User Profile Picture" className="img-fluid h-100" />
+                    <img src={user?.profile_picture} alt="User Profile Picture" className="img-fluid h-100" />
                     <div className="pro_img_overlay">
                         <i className="fa_icon edit_icon" />
                     </div>
