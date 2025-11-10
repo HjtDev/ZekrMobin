@@ -102,6 +102,7 @@ const StoryList = () => {
 
     const closeStory = () => {
         setStoryOpen(false);
+        setCurrentIndex(1);
     }
 
     useEffect(() => {
@@ -155,15 +156,6 @@ const StoryList = () => {
                                                         </div>
                                                     )
                                                 }
-                                                <div className="ms_box_overlay_on">
-                                                    <div className="ovrly_text_div">
-                                                    <span className="ovrly_text1">
-                                                        <a href="#" className="prevent-default">
-                                                            {story.title}
-                                                        </a>
-                                                    </span>
-                                                    </div>
-                                                </div>
                                             </div>
                                             <div className="ms_rcnt_box_text">
                                                 <h3>

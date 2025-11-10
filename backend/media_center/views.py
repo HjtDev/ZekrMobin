@@ -63,7 +63,7 @@ class FilteredPosts(APIView, ResponseBuilderMixin, GetDataMixin, CachedResponseM
         
         match section:
             case 'recent-posts':
-                qs = qs.order_by('-views_count')
+                qs = qs.exclude(is_story=True).order_by('-views_count')
             case 'weekly-posts':
                 qs = qs.filter(updated_at__gte=now - timedelta(days=7)).exclude(is_story=True).annotate(
                     likes=Count('liked_by'),
