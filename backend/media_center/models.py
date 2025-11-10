@@ -2,7 +2,6 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.text import slugify
 from django_resized import ResizedImageField
-from moviepy import VideoFileClip, AudioFileClip
 from logging import getLogger
 from mptt.models import MPTTModel, TreeForeignKey
 from django.contrib.postgres.indexes import GinIndex
@@ -77,13 +76,13 @@ class Tag(models.Model):
     
     def __str__(self):
         return self.name
-    
+
 
 class File(models.Model):
     class Meta:
         verbose_name = 'فایل'
         verbose_name_plural = 'فایل ها'
-        
+    
     class QualityChoices(models.TextChoices):
         quality_144p = ('144p', '144P')
         quality_240p = ('240p', '240P')
@@ -93,11 +92,11 @@ class File(models.Model):
         quality_1080p = ('1080p', '1080P')
         quality_2k = ('2560p', '2K')
         quality_4k = ('4k', '4K')
-        
+    
     class TypeChoices(models.TextChoices):
         VIDEO = ('video',  'ویدئویی')
         AUDIO = ('audio', 'صوتی')
-        
+    
     name = models.CharField(max_length=70, verbose_name='نام مختصر فایل', help_text='مثال: دعای جوشن کبیر 1080P')
     quality = models.CharField(max_length=5, choices=QualityChoices.choices, verbose_name='کیفیت')
     media_type = models.CharField(max_length=7, choices=TypeChoices.choices, verbose_name='نوع فایل')
@@ -110,7 +109,7 @@ class File(models.Model):
     
     def clean(self):
         super().clean()
-
+        
         mime_type, _ = mimetypes.guess_type(self.file.name)
         if not mime_type:
             raise ValidationError('فرمت فایل قابل شناسایی نیست.')
@@ -119,21 +118,6 @@ class File(models.Model):
             raise ValidationError('فایل انتخابی باید یک فایل ویدیویی باشد.')
         elif self.media_type == self.TypeChoices.AUDIO and not mime_type.startswith('audio'):
             raise ValidationError('فایل انتخابی باید یک فایل صوتی باشد.')
-        
-    def get_duration(self) -> int:
-        try:
-            clip = VideoFileClip(self.file.path) if self.media_type == self.TypeChoices.VIDEO else AudioFileClip(self.file.path)
-            return round(clip.duration, 2)
-        except Exception as e:
-            logger.error(f'Could not extract duration for {self.file.name}: {e}')
-            return 0
-        
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-        duration = self.get_duration()
-        if duration != self.duration:
-            File.objects.filter(pk=self.pk).update(duration=duration)
-    
 
 class Artist(models.Model):
     class Meta:
