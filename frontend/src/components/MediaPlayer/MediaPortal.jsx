@@ -548,6 +548,7 @@ const MediaPortal = ({ isOpen, onClose, postID }) => {
                         )}
                         <div className="text-gray d-flex justify-content-between align-items-center" style={{ fontWeight: "bold", marginBottom: "15rem" }}>
                             <h2 className='text-right w-100' style={{ fontWeight: "bold", fontSize: "20rem", color: "gray" }}>{post?.title}</h2>
+                            <span className="text-left w-100" dir="ltr"><i className="fa fa-eye"></i> {post?.views_count}</span>
                         </div>
                         <div className="row justify-content-between align-items-center text-center option-container">
                             <div className="col-3 hover-info">
