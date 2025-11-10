@@ -21,6 +21,9 @@ const TopArtists = () => {
                 spaceBetween: 30,
                 loop: true,
                 speed: 1500,
+                autoplay: {
+                    delay: 5000
+                },
                 navigation: {
                     nextEl: '.swiper-button-prev8',
                     prevEl: '.swiper-button-next8',

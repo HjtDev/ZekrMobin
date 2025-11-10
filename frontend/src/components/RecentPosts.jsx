@@ -16,6 +16,9 @@ const RecentPosts = () => {
                 spaceBetween: 30,
                 loop: true,
                 speed: 1500,
+                autoplay: {
+                    delay: 5000
+                },
                 navigation: {
                     nextEl: '.swiper-button-prev',
                     prevEl: '.swiper-button-next',

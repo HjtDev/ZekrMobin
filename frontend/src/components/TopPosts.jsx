@@ -21,6 +21,9 @@ const TopPosts = () => {
                 spaceBetween: 30,
                 loop: true,
                 speed: 1500,
+                autoplay: {
+                    delay: 5000
+                },
                 navigation: {
                     nextEl: '.swiper-button-prev3',
                     prevEl: '.swiper-button-next3',

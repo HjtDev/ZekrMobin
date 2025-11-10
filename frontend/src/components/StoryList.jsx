@@ -23,6 +23,9 @@ const StoryList = () => {
                 spaceBetween: 30,
                 loop: true,
                 speed: 1500,
+                autoplay: {
+                    delay: 5000
+                },
                 navigation: {
                     nextEl: '.swiper-button-prev9',
                     prevEl: '.swiper-button-next9',

@@ -20,6 +20,9 @@ const TopCategories = () => {
                 spaceBetween: 30,
                 loop: true,
                 speed: 1500,
+                autoplay: {
+                    delay: 5000
+                },
                 navigation: {
                     nextEl: '.swiper-button-prev-cat',
                     prevEl: '.swiper-button-next-cat',
