@@ -6,17 +6,21 @@
     font-size: 18px;
 }
 
-.fix-innerhtml-font h1 {
+.fix-innerhtml-font h3 {
     font-size: 16px;
 }
 
-.fix-innerhtml-font h1 {
+.fix-innerhtml-font h4 {
     font-size: 14px;
 }
 
-.fix-innerhtml-font h1 {
+.fix-innerhtml-font h5 {
     font-size: 12px;
 }
 
+
+.fix-innerhtml-font h6 {
+    font-size: 11px;
+}
 
 

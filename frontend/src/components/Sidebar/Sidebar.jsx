@@ -29,12 +29,12 @@ const Sidebar = () => {
                 <div className="ms_logo_inner">
                     <div className="ms_logo">
                         <Link to="/">
-                            <img src={logos?.logo} alt="" className="img-fluid" />
+                            <img src={logos?.logo} alt="Sidebar logo" className="img-fluid" />
                         </Link>
                     </div>
                     <div className="ms_logo_open">
                         <Link to="/">
-                            <img src={logos?.open_logo} alt="" className="img-fluid" />
+                            <img src={logos?.open_logo} alt="Footer logo" className="img-fluid" />
                         </Link>
                     </div>
                 </div>

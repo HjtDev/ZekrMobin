@@ -415,7 +415,8 @@ class BlogComment(APIView, ResponseBuilderMixin, GetDataMixin, CachedResponseMix
             Comment.objects.create(
                 post=post,
                 user=request.user,
-                content=result['content']
+                content=result['content'],
+                is_verified=True
             )
             
             return self.build_response(

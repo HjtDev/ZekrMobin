@@ -83,10 +83,8 @@ const WeeklyTop = () => {
                                                 </div>
                                             </div>
                                             <div className="w_tp_song_name">
-                                                <h3>
-                                                    <a href="#">{truncateText(post?.title, -1, 25)}</a>
-                                                </h3>
-                                                <p>{truncateText(post?.artist?.name, 30, 30) || "ناشناس"}</p>
+                                                <h3 onClick={() => setIsOpen(prev => ({...prev, [post?.id]: true}))}><a href="#" className="prevent-default">{truncateText(post?.title, -1, 30)}</a></h3>
+                                                <a href={`${window.location.origin}/posts/?artists=${post?.artist?.id}`}><p>{truncateText(post?.artist.name, -1, 30)}</p></a>
                                             </div>
                                         </div>
                                     </div>

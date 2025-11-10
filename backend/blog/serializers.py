@@ -149,7 +149,7 @@ class CommentSerializer(ModelSerializer):
         read_only_fields = ('id',)
     
     def get_user(self, obj: Comment):
-        return obj.user.username if obj.user else 'بی نام'
+        return obj.user.name if obj.user else 'بی نام'
     
     
     def get_time_since(self, obj: BlogPost):

@@ -119,7 +119,7 @@ class PostSerializer(ModelSerializer):
     
     class Meta:
         model = Post
-        fields = ('id', 'title', 'thumbnail', 'artist', 'duration', 'is_liked', 'categories', 'tags', 'media', 'created_at', 'updated_at')
+        fields = ('id', 'title', 'thumbnail', 'artist', 'duration', 'is_liked', 'categories', 'tags', 'media', 'views_count', 'created_at', 'updated_at')
         
     def get_media(self, obj: Post):
         return MediaSerializer(obj.medias.all(), many=True, context=self.context).data
@@ -166,7 +166,7 @@ class CommentSerializer(ModelSerializer):
         read_only_fields = ('id',)
         
     def get_user(self, obj: Comment):
-        return obj.user.username if obj.user else 'بی نام'
+        return obj.user.name if obj.user else 'بی نام'
 
 
     def get_time_since(self, obj: Comment):

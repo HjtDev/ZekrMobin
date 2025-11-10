@@ -105,7 +105,7 @@ const PostList = () => {
         if(categories && /^\d+(,\d+)*$/.test(categories)) {
             filters.categories = categories.split(',');
         } else {
-            filters.categories = null;
+            if(!filters.categories) filters.categories = null;
         }
         if(searchQuery) {
             filters.search = searchQuery;
@@ -133,7 +133,7 @@ const PostList = () => {
             minHeight: "42px",
             borderRadius: "10px",
             transition: "all 0.2s ease-in-out",
-            width: "200px",
+            width: "170px",
         }),
         menu: (base) => ({
             ...base,
@@ -218,7 +218,7 @@ const PostList = () => {
     const filtersRowStyle = {
         maxHeight: isFilterOpen ? '500rem' : '0',
         opacity: isFilterOpen ? 1 : 0,
-        columnGap: "60rem",
+        columnGap: "65rem",
         rowGap: "15rem",
     };
 
@@ -286,7 +286,7 @@ const PostList = () => {
                     <div className="col-lg-12">
                         <div className="ms_heading">
                             <div className="row align-items-center flex-wrap text-right flex-lg-wrap">
-                                <div className="col-12  order-0 order-lg-1" style={{marginBottom: "10rem"}}>
+                                <div className="col-12  order-0 order-lg-0" style={{marginBottom: "10rem"}}>
                                     {
                                         activeSearchParams ?
                                             activeSearchQuery ?
@@ -340,7 +340,7 @@ const PostList = () => {
                                         />
                                     </div>
 
-                                    <div className="col-12 col-sm-6 col-lg-2 order-3 order-lg-3">
+                                    <div className="col-12 col-sm-6 col-lg-2 order-4 order-lg-4">
                                         <div className="d-flex align-items-center gap-2">
                                             {categoryStack.length > 0 && (
                                                 <button
@@ -374,7 +374,7 @@ const PostList = () => {
                                         </div>
                                     </div>
 
-                                    <div className="col-12 col-sm-6 col-lg-2 order-2 order-lg-4">
+                                    <div className="col-12 col-sm-6 col-lg-2 order-2 order-lg-2">
                                         <Select
                                             value={selectedOption}
                                             onChange={(selectedOptions) => {
@@ -395,7 +395,7 @@ const PostList = () => {
                                         />
                                     </div>
 
-                                    <div className="col-12 col-sm-6 col-lg-2 order-2 order-lg-5">
+                                    <div className="col-12 col-sm-6 col-lg-2 order-3 order-lg-3">
                                         <Select
                                             value={selectedDate}
                                             onChange={(selectedOptions) => {
@@ -442,7 +442,7 @@ const PostList = () => {
                                                 className="ms_play_icon"
                                                 onClick={() => handleMediaClick(post.id)}
                                             >
-                                                <img src="/images/svg/play.svg" alt="" />
+                                                <img src="/images/svg/play.svg" alt="Play SVG" />
                                             </div>
                                         </div>
                                     </div>

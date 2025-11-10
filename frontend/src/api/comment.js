@@ -67,7 +67,7 @@ const createComments = async (post_id, content) => {
         if(res.status === 201) {
             return {
                 success: true,
-                msg: ['نظر شما با موفقیت ذخیره شد و پس از تایید به نمایش در خواهد آمد.']
+                msg: ['نظر شما با موفقیت ثبت شد و پس از تایید به نمایش در خواهد آمد.']
             }
         }
     } catch (err) {

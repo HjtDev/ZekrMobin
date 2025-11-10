@@ -20,6 +20,9 @@ const TopCategories = () => {
                 spaceBetween: 30,
                 loop: true,
                 speed: 1500,
+                autoplay: {
+                    delay: 5000
+                },
                 navigation: {
                     nextEl: '.swiper-button-prev-cat',
                     prevEl: '.swiper-button-next-cat',
@@ -60,7 +63,7 @@ const TopCategories = () => {
 
     useEffect(() => {
         if (pageData?.content) {
-            loadPageContent(pageData.content, '', 8)
+            loadPageContent(pageData.content, '', 15)
         }
     }, [pageData])
 
@@ -89,19 +92,24 @@ const TopCategories = () => {
                                             className="ms_play_icon"
                                             onClick={() => navigate(`/posts/?categories=${category.id}`)}
                                         >
-                                            <img src="images/svg/play.svg" alt="" />
+                                            <img src="images/svg/play.svg" alt="Play SVG" />
                                         </div>
                                         <div className="ovrly_text_div">
-                      <span className="ovrly_text1">
-                        <a href="#">{category.post_count} پست</a>
-                      </span>
+                                            <span
+                                                className="ovrly_text1"
+                                            >
+                                                <Link to={`/posts/?categories=${category.id}`}>{category.post_count} پست</Link>
+                                            </span>
                                         </div>
                                     </div>
                                     <div className="ms_box_overlay_on">
                                         <div className="ovrly_text_div">
-                      <span className="ovrly_text1">
-                        <a href="#">{truncateText(category?.name, 50, 45)}</a>
-                      </span>
+                                            <span
+                                                className="ovrly_text1"
+                                                onClick={() => navigate(`/posts/?categories=${category.id}`)}
+                                            >
+                                              <a href="#">{truncateText(category?.name, 50, 45)}</a>
+                                            </span>
                                         </div>
                                     </div>
                                 </div>

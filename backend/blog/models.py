@@ -71,7 +71,7 @@ class Comment(models.Model):
     post = models.ForeignKey(BlogPost, on_delete=models.CASCADE, related_name='comments', verbose_name='پست')
     
     content = models.TextField(max_length=320, verbose_name='متن')
-    is_verified = models.BooleanField(default=False, verbose_name='نمایش در سایت')
+    is_verified = models.BooleanField(default=True, verbose_name='نمایش در سایت')
     
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='تاریخ ایجاد')
     

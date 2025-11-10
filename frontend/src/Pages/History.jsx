@@ -68,7 +68,7 @@ const History = () => {
                                             <div className="ms_main_overlay">
                                                 <div className="ms_box_overlay"/>
                                                 <div className="ms_play_icon" onClick={() => handleMediaClick(post.id)}>
-                                                    <img src="/images/svg/play.svg" alt=""/>
+                                                    <img src="/images/svg/play.svg" alt="Play SVG"/>
                                                 </div>
                                             </div>
                                         </div>

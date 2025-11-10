@@ -20,6 +20,9 @@ const NewReleases = () => {
                 spaceBetween: 30,
                 loop: true,
                 speed: 1500,
+                autoplay: {
+                    delay: 5000
+                },
                 navigation: {
                     nextEl: ".swiper-button-prev2",
                     prevEl: ".swiper-button-next2",
@@ -58,7 +61,7 @@ const NewReleases = () => {
 
     useEffect(() => {
         if (pageData?.content) {
-            loadPageContent(pageData.content, "", 8);
+            loadPageContent(pageData.content, "", 15);
         }
     }, [pageData]);
 
@@ -102,10 +105,14 @@ const NewReleases = () => {
                                         </div>
 
                                         <div className="w_tp_song_name">
-                                            <h3>
-                                                <a href="#">{truncateText(post?.title, 15, 20)}</a>
+                                            <h3
+                                                onClick={() => handleMediaClick(post.id)}
+                                            >
+                                                <a href="#" className="prevent-default">{truncateText(post?.title, 15, 20)}</a>
                                             </h3>
-                                            <p>{truncateText(post?.artist?.name, 15, 20) || "ناشناس"}</p>
+                                            <a href={`${window.location.origin}/posts/?artists=${post?.artist?.id}`}>
+                                                <p>{truncateText(post?.artist?.name, 15, 20) || "ناشناس"}</p>
+                                            </a>
                                         </div>
                                     </div>
 

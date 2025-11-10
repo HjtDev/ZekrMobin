@@ -21,6 +21,9 @@ const TopArtists = () => {
                 spaceBetween: 30,
                 loop: true,
                 speed: 1500,
+                autoplay: {
+                    delay: 5000
+                },
                 navigation: {
                     nextEl: '.swiper-button-prev1',
                     prevEl: '.swiper-button-next1',
@@ -58,7 +61,7 @@ const TopArtists = () => {
 
     useEffect(() => {
         if(pageData?.content) {
-            loadPageContent(pageData.content, '', 0);
+            loadPageContent(pageData.content, '', 15);
         }
     }, [pageData]);
 
@@ -89,11 +92,11 @@ const TopArtists = () => {
                                 >
                                     <div className="ms_rcnt_box">
                                         <div className="ms_rcnt_box_img">
-                                            <img src={element.profile_picture} alt=""/>
+                                            <img src={element.profile_picture} alt={`عکس هنرمند: ${element?.name}`}/>
                                             <div className="ms_main_overlay">
                                                 <div className="ms_box_overlay"/>
                                                 <div className="ms_play_icon">
-                                                    <img src="images/svg/play.svg" alt=""/>
+                                                    <img src="images/svg/play.svg" alt="Play SVG"/>
                                                 </div>
                                             </div>
                                         </div>
