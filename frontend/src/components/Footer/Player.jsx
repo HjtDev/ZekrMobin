@@ -149,7 +149,7 @@ const Player = () => {
                                                     </div>
                                                     <div className="handle"/>
                                                     <div className="round">
-                                                        <img src="images/svg/volume.svg" alt=""/>
+                                                        <img src="images/svg/volume.svg" alt="Volume svg"/>
                                                     </div>
                                                 </div>
                                             </div>

@@ -21,6 +21,9 @@ const TopArtists = () => {
                 spaceBetween: 30,
                 loop: true,
                 speed: 1500,
+                autoplay: {
+                    delay: 5000
+                },
                 navigation: {
                     nextEl: '.swiper-button-prev8',
                     prevEl: '.swiper-button-next8',
@@ -44,7 +47,7 @@ const TopArtists = () => {
             filters: {
                 date: "newest"
             },
-            limit: 6
+            limit: 15
         }, 1);
         if(success) {
             setPageContent(posts);
@@ -85,7 +88,7 @@ const TopArtists = () => {
                                 >
                                     <div className="ms_rcnt_box">
                                         <div className="ms_rcnt_box_img">
-                                            <img src={b_post.thumbnail} alt={b_post.title}/>
+                                            <img style={{ cursor: "pointer" }} src={b_post.thumbnail} alt={b_post.title}/>
                                         </div>
                                         <div className="ms_rcnt_box_text">
                                             <h3>

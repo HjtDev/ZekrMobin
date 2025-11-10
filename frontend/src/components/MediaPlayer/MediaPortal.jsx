@@ -172,6 +172,10 @@ const CommentInput = ({ postID }) => {
             toast.warning('ابتدا یک حساب کاربری بسازید.');
             return
         }
+        if(!commentContent.trim()) {
+            toast.warning("شما نمی توانید یک نظر خالی ارسال کنید.");
+            return;
+        }
         toast.info('در حال ثبت نظر...');
         const { success, msg } = await createComments(postID, commentContent);
         msg.forEach((message) => {

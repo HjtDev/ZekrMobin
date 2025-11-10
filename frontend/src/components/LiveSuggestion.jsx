@@ -21,6 +21,9 @@ const LiveSuggestion = () => {
                 spaceBetween: 30,
                 loop: true,
                 speed: 1500,
+                autoplay: {
+                    delay: 5000
+                },
                 navigation: {
                     nextEl: ".swiper-button-prev4",
                     prevEl: ".swiper-button-next4",
@@ -61,7 +64,7 @@ const LiveSuggestion = () => {
 
     useEffect(() => {
         if (pageData?.content) {
-            loadPageContent(pageData.content, "", 6);
+            loadPageContent(pageData.content, "", 15);
         }
     }, [pageData]);
 
@@ -115,9 +118,12 @@ const LiveSuggestion = () => {
                                         </div>
                                     </div>
 
-                                    <div className="ms_rcnt_box_text">
+                                    <div
+                                        className="ms_rcnt_box_text"
+                                        onClick={() => handleMediaClick(post.id)}
+                                    >
                                         <h3>
-                                            <a href="#">{truncateText(post?.title, 50, 45)}</a>
+                                            <a href={`${window.location.origin}/?play=${post.id}`} className="prevent-default">{truncateText(post?.title, 50, 45)}</a>
                                         </h3>
                                     </div>
 

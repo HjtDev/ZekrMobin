@@ -16,6 +16,9 @@ const RecentPosts = () => {
                 spaceBetween: 30,
                 loop: true,
                 speed: 1500,
+                autoplay: {
+                    delay: 5000
+                },
                 navigation: {
                     nextEl: '.swiper-button-prev',
                     prevEl: '.swiper-button-next',
@@ -43,7 +46,7 @@ const RecentPosts = () => {
     }
 
     const loadContent = async (content_section) => {
-        const { success, content } = await getMainPageData(content_section, '', '6');
+        const { success, content } = await getMainPageData(content_section, '', 15);
         setContent(content || null);
         setTimeout(() => {initializeSwiper()}, 10);
     }
@@ -92,8 +95,8 @@ const RecentPosts = () => {
                                     </div>
                                 </div>
                                 <div className="ms_rcnt_box_text">
-                                    <h3><a href="#">{truncateText(item?.title, 50, 45)}</a></h3>
-                                    <p>{item?.artist?.name}</p>
+                                    <h3 onClick={() => setIsOpen(prev => ({...prev, [item.id]: true}))}><a href="#" className="prevent-default">{truncateText(item?.title, 50, 45)}</a></h3>
+                                    <a href={`${window.location.origin}/posts/?artists=${item?.artist?.id}`}><p>{truncateText(item?.artist.name, 50, 45)}</p></a>
                                 </div>
 
                                 {isOpen[item.id] && (

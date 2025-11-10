@@ -21,6 +21,9 @@ const TopPosts = () => {
                 spaceBetween: 30,
                 loop: true,
                 speed: 1500,
+                autoplay: {
+                    delay: 5000
+                },
                 navigation: {
                     nextEl: '.swiper-button-prev3',
                     prevEl: '.swiper-button-next3',
@@ -59,7 +62,7 @@ const TopPosts = () => {
 
     useEffect(() => {
         if(pageData?.content) {
-            loadPageContent(pageData.content, '', 6);
+            loadPageContent(pageData.content, '', 15);
         }
     }, [pageData]);
 
@@ -89,12 +92,12 @@ const TopPosts = () => {
                                                     className="ms_play_icon"
                                                     onClick={() => navigate(`/posts/?categories=${category.id}`)}
                                                 >
-                                                    <img src="images/svg/play.svg" alt=""/>
+                                                    <img src="images/svg/play.svg" alt="Play SVG"/>
                                                 </div>
                                             </div>
                                         </div>
                                         <div className="ms_rcnt_box_text">
-                                            <h3>
+                                            <h3 onClick={() => navigate(`/posts/?categories=${category.id}`)}>
                                                 <a href="#">{truncateText(category?.name, 50, 45)}</a>
                                             </h3>
                                             <p>دسته بندی منتخب - {category.post_count} پست</p>

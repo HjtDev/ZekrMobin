@@ -80,7 +80,7 @@ const RegisterPopups = () => {
                         </button>
                         <div className="modal-body">
                             <div className="ms_register_img">
-                                <img src="/images/register_img.png" alt="" className="img-fluid"/>
+                                <img src="/images/register_img.png" alt="Register Popup Image" className="img-fluid"/>
                             </div>
                             <div className="ms_register_form">
                                 <h2>ثبت نام / ورود</h2>
@@ -197,7 +197,7 @@ const RegisterPopups = () => {
                         </button>
                         <div className="modal-body">
                             <div className="ms_register_img">
-                                <img src="/images/register_img.png" alt="" className="img-fluid"/>
+                                <img src="/images/register_img.png" alt="Login Popup Image" className="img-fluid"/>
                             </div>
                             <div className="ms_register_form">
                                 <h2>ثبت نام / ورود</h2>
