@@ -92,11 +92,11 @@ const TopArtists = () => {
                                 >
                                     <div className="ms_rcnt_box">
                                         <div className="ms_rcnt_box_img">
-                                            <img src={element.profile_picture} alt=""/>
+                                            <img src={element.profile_picture} alt={`عکس هنرمند: ${element?.name}`}/>
                                             <div className="ms_main_overlay">
                                                 <div className="ms_box_overlay"/>
                                                 <div className="ms_play_icon">
-                                                    <img src="images/svg/play.svg" alt=""/>
+                                                    <img src="images/svg/play.svg" alt="Play SVG"/>
                                                 </div>
                                             </div>
                                         </div>

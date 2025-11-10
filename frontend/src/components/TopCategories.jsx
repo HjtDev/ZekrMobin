@@ -92,7 +92,7 @@ const TopCategories = () => {
                                             className="ms_play_icon"
                                             onClick={() => navigate(`/posts/?categories=${category.id}`)}
                                         >
-                                            <img src="images/svg/play.svg" alt="" />
+                                            <img src="images/svg/play.svg" alt="Play SVG" />
                                         </div>
                                         <div className="ovrly_text_div">
                                             <span
