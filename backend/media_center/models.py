@@ -60,7 +60,7 @@ class Comment(models.Model):
     post = models.ForeignKey('media_center.Post', related_name='comments', on_delete=models.CASCADE, verbose_name='پست')
     content = models.TextField(max_length=500, verbose_name='کامنت')
     
-    is_verified = models.BooleanField(default=False, verbose_name='نمایش در سایت')
+    is_verified = models.BooleanField(default=True, verbose_name='نمایش در سایت')
     
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='تاریخ ایجاد')
     

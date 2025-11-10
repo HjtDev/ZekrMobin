@@ -362,7 +362,7 @@ class PostComment(APIView, ResponseBuilderMixin, GetDataMixin):
         
         try:
             post = Post.objects.filter(is_visible=True).get(id=result['id'])
-            comment = Comment.objects.create(post=post, user=request.user, content=result['content'])
+            comment = Comment.objects.create(post=post, user=request.user, content=result['content'], is_verified=True)
             if comment:
                 return self.build_response(
                     status.HTTP_201_CREATED,
