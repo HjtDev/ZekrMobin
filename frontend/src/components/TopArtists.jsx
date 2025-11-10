@@ -58,7 +58,7 @@ const TopArtists = () => {
 
     useEffect(() => {
         if(pageData?.content) {
-            loadPageContent(pageData.content, '', 0);
+            loadPageContent(pageData.content, '', 15);
         }
     }, [pageData]);
 

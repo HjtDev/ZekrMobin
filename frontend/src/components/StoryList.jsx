@@ -55,7 +55,7 @@ const StoryList = () => {
     }
 
     const fetchPageContent = async () => {
-        const { success, content } = await getMainPageData(pageData.content, '', 10);
+        const { success, content } = await getMainPageData(pageData.content, '', 15);
         if(success) {
             setPageContent(content);
             setTimeout(initializeSwiper, 10);

@@ -61,7 +61,7 @@ const LiveSuggestion = () => {
 
     useEffect(() => {
         if (pageData?.content) {
-            loadPageContent(pageData.content, "", 6);
+            loadPageContent(pageData.content, "", 15);
         }
     }, [pageData]);
 

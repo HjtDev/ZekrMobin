@@ -44,7 +44,7 @@ const TopArtists = () => {
             filters: {
                 date: "newest"
             },
-            limit: 6
+            limit: 15
         }, 1);
         if(success) {
             setPageContent(posts);

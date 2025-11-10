@@ -43,7 +43,7 @@ const RecentPosts = () => {
     }
 
     const loadContent = async (content_section) => {
-        const { success, content } = await getMainPageData(content_section, '', '6');
+        const { success, content } = await getMainPageData(content_section, '', 15);
         setContent(content || null);
         setTimeout(() => {initializeSwiper()}, 10);
     }

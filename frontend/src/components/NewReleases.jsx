@@ -58,7 +58,7 @@ const NewReleases = () => {
 
     useEffect(() => {
         if (pageData?.content) {
-            loadPageContent(pageData.content, "", 8);
+            loadPageContent(pageData.content, "", 15);
         }
     }, [pageData]);
 
