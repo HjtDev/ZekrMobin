@@ -17,15 +17,23 @@ class Setting(models.Model):
         verbose_name_plural = 'تنظیمات'
     logo = ResizedImageField(upload_to='settings/logo/', blank=False, null=False, size=[78, 78], crop=['middle', 'center'], quality=100, force_format='PNG', verbose_name='لوگو', help_text='78 * 78')
     open_logo = ResizedImageField(upload_to='settings/logo/', blank=False, null=False, size=[126, 97], crop=['middle', 'center'], quality=100, force_format='PNG', verbose_name='لوگو فوتر', help_text='126 * 97')
+    
 
     footer_title1 = models.CharField(max_length=60, verbose_name='تیتر')
     footer_text1 = models.TextField(max_length=600, verbose_name='محتوا')
     
     footer_title2 = models.CharField(max_length=60, verbose_name='تیتر')
     footer_text2 = models.TextField(max_length=600, verbose_name='محتوا')
+    
     footer_img1 = ResizedImageField(upload_to='settings/section2_images/', blank=True, null=True, size=[140, 40], crop=['middle', 'center'], quality=100, verbose_name='عکس اول فوتر', help_text='140 * 40')
+    footer_img1_link = models.CharField(max_length=255, default='https://zekremobin.ir/', verbose_name='لینک عکس اول', help_text='با https://')
+    
     footer_img2 = ResizedImageField(upload_to='settings/section2_images/', blank=True, null=True, size=[140, 40], crop=['middle', 'center'], quality=100, verbose_name='عکس دوم فوتر', help_text='140 * 40')
+    footer_img2_link = models.CharField(max_length=255, default='https://zekremobin.ir/', verbose_name='لینک عکس دوم', help_text='با https://')
+    
     footer_img3 = ResizedImageField(upload_to='settings/section2_images/', blank=True, null=True, size=[140, 40], crop=['middle', 'center'], quality=100, verbose_name='عکس سوم فوتر', help_text='140 * 40')
+    footer_img3_link = models.CharField(max_length=255, default='https://zekremobin.ir/', verbose_name='لینک عکس سوم', help_text='با https://')
+    
     
     club_enabled = models.BooleanField(default=True, verbose_name='فعال سازی کلاب')
     club_welcome_email_enabled = models.BooleanField(default=False, verbose_name='ارسال ایمیل خوش آمد')

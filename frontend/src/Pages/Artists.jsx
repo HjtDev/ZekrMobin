@@ -37,7 +37,7 @@ const Artists = () => {
                             pageContent.map((artist, index) => (
                                 <div className="col-lg-2 col-md-6" key={index}
                                      onClick={() => {
-                                         navigate(`/posts/?artists=${artist?.id}`, { replace: true });
+                                         navigate(`/posts/?artists=${artist?.id}`, { replace: false });
                                      }}
                                 >
                                     <div className="ms_rcnt_box marger_bottom30">

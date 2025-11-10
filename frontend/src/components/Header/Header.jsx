@@ -22,7 +22,7 @@ const Header = () => {
     }
 
     const searchAction = () => {
-        navigate(`/posts/?search=${searchQuery}`, { replace: true });
+        navigate(`/posts/?search=${searchQuery}`, { replace: false });
         if(window.location.pathname.startsWith("/posts")) window.location.reload();
     }
 
@@ -98,6 +98,9 @@ const Header = () => {
                                 e.preventDefault();
                                 searchAction();
                             }
+                        }}
+                        style={{
+                            paddingLeft: "50rem"
                         }}
                     />
                     <span className="search_icon" onClick={() => searchAction()}>

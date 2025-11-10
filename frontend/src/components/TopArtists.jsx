@@ -84,7 +84,7 @@ const TopArtists = () => {
                                     className="swiper-slide"
                                     onClick={() => {
                                         pageData?.content === "top-artists" &&
-                                        navigate(`/posts/?artists=${element.id}`, { replace: true });
+                                        navigate(`/posts/?artists=${element.id}`, { replace: false });
                                     }}
                                 >
                                     <div className="ms_rcnt_box">

@@ -30,7 +30,18 @@ class SettingAdmin(admin.ModelAdmin):
         (
             'بخش دوم فوتر',
             {
-                'fields': ('footer_title2', 'footer_text2', 'footer_img1', 'footer_img2', 'footer_img3'),
+                'fields': ('footer_title2', 'footer_text2'),
+                'classes': ('collapse',),
+            }
+        ),
+        (
+            'عکس های لینک دار فوتر',
+            {
+                'fields': (
+                    'footer_img1', 'footer_img1_link',
+                    'footer_img2', 'footer_img2_link',
+                    'footer_img3', 'footer_img3_link',
+                ),
                 'classes': ('collapse',),
             }
         ),
