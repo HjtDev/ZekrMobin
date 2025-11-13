@@ -1,6 +1,11 @@
-from django.contrib import admin
+from django.contrib import admin, messages
 from mptt.admin import DraggableMPTTAdmin
 from .models import Post, Media, File, Category, Tag, Comment, Artist
+from moviepy import VideoFileClip, AudioFileClip
+import tempfile, os, logging
+
+
+logger = logging.getLogger(__name__)
 
 
 class MediaInline(admin.TabularInline):
@@ -75,10 +80,10 @@ class ArtistAdmin(admin.ModelAdmin):
 
 @admin.register(File)
 class FileAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'quality', 'media_type')
+    list_display = ('id', 'name', 'quality', 'media_type', 'duration')
     list_filter = ('quality', 'media_type')
+    list_editable = ('duration',)
     list_per_page = 15
-    readonly_fields = ('duration',)
     search_fields = ('name',)
     ordering = ('-id',)
     
@@ -91,6 +96,66 @@ class FileAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
     )
+    
+    actions = ['recalculate_duration']
+    
+    def recalculate_duration(self, request, queryset):
+        success_count = 0
+        error_count = 0
+        
+        for file_instance in queryset:
+            if not file_instance.file:
+                error_count += 1
+                continue
+            
+            temp_file_path = None
+            try:
+                # Create temporary file
+                if hasattr(file_instance.file, 'temporary_file_path'):
+                    temp_file_path = file_instance.file.temporary_file_path()
+                else:
+                    with tempfile.NamedTemporaryFile(delete=False, suffix=os.path.splitext(file_instance.file.name)[1]) as temp_file:
+                        file_instance.file.seek(0)
+                        for chunk in file_instance.file.chunks():
+                            temp_file.write(chunk)
+                        temp_file_path = temp_file.name
+                
+                # Calculate duration based on media type
+                if file_instance.media_type == File.TypeChoices.VIDEO:
+                    clip = VideoFileClip(temp_file_path)
+                else:
+                    clip = AudioFileClip(temp_file_path)
+                
+                new_duration = round(clip.duration)
+                clip.close()
+                
+                # Update the instance
+                file_instance.duration = new_duration
+                file_instance.save(update_fields=['duration'])
+                success_count += 1
+            
+            except Exception as e:
+                logger.error(f'Could not extract duration for {file_instance.file.name}: {e}')
+                error_count += 1
+            
+            finally:
+                # Clean up temporary file
+                if temp_file_path and temp_file_path != getattr(file_instance.file, 'temporary_file_path', None):
+                    if os.path.exists(temp_file_path):
+                        try:
+                            os.unlink(temp_file_path)
+                        except Exception as cleanup_error:
+                            logger.warning(f"Could not delete temp file {temp_file_path}: {cleanup_error}")
+        
+        # Show result message
+        if success_count > 0 and error_count == 0:
+            self.message_user(request, f'مدت زمان {success_count} فایل با موفقیت محاسبه شد.', messages.SUCCESS)
+        elif success_count > 0 and error_count > 0:
+            self.message_user(request, f'مدت زمان {success_count} فایل با موفقیت محاسبه شد. {error_count} فایل با خطا مواجه شد.', messages.WARNING)
+        else:
+            self.message_user(request, f'محاسبه مدت زمان برای {error_count} فایل با خطا مواجه شد.', messages.ERROR)
+    
+    recalculate_duration.short_description = "محاسبه مجدد مدت زمان فایل‌های انتخاب شده"
 
 
 @admin.register(Media)
