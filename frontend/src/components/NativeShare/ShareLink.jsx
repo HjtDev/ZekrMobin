@@ -7,7 +7,7 @@ const ShareLink = ({ url, title, text, children, className, style }) => {
 
         const copyLink = async () => {
             try {
-                await navigator.clipboard.writeText(url);
+                await navigator.clipboard.writeText(`${url}\n${title}`);
                 toast.success('لینک کپی شد.');
             } catch (err) {
                 console.error("Copy to clipboard failed:", err);
