@@ -85,13 +85,13 @@ class FilteredPosts(APIView, ResponseBuilderMixin, GetDataMixin, CachedResponseM
     
     def get_selected_items(self, selector: str) -> QuerySet[Post]:
         if selector == 'all':
-            return Post.objects.filter(is_visible=True)
+            return Post.objects.filter(is_visible=True).exclude(is_story=True)
         
         elif selector.startswith('ids:'):
             ids = selector.split(':', 1)[1].split(',')
             if not all(self.is_id(i) for i in ids):
                 raise ValidationError({selector: 'Invalid id in selector. ID must be a positive number.'})
-            return Post.objects.filter(is_visible=True, id__in=ids)
+            return Post.objects.filter(is_visible=True, id__in=ids).exclude(is_story=True)
         
         elif selector.startswith('section:'):
             section = selector.split(':', 1)[1]
