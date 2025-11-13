@@ -295,7 +295,8 @@ const MediaPortal = ({ isOpen, onClose, postID }) => {
         }
     }
 
-    const updateLike = async () => {
+    const updateLike = async (e) => {
+        e.preventDefault();
         if(!isLoggedIn) {
             toast.warning('ابتدا یک حساب کاربری بسازید.');
             return;
@@ -317,12 +318,13 @@ const MediaPortal = ({ isOpen, onClose, postID }) => {
         }
     }
 
-    const getSuggestionList = async () => {
+    const getSuggestionList = async (e) => {
+        e.preventDefault();
         if(!post) {
             toast.warning('مشکلی پیش آمد لطفا بعدا تلاش کنید.');
         }
         const { success, posts } = await getSuggestedPosts(post.id);
-        if(success && posts.length > 0) {
+        if(success && posts && posts.length > 0) {
             toast.success('در حال بارگزاری پست ها');
             await new Promise((resolve) => setTimeout(resolve, 1000));
             navigate(`/posts/?section=${posts.join(",")}`, { replace: false });
@@ -556,7 +558,7 @@ const MediaPortal = ({ isOpen, onClose, postID }) => {
                         </div>
                         <div className="row justify-content-between align-items-center text-center option-container">
                             <div className="col-3 hover-info">
-                                <a href="#" onClick={() => updateLike()} className="text-muted"><span className={`fa fa-thumbs-up d-block ${post?.is_liked ? 'text-info' : ''}`} style={{ cursor: "pointer" }}></span>لایک</a>
+                                <a href="#" onClick={(e) => updateLike(e)} className="text-muted"><span className={`fa fa-thumbs-up d-block ${post?.is_liked ? 'text-info' : ''}`} style={{ cursor: "pointer" }}></span>لایک</a>
                             </div>
                             <div className="col-3 hover-info">
                                 <ShareLink url={`${window.location.origin}/?play=${post?.id}`} title={post?.title} text={post?.title} className="text-muted">
@@ -564,7 +566,7 @@ const MediaPortal = ({ isOpen, onClose, postID }) => {
                                 </ShareLink>
                             </div>
                             <div className="col-3 hover-info">
-                                <a href="#" onClick={() => getSuggestionList()} className="text-muted"><span className="fa fa-list d-block" style={{ cursor: "pointer" }}></span>پیشنهادی</a>
+                                <a href="#" onClick={(e) => getSuggestionList(e)} className="text-muted"><span className="fa fa-list d-block" style={{ cursor: "pointer" }}></span>پیشنهادی</a>
                             </div>
                             <div className="col-3 hover-info">
                                 <a href={activeMedia?.files?.[0]?.file} target="_blank" className="text-muted"><span className="fa fa-download d-block" style={{ cursor: "pointer" }}></span>دانلود</a>
