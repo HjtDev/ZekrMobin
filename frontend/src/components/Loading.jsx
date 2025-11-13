@@ -4,7 +4,7 @@ const Loading = () => {
     return (
         <div className="ms_loader">
             <div className="wrap">
-                <img src="images/loader.gif" alt="Loading gif"/>
+                <img src="/images/loader.gif" alt="Loading gif"/>
             </div>
         </div>
     )

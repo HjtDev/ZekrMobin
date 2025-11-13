@@ -13,7 +13,8 @@ const Header = () => {
 
     const navigate = useNavigate();
 
-    const toggleUserDropDown = () => {
+    const toggleUserDropDown = (e) => {
+        e.preventDefault();
         if(userDropDown === '') {
             setUserDropDown('open_dropdown');
         } else {
@@ -28,7 +29,7 @@ const Header = () => {
 
     const LoggedInButtons = (
         <div className="ms_top_btn">
-            <a href="#" onClick={toggleUserDropDown} role="button" className="ms_admin_name">
+            <a href="#" onClick={(e) => toggleUserDropDown(e)} role="button" className="ms_admin_name">
                 {truncateText(user?.name, 5)}
                 {
                     user?.profile_picture ?
