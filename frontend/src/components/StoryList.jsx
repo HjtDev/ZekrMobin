@@ -49,7 +49,8 @@ const StoryList = () => {
     const [activeStory, setActiveStory] = useState(null);
 
     const updateStoryIndex = (ch) => {
-        setCurrentIndex(prev => prev + ch);
+        // checks if currentIndex - ch is less than zero it just returns zero to prevent out of index error
+        setCurrentIndex(prev => prev + (ch < 0 && currentIndex - ch < 0 ? 0 : ch ));
     }
 
     const fetchPageDaga = async () => {
@@ -104,8 +105,8 @@ const StoryList = () => {
     }
 
     const closeStory = () => {
+        setCurrentIndex(0);
         setStoryOpen(false);
-        setCurrentIndex(1);
     }
 
     useEffect(() => {

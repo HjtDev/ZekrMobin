@@ -540,7 +540,6 @@ const MediaPortal = ({ isOpen, onClose, postID }) => {
                                     <MediaProvider/>
                                     <PlyrLayout
                                         icons={plyrLayoutIcons}
-                                        thumbnails={post?.thumbnail}
                                         clickToFullscreen={true}
                                         clickToPlay={true}
                                     />
