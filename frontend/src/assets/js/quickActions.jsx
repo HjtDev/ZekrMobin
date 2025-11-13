@@ -69,21 +69,19 @@ const quickAction = async (postID, action, isLoggedIn) => {
             return
         }
         const url = `${window.location.origin}/?play=${post.id}`;
-        const title = post.title;
-        const text = post.title;
+        const title = post.share_text || post.title;
+        const text = post.share_text || post.title;
 
         const copyLink = async () => {
             try {
-                await navigator.clipboard.writeText(url);
+                await navigator.clipboard.writeText(`${url}\n${title}`);
                 toast.success('لینک کپی شد.');
             } catch (err) {
                 console.error("Copy to clipboard failed:", err);
             }
         };
 
-        const isMobile = /Mobi|Android/i.test(navigator.userAgent);
-
-        if (isMobile && navigator.share) {
+        if (navigator.share) {
             try {
                 await navigator.share({ title, text, url });
             } catch {

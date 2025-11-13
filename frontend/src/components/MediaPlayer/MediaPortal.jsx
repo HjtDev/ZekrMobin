@@ -560,7 +560,7 @@ const MediaPortal = ({ isOpen, onClose, postID }) => {
                                 <a href="#" onClick={(e) => updateLike(e)} className="text-muted"><span className={`fa fa-thumbs-up d-block ${post?.is_liked ? 'text-info' : ''}`} style={{ cursor: "pointer" }}></span>لایک</a>
                             </div>
                             <div className="col-3 hover-info">
-                                <ShareLink url={`${window.location.origin}/?play=${post?.id}`} title={post?.title} text={post?.title} className="text-muted">
+                                <ShareLink url={`${window.location.origin}/?play=${post?.id}`} title={post?.share_text || post?.title} text={post?.share_text || post?.title} className="text-muted">
                                     <span className="fa fa-share d-block" style={{ cursor: "pointer" }}></span>اشتراک
                                 </ShareLink>
                             </div>

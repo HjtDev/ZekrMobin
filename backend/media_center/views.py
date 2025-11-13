@@ -12,6 +12,10 @@ from rest_framework import status
 from .serializers import QuickPostSerializer, PostSerializer, ArtistSerializer, CategorySerializer, CommentSerializer, \
     QuickCategorySerializer, TagSerializer, QuickTreeCategorySerializer
 from .permissions import SafeAuthentication
+import logging
+
+
+logger = logging.getLogger(__name__)
 
 
 class SinglePost(APIView, ResponseBuilderMixin, GetDataMixin):
@@ -148,8 +152,8 @@ class FilteredPosts(APIView, ResponseBuilderMixin, GetDataMixin, CachedResponseM
                         pass
                     query = SearchQuery(query)
                     search_vector = SearchVector('title', 'categories__name', 'tags__name')
-                    posts = (posts.annotate(rank=SearchRank(search_vector, query)).order_by('-rank'))
-                
+                    posts = posts.annotate(rank=SearchRank(search_vector, query)).filter(rank__gt=0).distinct().order_by('-rank')
+                    
         return posts.distinct()
     
     def get(self, request):

@@ -90,6 +90,11 @@ const RegisterPopups = () => {
                                         placeholder="نام کاربری: (Ali)"
                                         className="form-control"
                                         onChange={(e) => {setUsername(e.target.value)}}
+                                        onKeyDown={(e) => {
+                                            if(e.key === 'Enter'){
+                                                register();
+                                            }
+                                        }}
                                     />
                                     <ul className="small text-right" style={{color: "#e74c3c"}}>
                                         {usernameErrors.map((err, index) => (
@@ -106,6 +111,11 @@ const RegisterPopups = () => {
                                         placeholder="اسم: (علی محمدی)"
                                         className="form-control"
                                         onChange={(e) => {setName(e.target.value)}}
+                                        onKeyDown={(e) => {
+                                            if(e.key === 'Enter'){
+                                                register();
+                                            }
+                                        }}
                                     />
                                     <ul className="small text-right" style={{color: "#e74c3c"}}>
                                         {
@@ -124,6 +134,11 @@ const RegisterPopups = () => {
                                         placeholder="رمز عبور"
                                         className="form-control"
                                         onChange={(e) => {setPassword(e.target.value)}}
+                                        onKeyDown={(e) => {
+                                            if(e.key === 'Enter'){
+                                                register();
+                                            }
+                                        }}
                                     />
                                     <ul className="small text-right" style={{ color: "#e74c3c" }}>
                                         {
@@ -153,6 +168,11 @@ const RegisterPopups = () => {
                                         placeholder="تکرار رمز عبور"
                                         className="form-control"
                                         onChange={(e) => {setPassword2(e.target.value)}}
+                                        onKeyDown={(e) => {
+                                            if(e.key === 'Enter'){
+                                                register();
+                                            }
+                                        }}
                                     />
                                     <ul className="small text-right" style={{color: "#e74c3c"}}>
                                         {
@@ -207,6 +227,11 @@ const RegisterPopups = () => {
                                         placeholder="نام کاربری"
                                         className="form-control"
                                         onChange={(e) => {setLoginUsername(e.target.value)}}
+                                        onKeyDown={(e) => {
+                                            if(e.key === 'Enter'){
+                                                login();
+                                            }
+                                        }}
                                     />
                                     <span className="form_icon">
                   <i className="fa_icon form-envelope" aria-hidden="true"/>
@@ -218,6 +243,11 @@ const RegisterPopups = () => {
                                         placeholder="رمز عبور"
                                         className="form-control"
                                         onChange={(e) => {setLoginPassword(e.target.value)}}
+                                        onKeyDown={(e) => {
+                                            if(e.key === 'Enter'){
+                                                login();
+                                            }
+                                        }}
                                     />
                                     <ul className="small text-right" style={{color: "#e74c3c"}}>
                                         {

@@ -15,6 +15,7 @@ import "../assets/css/HeadingFix.css"
 import TopBlogPosts from "../components/TopBlogPosts.jsx";
 import Video from "../components/Video.jsx";
 import StoryList from "../components/StoryList.jsx";
+import ManualPosts from "../components/ManualPosts.jsx";
 
 
 const MainPage = () => {
@@ -53,6 +54,9 @@ const MainPage = () => {
             </LazySection>
             <LazySection>
                 <WeeklyTop/>
+            </LazySection>
+            <LazySection>
+                <ManualPosts />
             </LazySection>
             <LazySection>
                 <TopArtists/>

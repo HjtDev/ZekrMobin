@@ -127,6 +127,7 @@ class ClubMessageAdmin(admin.ModelAdmin):
 
 @admin.register(MainPage)
 class MainPageAdmin(admin.ModelAdmin):
+    raw_id_fields = ('section10_content',)
     fieldsets = (
         (
             'بخش اول',
@@ -188,6 +189,13 @@ class MainPageAdmin(admin.ModelAdmin):
             'استوری ها',
             {
                 'fields': ('section9_title',),
+                'classes': ('collapse',),
+            }
+        ),
+        (
+            'پست های دستی',
+            {
+                'fields': ('section10_title', 'section10_content'),
                 'classes': ('collapse',),
             }
         ),

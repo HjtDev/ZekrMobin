@@ -110,13 +110,14 @@ const PostList = () => {
         if(searchQuery) {
             filters.search = searchQuery;
             setActiveSearchQuery(searchQuery);
+            perPage = 6;
         } else {
             filters.search = null;
             setActiveSearchQuery(null);
         }
         const { success, msg, posts, updatedPagination } = await getFilteredPostList(section, filters, perPage, page);
         setPosts(posts);
-        if (updatedPagination) setPagination(updatedPagination);
+        if (updatedPagination && !searchQuery) setPagination(updatedPagination);
         const messenger = success ? toast.success : toast.error;
         msg.forEach((message) => messenger(message));
         setIsLoading(false);
