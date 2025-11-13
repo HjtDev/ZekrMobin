@@ -13,6 +13,11 @@ const Header = () => {
 
     const navigate = useNavigate();
 
+    const logoutHandler = (e) => {
+        e.preventDefault();
+        logout();
+    }
+
     const toggleUserDropDown = (e) => {
         e.preventDefault();
         if(userDropDown === '') {
@@ -53,7 +58,7 @@ const Header = () => {
                 </li>
 
                 <li>
-                    <a href="#" onClick={logout}>خروج</a>
+                    <a href="#" onClick={logoutHandler}>خروج</a>
                 </li>
             </ul>
         </div>
