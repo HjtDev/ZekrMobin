@@ -192,7 +192,7 @@ class PostAdmin(admin.ModelAdmin):
     
     fieldsets = (
         ('اطلاعات اصلی پست', {
-            'fields': ('title', 'thumbnail', 'publisher', 'recommended_by_site', 'is_story', 'is_visible')
+            'fields': ('title', 'thumbnail', 'share_text', 'publisher', 'recommended_by_site', 'is_story', 'is_visible')
         }),
         ('دسته‌بندی و تگ‌ها', {
             'fields': ('categories', 'tags'),

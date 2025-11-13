@@ -157,6 +157,7 @@ class Post(models.Model):
     
     title = models.CharField(max_length=50, verbose_name='تیتر پست')
     thumbnail = ResizedImageField(upload_to=dynamic_post_path, size=[240, 240], crop=['middle', 'center'], quality=100, verbose_name='عکس کاور', help_text='240 * 240')
+    share_text = models.CharField(max_length=60, blank=True, null=True, verbose_name='متن اشتراک')
 
     is_story = models.BooleanField(default=False, verbose_name='استوری')
     is_visible = models.BooleanField(default=True, verbose_name='نمایش در سایت')
