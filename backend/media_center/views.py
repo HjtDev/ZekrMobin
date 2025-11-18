@@ -77,7 +77,7 @@ class FilteredPosts(APIView, ResponseBuilderMixin, GetDataMixin, CachedResponseM
                     )
                 ).order_by('-order')
             case 'new-posts':
-                qs = qs.filter(created_at__gt=now - timedelta(hours=348)).exclude(is_story=True).order_by('-updated_at')
+                qs = qs.exclude(is_story=True).order_by('-updated_at')
             case 'live-suggestions':
                 qs = qs.filter(recommended_by_site=True).exclude(is_story=True).order_by('-updated_at')
             case 'stories':
