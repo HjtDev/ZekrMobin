@@ -72,7 +72,7 @@ class MediaSerializer(ModelSerializer):
     
     class Meta:
         model = Media
-        fields = ('id', 'name', 'artist', 'files')
+        fields = ('id', 'name', 'artist', 'files', 'display_order')
         
     def get_files(self, obj: Media):
         return FileSerializer(obj.files.all(), many=True, context=self.context).data
@@ -122,7 +122,7 @@ class PostSerializer(ModelSerializer):
         fields = ('id', 'title', 'thumbnail', 'share_text', 'artist', 'duration', 'is_liked', 'categories', 'tags', 'media', 'views_count', 'created_at', 'updated_at')
         
     def get_media(self, obj: Post):
-        return MediaSerializer(obj.medias.all(), many=True, context=self.context).data
+        return MediaSerializer(obj.medias.all().order_by('display_order'), many=True, context=self.context).data
     
     def get_duration(self, obj: Post):
         duration = obj.get_media_duration()

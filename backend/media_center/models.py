@@ -143,6 +143,7 @@ class Media(models.Model):
     post = models.ForeignKey('media_center.Post', related_name='medias', on_delete=models.SET_NULL, blank=True, null=True, verbose_name='پست')
     artist = models.ForeignKey(Artist, related_name='medias', on_delete=models.SET_NULL, blank=True, null=True, verbose_name='مداح/نویسنده/خواننده')
     files = models.ManyToManyField(File, related_name='medias', verbose_name='فایل ها')
+    display_order = models.PositiveIntegerField(default=1, verbose_name='ترتیب نمایش')
 
 
 class Post(models.Model):

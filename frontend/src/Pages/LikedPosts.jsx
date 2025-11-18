@@ -45,13 +45,13 @@ const LikedPosts = () => {
     return (
         <div className="ms_free_download ms_purchase_wrapper">
             <div className="ms_heading">
-                <h1>آهنگ های مورد علاقه شما</h1>
+                <h1>علاقه مندی های شما</h1>
             </div>
             <div className="album_inner_list" style={{ paddingBlock: "25rem"}}>
                 <div className="album_list_wrapper">
                     <ul className="album_list_name">
                         <li className="w-10"></li>
-                        <li className="w-22">نام آهنگ</li>
+                        <li className="w-22">پست</li>
                         <li className="w-22">هنرمند</li>
                         <li className="text-center w-22">زمان</li>
                         <li className="text-center w-22">بیشتر</li>
@@ -70,7 +70,7 @@ const LikedPosts = () => {
                                         <a href="#" className="prevent-default" role="button">{post.title}</a>
                                     </li>
                                     <li className="w-22">
-                                        <a href="#">{post.artist.name}</a>
+                                        <a href={`${window.location.origin}/posts/?artists=${post.artist.id}`}>{post.artist.name}</a>
                                     </li>
                                     <li className="text-center w-22" onClick={() => handleMediaClick(post.id)}>
                                         <a href="#" role="button" className="prevent-default">{post.duration}</a>

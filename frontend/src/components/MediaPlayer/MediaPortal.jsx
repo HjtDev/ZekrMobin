@@ -131,7 +131,7 @@ const PlayListItem = ({ item, isActive, onClick }) => {
             <div className="col-9 d-flex align-items-center">
                 <i className={`${iconClass} me-3`} style={{ width: '25px', fontSize: '18px', textAlign: 'center' }}></i>
                 <p className="mb-0 text-truncate" style={{ fontSize: '16px', lineHeight: '1.2' }}>
-                    {item.name}
+                    {item.display_order}. {item.name}
                 </p>
             </div>
             <div className="col-3 text-end">

@@ -53,10 +53,12 @@ const Comments = ({ postID }) => {
                                 <div className="ms_comment_section">
                                     <div className="comment_info pr-0">
                                         <div className="comment_head">
-                                            <h3>{comment.user}</h3>
-                                            <p>{comment.time_since}</p>
+                                            <div className="row justify-content-between align-items-center">
+                                                <div className="col-6 text-right">{comment.user}</div>
+                                                <div className="col-6 text-left">{comment.time_since}</div>
+                                            </div>
                                         </div>
-                                        <p style={{ padding: "10rem" }}>{comment.content}</p>
+                                        <p className="text-right" style={{ padding: "10rem" }}>{comment.content}</p>
                                     </div>
                                 </div>
                             </li>

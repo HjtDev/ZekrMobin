@@ -74,7 +74,9 @@ const PostList = () => {
         window.history.replaceState(null, '', url.toString());
         setActiveSearchQuery(null);
         setActiveSearchParams(null);
-        await fetchPosts(selectedSection, filters, 12, pagination.page);
+        setSelectedSection("all");
+        setFilters({});
+        await fetchPosts("all", {}, 12, pagination.page);
     }
 
     const [isOpen, setIsOpen] = useState({});

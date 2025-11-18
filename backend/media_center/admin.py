@@ -160,8 +160,8 @@ class FileAdmin(admin.ModelAdmin):
 
 @admin.register(Media)
 class MediaAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'post', 'artist')
-    list_filter = ('post', 'artist', 'post__publisher')
+    list_display = ('id', 'name', 'post', 'artist', 'display_order')
+    list_filter = ('post', 'artist', 'post__publisher', 'display_order')
     list_per_page = 15
     autocomplete_fields = ('post', 'artist', 'files')
     search_fields = ('name', 'post__title', 'artist__name')
@@ -169,7 +169,7 @@ class MediaAdmin(admin.ModelAdmin):
     
     fieldsets = (
         ('اطلاعات رسانه', {
-            'fields': ('name', 'post', 'artist')
+            'fields': ('name', 'post', 'artist', 'display_order')
         }),
         ('فایل‌ها', {
             'fields': ('files',),

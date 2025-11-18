@@ -77,7 +77,7 @@ class FilteredPosts(APIView, ResponseBuilderMixin, GetDataMixin, CachedResponseM
                     )
                 ).order_by('-order')
             case 'new-posts':
-                qs = qs.filter(created_at__gt=now - timedelta(hours=348)).exclude(is_story=True).order_by('-updated_at')
+                qs = qs.exclude(is_story=True).order_by('-updated_at')
             case 'live-suggestions':
                 qs = qs.filter(recommended_by_site=True).exclude(is_story=True).order_by('-updated_at')
             case 'stories':
@@ -449,8 +449,8 @@ class PostDownload(APIView, ResponseBuilderMixin, GetDataMixin):
                 status.HTTP_404_NOT_FOUND,
                 message='Post not found'
             )
-            
-            
+
+
 class PostSuggestion(APIView, ResponseBuilderMixin, GetDataMixin, CachedResponseMixin):
     throttle_scope = 'suggestion'
     
@@ -465,14 +465,35 @@ class PostSuggestion(APIView, ResponseBuilderMixin, GetDataMixin, CachedResponse
             )
         
         try:
-            post = Post.objects.get(id=result['id'])
+            post = Post.objects.prefetch_related('categories').get(id=result['id'])
             if not post.is_visible:
                 raise Post.DoesNotExist
             
             self.set_cache_key(f'suggestion-{post.id}')
             suggestion, _ = self.get_cached(Post)
             if not self._restored_from_cache:
-                suggestion = Post.objects.exclude(id=post.id).filter(is_visible=True, categories__id__in=list(post.categories.values_list('id', flat=True))).order_by('-updated_at')
+                categories = list(post.categories.all())
+                category_ids = set()
+                
+                for category in categories:
+                    category_ids.add(category.id)
+                    
+                    descendants = category.get_descendants(include_self=False)
+                    category_ids.update(descendants.values_list('id', flat=True))
+                    
+                    ancestors = category.get_ancestors(include_self=False)
+                    category_ids.update(ancestors.values_list('id', flat=True))
+                    
+                    for ancestor in ancestors:
+                        ancestor_descendants = ancestor.get_descendants(include_self=False)
+                        category_ids.update(ancestor_descendants.values_list('id', flat=True))
+                
+                suggestion = Post.objects.exclude(id=post.id).filter(
+                    categories__id__in=category_ids,
+                    is_story=False,
+                    is_visible=True
+                ).distinct().order_by('-updated_at')
+                
                 self.store_cached(suggestion)
             
             return self.build_response(
