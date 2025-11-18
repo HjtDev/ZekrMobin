@@ -52,9 +52,7 @@ const Header = () => {
                 </li>
 
                 <li>
-                    <a href="blog.html" target="_blank">
-                        بلاگ
-                    </a>
+                    <Link to='/blog/'>مجله</Link>
                 </li>
 
                 <li>

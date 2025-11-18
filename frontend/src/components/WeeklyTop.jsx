@@ -73,13 +73,13 @@ const WeeklyTop = () => {
                                         >
                                             <div className="w_tp_song_img">
                                                 <img
-                                                    src={post.thumbnail || "images/weekly/default.jpg"}
+                                                    src={post.thumbnail || "/images/weekly/default.jpg"}
                                                     alt={post.title}
                                                     className="img-fluid"
                                                 />
                                                 <div className="ms_song_overlay"></div>
                                                 <div className="ms_play_icon">
-                                                    <img src="images/svg/play.svg" alt="Play" />
+                                                    <img src="/images/svg/play.svg" alt="Play" />
                                                 </div>
                                             </div>
                                             <div className="w_tp_song_name">
@@ -92,7 +92,7 @@ const WeeklyTop = () => {
                                     <div className="weekly_left">
                                         <span className="w_song_time">{post.duration}</span>
                                         <span className="ms_more_icon" data-other={1}>
-                                            <img src="images/svg/more.svg" alt="More" />
+                                            <img src="/images/svg/more.svg" alt="More" />
                                         </span>
                                     </div>
 
