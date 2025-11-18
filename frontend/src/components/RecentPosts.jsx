@@ -11,7 +11,7 @@ const RecentPosts = () => {
             if (window.recentSwiper) {
                 window.recentSwiper.destroy(true, true);
             }
-            window.recentSwiper = new window.Swiper('.ms_rcnt_slider .swiper-container', {
+            window.recentSwiper = new window.Swiper('.recent_posts_slider .swiper-container', {
                 slidesPerView: 6,
                 spaceBetween: 30,
                 loop: true,
@@ -20,8 +20,8 @@ const RecentPosts = () => {
                     delay: 5000
                 },
                 navigation: {
-                    nextEl: '.swiper-button-prev',
-                    prevEl: '.swiper-button-next',
+                    nextEl: '.swiper-button-prev-recent',
+                    prevEl: '.swiper-button-next-recent',
                 },
                 breakpoints: {
                     1800: {slidesPerView: 4},
@@ -62,7 +62,7 @@ const RecentPosts = () => {
     }, [sectionData]);
 
     return (
-        <div className="ms_rcnt_slider">
+        <div className="ms_rcnt_slider recent_posts_slider">
             <div className="ms_heading w-100 text-center">
                 <h1 className="">{sectionData?.title}</h1>
                 <span className="ms_heading_underline" aria-hidden="true"></span>
@@ -113,8 +113,8 @@ const RecentPosts = () => {
                     )}
                 </div>
             </div>
-            <div className="swiper-button-next slider_nav_next"/>
-            <div className="swiper-button-prev slider_nav_prev"/>
+            <div className="swiper-button-next-recent slider_nav_next"/>
+            <div className="swiper-button-prev-recent slider_nav_prev"/>
         </div>
     )
 }

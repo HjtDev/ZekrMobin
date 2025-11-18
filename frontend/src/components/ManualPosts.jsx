@@ -71,6 +71,7 @@ const RecentPosts = () => {
         <div className="ms_rcnt_slider manual_posts_slider" style={{ marginTop: "25rem" }}>
             <div className="ms_heading w-100 text-center">
                 <h1 className="">{pageData?.title}</h1>
+                <span className="ms_heading_underline" aria-hidden="true"></span>
             </div>
             <div className="swiper-container">
                 <div className="swiper-wrapper">

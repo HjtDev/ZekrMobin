@@ -65,7 +65,7 @@ const TopArtists = () => {
     return (
         <div className="ms_featured_slider">
             <div className="ms_heading w-100 text-center">
-                <h1>پست های جدید مجله</h1>
+                <h1>مجله ذکرمبین</h1>
                 <span className="ms_heading_underline" aria-hidden="true"></span>
                 <span className="veiw_all w-100">
                     <Link to="/blog/">

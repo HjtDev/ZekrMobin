@@ -100,7 +100,7 @@ const NewReleases = () => {
                                                 className="ms_play_icon"
                                                 onClick={() => handleMediaClick(post.id)}
                                             >
-                                                <img src="images/svg/play.svg" alt="Play" />
+                                                <img src="/images/svg/play.svg" alt="Play" />
                                             </div>
                                         </div>
 
