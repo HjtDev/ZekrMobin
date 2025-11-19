@@ -282,6 +282,8 @@ const BlogList = () => {
                                                     <li>{post.time_since}</li>
                                                     <li>&nbsp;/&nbsp;</li>
                                                     <li> {post.comments_count} دیدگاه</li>
+                                                    <li>&nbsp;/&nbsp;</li>
+                                                    <li>{post.views_count} بازدید</li>
                                                 </ul>
                                             </div>
                                         </div>

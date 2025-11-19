@@ -114,7 +114,7 @@ class QuickBlogPostSerializer(BlogPostSerializer):
         model = BlogPost
         fields = (
             'id', 'title', 'thumbnail',
-            'comments_count', 'time_since',
+            'comments_count', 'time_since', 'views_count'
         )
         
     def get_thumbnail(self, obj: BlogPost):
