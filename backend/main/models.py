@@ -59,7 +59,9 @@ class Setting(models.Model):
     landing_image = ResizedImageField(upload_to='settings/landing/', size=[511, 539], crop=['middle', 'center'], quality=100, force_format='PNG', verbose_name='عکس', help_text='511 * 539')
     
     ad1_image = ResizedImageField(upload_to='settings/ads/', size=[728, 90], crop=['middle', 'center'], quality=100, force_format='JPEG', blank=True, null=True, verbose_name='تبلیغ اول', help_text='728 * 90')
+    ad1_link = models.CharField(max_length=255, default='https://zekremobin.ir/', blank=True, null=True, verbose_name='لینک تبلیغ اول', help_text='با https://')
     ad2_image = ResizedImageField(upload_to='settings/ads/', size=[728, 90], crop=['middle', 'center'], quality=100, force_format='JPEG', blank=True, null=True, verbose_name='تبلیغ دوم', help_text='728 * 90')
+    ad2_link = models.CharField(max_length=255, default='https://zekremobin.ir/', blank=True, null=True, verbose_name='لینک تبلیغ دوم', help_text='با https://')
     
     def __str__(self):
         return 'تنظیمات'

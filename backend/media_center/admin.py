@@ -191,8 +191,13 @@ class PostAdmin(admin.ModelAdmin):
     inlines = [MediaInline]
     
     fieldsets = (
-        ('اطلاعات اصلی پست', {
-            'fields': ('title', 'thumbnail', 'share_text', 'publisher', 'recommended_by_site', 'is_story', 'is_visible')
+        ('اطلاعات اصلی', {
+            'fields': ('title', 'thumbnail', 'description', 'is_visible'),
+            'classes': ('collapse',)
+        }),
+        ('اطلاعات تکمیلی', {
+            'fields': ('share_text', 'publisher', 'recommended_by_site', 'is_story'),
+            'classes': ('collapse',)
         }),
         ('دسته‌بندی و تگ‌ها', {
             'fields': ('categories', 'tags'),

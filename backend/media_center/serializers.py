@@ -119,7 +119,7 @@ class PostSerializer(ModelSerializer):
     
     class Meta:
         model = Post
-        fields = ('id', 'title', 'thumbnail', 'share_text', 'artist', 'duration', 'is_liked', 'categories', 'tags', 'media', 'views_count', 'created_at', 'updated_at')
+        fields = ('id', 'title', 'thumbnail', 'description', 'share_text', 'artist', 'duration', 'is_liked', 'categories', 'tags', 'media', 'views_count', 'created_at', 'updated_at')
         
     def get_media(self, obj: Post):
         return MediaSerializer(obj.medias.all().order_by('display_order'), many=True, context=self.context).data

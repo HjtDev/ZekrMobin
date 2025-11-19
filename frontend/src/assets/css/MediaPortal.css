@@ -55,11 +55,27 @@
     margin: 0 auto 8rem auto;
 }
 
+.text-expand {
+    animation: expandHeight 750ms ease-in-out;
+    overflow: hidden;
+}
+
+@keyframes expandHeight {
+    from {
+        max-height: 0;
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        max-height: 1000px;
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 @media (max-width: 992px) {
     .modal-content {
         width: 100% !important;
-
-
         margin: 0;
         border-radius: 0;
     }

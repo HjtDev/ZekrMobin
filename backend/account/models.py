@@ -5,6 +5,7 @@ from django_resized import ResizedImageField
 from django.core.exceptions import ValidationError
 from backend.mixins import GetDataMixin
 from media_center.models import Post
+from random import choice
 import os, re
 
 
@@ -30,6 +31,10 @@ class UserManager(BaseUserManager):
         return self.create_user(username, password, **extra_fields)
 
 
+def get_random_default_image():
+    default_images = ['pro1.webp', 'pro2.webp', 'pro3.webp', 'pro4.webp']
+    return os.path.join('Profiles', choice(default_images))
+
 def profile_directory_path(instance, filename):
     return os.path.join(
         'Profiles',
@@ -45,7 +50,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=30, unique=True, verbose_name='نام کاربری', validators=[validate_username])
     email = models.EmailField(max_length=255, blank=True, null=True, verbose_name='ایمیل')
     name = models.CharField(max_length=60, verbose_name='نام')
-    profile_picture = ResizedImageField(upload_to=profile_directory_path, blank=True, null=True, default='Profiles/default_profile.png', verbose_name='تصویر پروفایل')
+    profile_picture = ResizedImageField(upload_to=profile_directory_path, blank=True, null=True, default=get_random_default_image, verbose_name='تصویر پروفایل')
     
     history = models.CharField(max_length=500, blank=True, null=True, verbose_name='تاریخچه')
     

@@ -47,7 +47,7 @@ function App() {
                 <div className="ms_content_wrapper padder_top80">
                     <Header />
                     <Routes>
-                        <Route path='/' element={<MainPage />} />
+                        {/*<Route path='/' element={<MainPage />} />*/}
                         <Route path='/profile' element={<Profile />} />
                         <Route path='/profile/history/' element={<History />} />
                         <Route path='/profile/liked/' element={<LikedPosts />} />
@@ -55,7 +55,8 @@ function App() {
                         <Route path='/artists/' element={<Artists />} />
                         <Route path='/blog/' element={<BlogList />} />
                         <Route path='/blog/post/:id/*' element={<Blog />} />
-                        <Route path='*' element={<NotFound />} />
+                        <Route path='*' element={<MainPage />} />
+                        {/*<Route path='*' element={<NotFound />} />*/}
                     </Routes>
                 </div>
                 <LazySection>

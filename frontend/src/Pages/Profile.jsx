@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Navigate, useNavigate } from 'react-router-dom';
+import {Link, Navigate, redirect, useNavigate} from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext.jsx';
 import { toast } from 'react-toastify';
 
@@ -133,7 +133,20 @@ const Profile = () => {
                             null
                         }
                     </div>
-                </div>
+
+                    <div className="pro-form-btn text-center marger_top15 d-flex align-items-center justify-content-center"
+                         style={{
+                             gap: "24rem",
+                             marginTop: "50rem"
+                         }}>
+                        <Link to="/profile/liked/" className="ms_btn">
+                            علاقه مندی ها
+                        </Link>
+                        <Link to="/profile/history/" className="ms_btn">
+                            تاریخچه
+                        </Link>
+                    </div>
+               </div>
             </div>
         </div>
     )
