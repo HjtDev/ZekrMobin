@@ -36,7 +36,7 @@ class SettingView(APIView, ResponseBuilderMixin, GetDataMixin):
             'contact': ['contact_us_title', 'contact_us_phone', 'contact_us_email', 'contact_us_address'],
             'social': ['telegram_link', 'instagram_link', 'youtube_link', 'eitaa_link', 'aparat_link'],
             'rights': ['rights_text'],
-            'ad': ['ad1_image', 'ad2_image']
+            'ad': ['ad1_image', 'ad1_link', 'ad2_image', 'ad2_link']
         }
         
         setting = Setting.objects.first()

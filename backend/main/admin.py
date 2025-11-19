@@ -76,7 +76,10 @@ class SettingAdmin(admin.ModelAdmin):
         (
             'تبلیغات',
             {
-                'fields': ('ad1_image', 'ad2_image'),
+                'fields': (
+                    'ad1_image', 'ad1_link',
+                    'ad2_image', 'ad2_link'
+                ),
                 'classes': ('collapse',),
             }
         ),
