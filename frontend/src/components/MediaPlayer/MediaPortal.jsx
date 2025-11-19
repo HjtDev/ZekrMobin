@@ -16,7 +16,8 @@ import downloadPost from '../../api/download.js';
 import ShareLink from '../NativeShare/ShareLink.jsx';
 import getSuggestedPosts from '../../api/suggestion.js';
 import toJalaliDate from "../../assets/js/jalaali-conventor.js";
-import {Navigate, useLocation, useNavigate} from 'react-router-dom';
+import {Link, Navigate, useLocation, useNavigate} from 'react-router-dom';
+import truncateText from "../../assets/js/utility.js";
 
 const modalRoot = document.getElementById("modal-root");
 
@@ -272,6 +273,13 @@ const MediaPortal = ({ isOpen, onClose, postID }) => {
     const { isLoggedIn } = useAuth();
     const navigate = useNavigate();
     const { pathname } = useLocation();
+    const [descriptionToShow, setDescriptionToShow] = useState(null);
+    const [showMore, setShowMore] = useState(false);
+
+    const handleShowMore = (e) => {
+        e.preventDefault();
+        setDescriptionToShow(descriptionToShow === post.description ? truncateText(post.description, 150, 150) : post.description);
+    }
 
     const getDownloadLink = async () => {
         if(!post) {
@@ -370,6 +378,8 @@ const MediaPortal = ({ isOpen, onClose, postID }) => {
                 if (cancelled) return;
                 const data = response.data.post;
                 setPost(data);
+                setShowMore(data.description && data.description.length > 150);
+                setDescriptionToShow(truncateText(data.description, 150, 150));
 
                 // default selection
                 if (data.media?.length > 0) {
@@ -444,6 +454,7 @@ const MediaPortal = ({ isOpen, onClose, postID }) => {
             setActiveQuality(null);
         }
     };
+
 
     return ReactDOM.createPortal(
         <div className="modal-overlay" onClick={onClose} style={overlayStyle}>
@@ -554,6 +565,20 @@ const MediaPortal = ({ isOpen, onClose, postID }) => {
                         <div className="text-gray d-flex justify-content-between align-items-center" style={{ fontWeight: "bold", marginBottom: "15rem" }}>
                             <h2 className='text-right w-100' style={{ fontWeight: "bold", fontSize: "20rem", color: "gray" }}>{post?.title}</h2>
                             <span className="text-left w-100" dir="ltr"><i className="fa fa-eye"></i> {post?.views_count}</span>
+                        </div>
+                        <div className="d-flex justify-content-start align-items-center flex-column" style={{ marginBottom: "15rem" }}>
+                            <div className="w-100">
+                                <p key={descriptionToShow} className="text-expand">
+                                    {descriptionToShow}
+                                </p>
+                            </div>
+                            {
+                                showMore && (
+                                    <div className="w-100" style={{ marginTop: "5rem" }}>
+                                        <Link to="#" onClick={(e) => handleShowMore(e)}>مشاهده بیشتر</Link>
+                                    </div>
+                                )
+                            }
                         </div>
                         <div className="row justify-content-between align-items-center text-center option-container">
                             <div className="col-3 hover-info">
