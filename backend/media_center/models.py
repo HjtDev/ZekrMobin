@@ -157,6 +157,7 @@ class Post(models.Model):
     publisher = models.ForeignKey('account.User', related_name='posts', on_delete=models.SET_NULL, blank=True, null=True, verbose_name='منتشر کننده')
     
     title = models.CharField(max_length=50, verbose_name='تیتر پست')
+    description = models.TextField(max_length=600, blank=True, verbose_name='توضیحات پست')
     thumbnail = ResizedImageField(upload_to=dynamic_post_path, size=[240, 240], crop=['middle', 'center'], quality=100, verbose_name='عکس کاور', help_text='240 * 240')
     share_text = models.CharField(max_length=60, blank=True, null=True, verbose_name='متن اشتراک')
 
