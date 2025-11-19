@@ -18,6 +18,7 @@ import getSuggestedPosts from '../../api/suggestion.js';
 import toJalaliDate from "../../assets/js/jalaali-conventor.js";
 import {Link, Navigate, useLocation, useNavigate} from 'react-router-dom';
 import truncateText from "../../assets/js/utility.js";
+import PERSIAN from "../../assets/js/player-translation.js";
 
 const modalRoot = document.getElementById("modal-root");
 
@@ -551,6 +552,7 @@ const MediaPortal = ({ isOpen, onClose, postID }) => {
                                     <MediaProvider/>
                                     <PlyrLayout
                                         icons={plyrLayoutIcons}
+                                        translations={PERSIAN}
                                         clickToFullscreen={true}
                                         clickToPlay={true}
                                     />
