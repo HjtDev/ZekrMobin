@@ -5,6 +5,7 @@ import '@vidstack/react/player/styles/plyr/theme.css';
 import { MediaPlayer, MediaProvider } from '@vidstack/react';
 import { PlyrLayout, plyrLayoutIcons } from '@vidstack/react/player/layouts/plyr';
 import { PlayIcon, PauseIcon, ReplayIcon } from "@vidstack/react/icons";
+import PERSIAN from "../assets/js/player-translation.js";
 
 const Video = () => {
     const [pageData, setPageData] = useState(null);
@@ -57,6 +58,7 @@ const Video = () => {
                         Restart: ReplayIcon
                     }}
                     // thumbnails={post?.thumbnail}
+                    translations={PERSIAN}
                     clickToFullscreen={true}
                     clickToPlay={true}
                 />
