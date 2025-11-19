@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { getCategoryList, getFilteredBlogPosts, getTagsList } from '../api/blog.js';
 import { toast } from "react-toastify";
 import CustomSkeleton from '../components/CustomSkeleton.jsx';
-import {Link, useNavigate, useParams, useSearchParams} from 'react-router-dom';
+import {Link, useNavigate, useSearchParams} from 'react-router-dom';
 import Select from 'react-select';
 
 const BlogList = () => {
@@ -13,44 +13,12 @@ const BlogList = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [posts, setPosts] = useState(null);
     const [categories, setCategories] = useState(null);
-    const [tags, setTags] = useState()
+    const [tags, setTags] = useState(null);
 
     const [pagination, setPagination] = useState({ page: 1 });
     const [paginationOptions, setPaginationOptions] = useState({});
     const [searchQuery, setSearchQuery] = useState('');
     const [activeFilter, setActiveFilter] = useState(false);
-
-    const getDefaultOptions = (params) => {
-        const category = params.get("category");
-        const tag = params.get("tag");
-        const query = params.get("search");
-
-        let defaultOptions = {
-            selector: "all",
-            filters: { date: "trends" },
-            limit: 6,
-        };
-
-        if (category && Number.isInteger(Number(category))) {
-            defaultOptions.filters.category = [category];
-        }
-
-        if (tag && Number.isInteger(Number(tag))) {
-            defaultOptions.filters.tags = [tag];
-        }
-
-        if (query) {
-            defaultOptions.selector = `search:${query}`;
-        }
-
-        return defaultOptions;
-    };
-
-    const [options, setOptions] = useState({
-        selector: "all",
-        filters: { date: "trends" },
-        limit: 6,
-    });
 
     const SelectStyle = {
         control: (base, state) => ({
@@ -63,7 +31,7 @@ const BlogList = () => {
             minHeight: "42px",
             borderRadius: "10px",
             transition: "all 0.2s ease-in-out",
-            width: "200px",
+            width: "170px",
         }),
         menu: (base) => ({
             ...base,
@@ -137,6 +105,38 @@ const BlogList = () => {
         }),
     };
 
+    const getDefaultOptions = (params) => {
+        const category = params.get("category");
+        const tag = params.get("tag");
+        const query = params.get("search");
+
+        let defaultOptions = {
+            selector: "all",
+            filters: { date: "trends" },
+            limit: 6,
+        };
+
+        if (category && Number.isInteger(Number(category))) {
+            defaultOptions.filters.category = [category];
+        }
+
+        if (tag && Number.isInteger(Number(tag))) {
+            defaultOptions.filters.tags = [tag];
+        }
+
+        if (query) {
+            defaultOptions.selector = `search:${query}`;
+        }
+
+        return defaultOptions;
+    };
+
+    const [options, setOptions] = useState({
+        selector: "all",
+        filters: { date: "trends" },
+        limit: 6,
+    });
+
     const fetchPosts = async (page = null) => {
         let fPage = page;
         if(fPage) {
@@ -204,7 +204,7 @@ const BlogList = () => {
         }
         const loadTags = async () => {
             const { success, msg, tags } = await getTagsList(0);
-            setTags(tags);
+            setTags(tags.map((tag) => ({ label: tag.name, value: tag.id })));
             const messanger = success ? toast.success : toast.error;
             msg.forEach(message => messanger(message));
         }
@@ -384,12 +384,20 @@ const BlogList = () => {
                             <h2 className="widget-title">تگ ها</h2>
                             <ul>
                                 {
-                                    tags ?
-                                        tags.map((tag, index) => (
-                                            <li key={index}>
-                                                <a href={`?tag=${tag.id}`} onClick={() => addTag(tag.id)} className="prevent-default">{tag.name}</a>
-                                            </li>
-                                        )) : (
+                                    tags ? (
+                                        <Select
+                                            onChange={(selectedOptions) => {
+                                                addTag(selectedOptions.value);
+                                            }}
+                                            isSearchable
+                                            isRtl
+                                            placeholder="تگ ها"
+                                            options={tags}
+                                            noOptionsMessage={() => "یافت نشد"}
+                                            autoComplete="off"
+                                            styles={SelectStyle}
+                                        />
+                                    ) : (
                                             <div>
                                                 <a href="#"><CustomSkeleton width={150} /></a>
                                                 <a href="#"><CustomSkeleton width={150} /></a>
