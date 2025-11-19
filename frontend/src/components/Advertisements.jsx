@@ -7,7 +7,10 @@ const Advertisements = ({ adID }) => {
         const getAdImage = async () => {
             const { success, msg, config } = await fetchSettings(["ad"]);
             if(success) {
-                setAdvertisement(config[`ad${adID}_image`]);
+                setAdvertisement({
+                    image: config[`ad${adID}_image`],
+                    url: config[`ad${adID}_link`]
+                });
             } else {
                 console.error("Failed to fetch advertisement: ", msg);
             }
@@ -21,8 +24,8 @@ const Advertisements = ({ adID }) => {
             <div className="container">
                 <div className="row">
                     <div className="col-lg-12">
-                        <a href="#">
-                            <img src={advertisement} alt="Advertisement Image" className="img-fluid" />
+                        <a href={advertisement.url} target="_blank" rel="noopener noreferrer">
+                            <img src={advertisement.image} alt="Advertisement Image" className="img-fluid" />
                         </a>
                     </div>
                 </div>
