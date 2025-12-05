@@ -94,6 +94,7 @@ const PostList = () => {
         const updatedSection = params.get('section');
         const artists = params.get('artists');
         const categories = params.get('categories');
+        const tags = params.get('tags');
         const searchQuery = params.get('search');
         if(updatedSection) {
             section = updatedSection;
@@ -108,6 +109,11 @@ const PostList = () => {
             filters.categories = categories.split(',');
         } else {
             if(!filters.categories) filters.categories = null;
+        }
+        if(tags && /^\d+(,\d+)*$/.test(tags)) {
+            filters.tags = tags.split(',');
+        } else {
+            if(!filters.tags) filters.tags = null;
         }
         if(searchQuery) {
             filters.search = searchQuery;

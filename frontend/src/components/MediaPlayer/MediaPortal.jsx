@@ -608,8 +608,9 @@ const MediaPortal = ({ isOpen, onClose, postID }) => {
                                 width: "100%"
                             }}>
                                 {post?.tags?.map(tag => (
-                                    <a
-                                        href="#"
+                                    <Link
+                                        to={`/posts/?tags=${tag.id}`}
+                                        reloadDocument={true}
                                         key={tag.id}
                                         style={{
                                             backgroundColor: "rgba(20,27,42,0.64)",
@@ -622,8 +623,8 @@ const MediaPortal = ({ isOpen, onClose, postID }) => {
                                             border: "1px solid #08306b",
                                         }}
                                     >
-            {tag.name || '—'}
-        </a>
+                                        {tag.name || '—'}
+                                    </Link>
                                 ))}
                             </div>
                         </div>
