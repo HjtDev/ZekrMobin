@@ -197,7 +197,7 @@ class MainPage(models.Model):
     section9_content = 'stories'
     
     section10_title = models.CharField(max_length=30, verbose_name='تیتر')
-    section10_content = models.ManyToManyField(Post, blank=False, null=False, verbose_name='پست ها')
+    section10_content = models.ManyToManyField(Post, blank=False, verbose_name='پست ها')
     
     def __str__(self):
         return 'تنظیمات صفحه اصلی'

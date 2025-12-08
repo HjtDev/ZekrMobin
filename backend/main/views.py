@@ -1,12 +1,12 @@
-from pyexpat.errors import messages
-
-from drf_spectacular.hooks import postprocess_schema_enum_id_removal
+from django.core.cache import cache
 from rest_framework.views import APIView
 from backend.mixins import ResponseBuilderMixin, GetDataMixin
 from rest_framework import status
 from django.db.models import Q
 from .models import Setting, ClubMember, MainPage
 from .serializers import ClubMemberSerializer
+from bs4 import BeautifulSoup
+import requests as req
 
 
 class SettingView(APIView, ResponseBuilderMixin, GetDataMixin):
@@ -170,4 +170,53 @@ class MainPageSections(APIView, ResponseBuilderMixin, GetDataMixin):
         return self.build_response(
             status.HTTP_422_UNPROCESSABLE_ENTITY,
             message='This section is not available yet'
+        )
+    
+    
+class DailyHadith(APIView, ResponseBuilderMixin, GetDataMixin):
+    throttle_rate = 'hadith'
+    
+    _restored_from_cache = False
+    
+    def restore_hadith_from_cache(self):
+        hadith = cache.get('daily_hadith')
+        self._restored_from_cache = bool(hadith)
+        return hadith
+    
+    @staticmethod
+    def fetch_daily_hadith():
+        response = req.get('https://www.hadithlib.com/hadithlibjs/daily/a6150e/Traditional Arabic/18/bold/ffdbdb/1f95a6/Traditional Arabic/18/bold/c7f8ff/864d2b/Traditional Arabic/18/bold/ffdfcc/20483E/Traditional Arabic/18/bold/ccfff2/CD8F6A/Traditional Arabic/12/bold/fbe8dc/BFAD7B/double/3/fefce7/60/1/1/1/1/1/1/1/1/')
+        if response.status_code != 200:
+            return None
+        
+        html = response.text.removeprefix('document.write(').removesuffix(')').strip()
+        
+        soup = BeautifulSoup(html, 'html.parser')
+        data = {  # There is no better way than this :-)
+            'title': soup.select_one('span[style*="color: #a6150e"]').text.strip(),
+            'narrator': soup.select_one('span[style*="color: #1f95a6"]').text.strip(),
+            'arabic_text': soup.select_one('span[style*="color: #864d2b"]').text.strip(),
+            'translation': soup.select_one('a[style*="color: #20483E"] span').text.strip(),
+            'source': soup.select_one('a[style*="color: #CD8F6A"] span').text.strip(),
+            'source_link': soup.select_one('a[style*="color: #CD8F6A"]')['href']
+        }
+        
+        return data
+    
+    def get(self, request):
+        data = self.restore_hadith_from_cache() or self.fetch_daily_hadith()
+        
+        if not data:
+            return self.build_response(
+                status.HTTP_404_NOT_FOUND,
+                message='Hadith is not available'
+            )
+        
+        if not self._restored_from_cache:
+            cache.set('daily_hadith', data, 3600)
+            
+        return self.build_response(
+            message='Successful retrieval',
+            restored_from_cache=self._restored_from_cache,
+            hadith=data
         )

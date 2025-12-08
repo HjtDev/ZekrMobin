@@ -16,6 +16,7 @@ import TopBlogPosts from "../components/TopBlogPosts.jsx";
 import Video from "../components/Video.jsx";
 import StoryList from "../components/StoryList.jsx";
 import ManualPosts from "../components/ManualPosts.jsx";
+import Hadith from "../components/Hadith.jsx";
 
 
 const MainPage = () => {
@@ -75,6 +76,9 @@ const MainPage = () => {
             </LazySection>
             <LazySection>
                 <Advertisements adID={2} />
+            </LazySection>
+            <LazySection>
+                <Hadith />
             </LazySection>
             <LazySection>
                 <LiveSuggestions/>
