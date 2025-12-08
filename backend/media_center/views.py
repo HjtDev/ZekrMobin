@@ -490,6 +490,7 @@ class PostSuggestion(APIView, ResponseBuilderMixin, GetDataMixin, CachedResponse
                 
                 suggestion = Post.objects.exclude(id=post.id).filter(
                     categories__id__in=category_ids,
+                    tags__id__in=post.tags.values_list('id', flat=True),
                     is_story=False,
                     is_visible=True
                 ).distinct().order_by('-updated_at')
@@ -498,7 +499,7 @@ class PostSuggestion(APIView, ResponseBuilderMixin, GetDataMixin, CachedResponse
             
             return self.build_response(
                 status.HTTP_200_OK,
-                message='Suggested posts based on category',
+                message='Suggested posts based on category and tag',
                 posts=list(suggestion.values_list('id', flat=True)),
                 is_cached=self._restored_from_cache
             )

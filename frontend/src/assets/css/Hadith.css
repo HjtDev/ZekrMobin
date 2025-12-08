@@ -1,0 +1,152 @@
+.hadith-image-container {
+    position: relative;
+    display: block;
+    width: 100%;
+}
+
+.hadith-background-image {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(30, 60, 114, 0.3), 0 2px 6px rgba(30, 60, 114, 0.2);
+    display: block;
+}
+
+.hadith-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    box-sizing: border-box;
+}
+
+.hadith-content {
+    text-align: center;
+    width: 100%;
+    max-width: 800px;
+    max-height: 100%;
+    margin: 0 auto;
+}
+
+/* Date styles */
+.hadith-date {
+    margin-bottom: 10px;
+}
+
+.gregorian-date {
+    display: block;
+    font-size: 12px;
+    color: #fff;
+    margin-bottom: 3px;
+    font-family: 'Josefin Sans', Tahoma, Geneva, Verdana, sans-serif;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.hijri-date {
+    display: block;
+    font-size: 14px;
+    color: #fff;
+    font-weight: 600;
+    font-family: 'Josefin Sans', 'Scheherazade', 'Lateef', serif;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.hadith-text {
+    margin: 12px 0;
+}
+
+.hadith-arabic {
+    font-size: 18px;
+    line-height: 1.6;
+    color: #fff;
+    margin-bottom: 10px;
+    font-weight: 600;
+    font-family: 'Josefin Sans', 'Scheherazade', 'Lateef', serif;
+    direction: rtl;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+}
+
+.hadith-translation {
+    font-size: 14px;
+    line-height: 1.4;
+    color: #fff;
+    font-style: italic;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    font-family: 'Josefin Sans', 'Times New Roman', serif;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.hadith-reference {
+    padding-top: 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    font-size: 12px;
+    color: #fff;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.hadith-reference .source {
+    font-weight: 600;
+    color: #fff;
+    margin-right: 5px;
+    font-family: 'Josefin Sans', 'Scheherazade', serif;
+}
+
+.hadith-reference .reference-number {
+    color: rgba(255, 255, 255, 0.9);
+    font-family: 'Josefin Sans', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+@media (max-width: 576px) {
+    .hadith-arabic {
+        font-size: 10px;
+        line-height: 1.3;
+    }
+
+    .hadith-translation {
+        font-size: 10px;
+        line-height: 1.2;
+    }
+
+    .gregorian-date {
+        font-size: 10px;
+    }
+
+    .hijri-date {
+        font-size: 12px;
+    }
+
+    .hadith-reference {
+        font-size: 10px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .hadith-arabic {
+        font-size: calc(20px + 10px);
+    }
+
+    .hadith-translation {
+        font-size: 20px;
+    }
+
+    .gregorian-date {
+        font-size: calc(12px + 10px);
+        margin-bottom: 5px;
+    }
+
+    .hijri-date {
+        font-size: calc(14px + 10px);
+        margin-bottom: 10px;
+    }
+
+    .hadith-reference {
+        font-size: calc(12px + 10px);
+    }
+}

@@ -11,7 +11,7 @@ const getSuggestedPosts = async (postID) => {
 
     try {
         const res = await api.get(
-            'media/posts/post/suggestion',
+            'media/posts/post/suggestion/',
             {
                 params: {
                     'id': postID

@@ -285,6 +285,7 @@ REST_FRAMEWORK = {
         'blog-tag-list': '200/minute',
         'blog-post-suggestion': '200/minute',
         'blog-comment': '100/minute',
+        'hadith': '200/minute',
     },
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema'
 }
