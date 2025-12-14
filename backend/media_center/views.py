@@ -451,64 +451,108 @@ class PostDownload(APIView, ResponseBuilderMixin, GetDataMixin):
             )
 
 
-class PostSuggestion(APIView, ResponseBuilderMixin, GetDataMixin, CachedResponseMixin):
+# class PostSuggestion(APIView, ResponseBuilderMixin, GetDataMixin, CachedResponseMixin):
+#     throttle_scope = 'suggestion'
+#
+#     def get(self, request):
+#         success, result = self.get_data(request, ('id', self.is_id))
+#
+#         if not success:
+#             return self.build_response(
+#                 status.HTTP_400_BAD_REQUEST,
+#                 message='Invalid or missing parameter',
+#                 errors=result
+#             )
+#
+#         try:
+#             post = Post.objects.prefetch_related('categories').get(id=result['id'])
+#             if not post.is_visible:
+#                 raise Post.DoesNotExist
+#
+#             self.set_cache_key(f'suggestion-{post.id}')
+#             suggestion, _ = self.get_cached(Post)
+#             if not self._restored_from_cache:
+#                 categories = list(post.categories.all())
+#                 category_ids = set()
+#
+#                 for category in categories:
+#                     category_ids.add(category.id)
+#
+#                     descendants = category.get_descendants(include_self=False)
+#                     category_ids.update(descendants.values_list('id', flat=True))
+#
+#                     ancestors = category.get_ancestors(include_self=False)
+#                     category_ids.update(ancestors.values_list('id', flat=True))
+#
+#                     for ancestor in ancestors:
+#                         ancestor_descendants = ancestor.get_descendants(include_self=False)
+#                         category_ids.update(ancestor_descendants.values_list('id', flat=True))
+#
+#                 suggestion = Post.objects.exclude(id=post.id).filter(
+#                     categories__id__in=category_ids,
+#                     tags__id__in=post.tags.values_list('id', flat=True),
+#                     is_story=False,
+#                     is_visible=True
+#                 ).distinct().order_by('-updated_at')
+#
+#                 self.store_cached(suggestion)
+#
+#             return self.build_response(
+#                 status.HTTP_200_OK,
+#                 message='Suggested posts based on category and tag',
+#                 posts=list(suggestion.values_list('id', flat=True)),
+#                 is_cached=self._restored_from_cache
+#             )
+#         except Post.DoesNotExist:
+#             return self.build_response(
+#                 status.HTTP_404_NOT_FOUND,
+#                 message='Post not found'
+#             )
+
+
+class PostTagSuggestion(APIView, ResponseBuilderMixin, GetDataMixin, CachedResponseMixin):
     throttle_scope = 'suggestion'
-    
+
     def get(self, request):
         success, result = self.get_data(request, ('id', self.is_id))
-        
+
         if not success:
             return self.build_response(
                 status.HTTP_400_BAD_REQUEST,
                 message='Invalid or missing parameter',
                 errors=result
             )
-        
+
         try:
-            post = Post.objects.prefetch_related('categories').get(id=result['id'])
+            post = Post.objects.prefetch_related('tags').get(id=result['id'])
             if not post.is_visible:
                 raise Post.DoesNotExist
-            
+
             self.set_cache_key(f'suggestion-{post.id}')
             suggestion, _ = self.get_cached(Post)
+            
             if not self._restored_from_cache:
-                categories = list(post.categories.all())
-                category_ids = set()
-                
-                for category in categories:
-                    category_ids.add(category.id)
-                    
-                    descendants = category.get_descendants(include_self=False)
-                    category_ids.update(descendants.values_list('id', flat=True))
-                    
-                    ancestors = category.get_ancestors(include_self=False)
-                    category_ids.update(ancestors.values_list('id', flat=True))
-                    
-                    for ancestor in ancestors:
-                        ancestor_descendants = ancestor.get_descendants(include_self=False)
-                        category_ids.update(ancestor_descendants.values_list('id', flat=True))
-                
                 suggestion = Post.objects.exclude(id=post.id).filter(
-                    categories__id__in=category_ids,
-                    tags__id__in=post.tags.values_list('id', flat=True),
-                    is_story=False,
-                    is_visible=True
+                    is_visible=True,
+                    tags__id__in=post.tags.values_list('id', flat=True)
                 ).distinct().order_by('-updated_at')
                 
-                self.store_cached(suggestion)
-            
+                if suggestion.count():
+                    self.store_cached(suggestion)
+                    
             return self.build_response(
                 status.HTTP_200_OK,
-                message='Suggested posts based on category and tag',
+                message='Suggested posts based on tags',
                 posts=list(suggestion.values_list('id', flat=True)),
-                is_cached=self._restored_from_cache
+                restored_from_cache=self._restored_from_cache
             )
+            
         except Post.DoesNotExist:
             return self.build_response(
                 status.HTTP_404_NOT_FOUND,
                 message='Post not found'
             )
-        
+    
     
 class UserPosts(APIView, ResponseBuilderMixin, GetDataMixin):
     throttle_scope = 'user-posts'
